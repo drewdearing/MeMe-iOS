@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17C6E8402239A88A004665F0 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C6E83F2239A88A004665F0 /* MainViewController.swift */; };
+		17C6E8422239A983004665F0 /* HomeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8412239A983004665F0 /* HomeView.xib */; };
+		17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C6E8472239ABF9004665F0 /* HomeView.swift */; };
+		17C6E84A2239AE5B004665F0 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C6E8492239AE5B004665F0 /* DiscoverView.swift */; };
+		17C6E84C2239AE6A004665F0 /* DiscoverView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E84B2239AE6A004665F0 /* DiscoverView.xib */; };
+		17C6E84E2239B2D8004665F0 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C6E84D2239B2D8004665F0 /* MessageView.swift */; };
+		17C6E8502239B2E9004665F0 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C6E84F2239B2E9004665F0 /* ProfileView.swift */; };
+		17C6E8522239B30D004665F0 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8512239B30D004665F0 /* MessageView.xib */; };
+		17C6E8542239B31F004665F0 /* ProfileView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8532239B31F004665F0 /* ProfileView.xib */; };
 		23BD7A5C5DD54070A9759157 /* Pods_MeMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */; };
 		3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B76C13C22398191005CA53E /* GoogleService-Info.plist */; };
 		3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */; };
@@ -18,6 +27,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		17C6E83F2239A88A004665F0 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		17C6E8412239A983004665F0 /* HomeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeView.xib; sourceTree = "<group>"; };
+		17C6E8472239ABF9004665F0 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		17C6E8492239AE5B004665F0 /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
+		17C6E84B2239AE6A004665F0 /* DiscoverView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DiscoverView.xib; sourceTree = "<group>"; };
+		17C6E84D2239B2D8004665F0 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
+		17C6E84F2239B2E9004665F0 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		17C6E8512239B30D004665F0 /* MessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
+		17C6E8532239B31F004665F0 /* ProfileView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProfileView.xib; sourceTree = "<group>"; };
 		1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MeMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B76C13C22398191005CA53E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
@@ -44,6 +62,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		17C6E8452239A9B7004665F0 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				60430CCD2231CC630033C92F /* LoginViewController.swift */,
+				3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */,
+				17C6E83F2239A88A004665F0 /* MainViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		17C6E8462239A9D3004665F0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				17C6E8472239ABF9004665F0 /* HomeView.swift */,
+				17C6E8412239A983004665F0 /* HomeView.xib */,
+				17C6E8492239AE5B004665F0 /* DiscoverView.swift */,
+				17C6E84B2239AE6A004665F0 /* DiscoverView.xib */,
+				17C6E84D2239B2D8004665F0 /* MessageView.swift */,
+				17C6E8512239B30D004665F0 /* MessageView.xib */,
+				17C6E84F2239B2E9004665F0 /* ProfileView.swift */,
+				17C6E8532239B31F004665F0 /* ProfileView.xib */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		60430CBF2231CC630033C92F = {
 			isa = PBXGroup;
 			children = (
@@ -65,10 +108,10 @@
 		60430CCA2231CC630033C92F /* MeMe */ = {
 			isa = PBXGroup;
 			children = (
+				17C6E8462239A9D3004665F0 /* Views */,
+				17C6E8452239A9B7004665F0 /* Controllers */,
 				3B76C13C22398191005CA53E /* GoogleService-Info.plist */,
 				60430CCB2231CC630033C92F /* AppDelegate.swift */,
-				60430CCD2231CC630033C92F /* LoginViewController.swift */,
-				3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */,
 				60430CCF2231CC630033C92F /* Main.storyboard */,
 				60430CD22231CC650033C92F /* Assets.xcassets */,
 				60430CD42231CC650033C92F /* LaunchScreen.storyboard */,
@@ -155,9 +198,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				60430CD62231CC650033C92F /* LaunchScreen.storyboard in Resources */,
+				17C6E84C2239AE6A004665F0 /* DiscoverView.xib in Resources */,
 				3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */,
+				17C6E8522239B30D004665F0 /* MessageView.xib in Resources */,
+				17C6E8542239B31F004665F0 /* ProfileView.xib in Resources */,
 				60430CD32231CC650033C92F /* Assets.xcassets in Resources */,
 				60430CD12231CC630033C92F /* Main.storyboard in Resources */,
+				17C6E8422239A983004665F0 /* HomeView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,9 +276,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17C6E8502239B2E9004665F0 /* ProfileView.swift in Sources */,
+				17C6E84E2239B2D8004665F0 /* MessageView.swift in Sources */,
 				3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */,
 				60430CCE2231CC630033C92F /* LoginViewController.swift in Sources */,
 				60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */,
+				17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */,
+				17C6E8402239A88A004665F0 /* MainViewController.swift in Sources */,
+				17C6E84A2239AE5B004665F0 /* DiscoverView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

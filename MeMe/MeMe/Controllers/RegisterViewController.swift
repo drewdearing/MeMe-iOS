@@ -55,12 +55,13 @@ class RegisterViewController: UIViewController {
                                 } else {
                                     self.statusLabel.text = "User created!"
                                     //go to home
+                                    self.performSegue(withIdentifier: "RegisterSegue", sender: self)
                                 }
                                 self.unlockUI()
                             }
                         }
                         else{
-                            self.statusLabel.text = "User already exists!"
+                            self.statusLabel.text = error!.localizedDescription
                             self.unlockUI()
                         }
                     }
