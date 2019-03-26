@@ -21,6 +21,8 @@
 		3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */; };
 		3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B76C13C22398191005CA53E /* GoogleService-Info.plist */; };
 		3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */; };
+		6037F704224AD13F000D0E57 /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6037F703224AD13F000D0E57 /* GalleryViewController.swift */; };
+		6037F706224AD165000D0E57 /* EditMemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6037F705224AD165000D0E57 /* EditMemeViewController.swift */; };
 		60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60430CCB2231CC630033C92F /* AppDelegate.swift */; };
 		60430CCE2231CC630033C92F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60430CCD2231CC630033C92F /* LoginViewController.swift */; };
 		60430CD12231CC630033C92F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60430CCF2231CC630033C92F /* Main.storyboard */; };
@@ -43,6 +45,8 @@
 		3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FeedTableViewCell.xib; path = MeMe/Cells/FeedTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		3B76C13C22398191005CA53E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		6037F703224AD13F000D0E57 /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
+		6037F705224AD165000D0E57 /* EditMemeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMemeViewController.swift; sourceTree = "<group>"; };
 		60430CC82231CC630033C92F /* MeMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60430CCB2231CC630033C92F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		60430CCD2231CC630033C92F /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -72,6 +76,8 @@
 				60430CCD2231CC630033C92F /* LoginViewController.swift */,
 				3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */,
 				17C6E83F2239A88A004665F0 /* MainViewController.swift */,
+				6037F703224AD13F000D0E57 /* GalleryViewController.swift */,
+				6037F705224AD165000D0E57 /* EditMemeViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -296,9 +302,11 @@
 				17C6E84E2239B2D8004665F0 /* MessageView.swift in Sources */,
 				3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */,
 				60430CCE2231CC630033C92F /* LoginViewController.swift in Sources */,
+				6037F706224AD165000D0E57 /* EditMemeViewController.swift in Sources */,
 				60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */,
 				17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */,
 				17C6E8402239A88A004665F0 /* MainViewController.swift in Sources */,
+				6037F704224AD13F000D0E57 /* GalleryViewController.swift in Sources */,
 				17C6E84A2239AE5B004665F0 /* DiscoverView.swift in Sources */,
 				3B3F47C32249ACBA00B2C5A0 /* FeedTableViewCell.swift in Sources */,
 			);
