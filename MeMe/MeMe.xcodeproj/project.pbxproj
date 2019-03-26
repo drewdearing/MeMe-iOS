@@ -17,6 +17,8 @@
 		17C6E8522239B30D004665F0 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8512239B30D004665F0 /* MessageView.xib */; };
 		17C6E8542239B31F004665F0 /* ProfileView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8532239B31F004665F0 /* ProfileView.xib */; };
 		23BD7A5C5DD54070A9759157 /* Pods_MeMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */; };
+		3B6465442249A5CF00F286B0 /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6465422249A5CF00F286B0 /* FeedTableViewCell.swift */; };
+		3B6465452249A5CF00F286B0 /* FeedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B6465432249A5CF00F286B0 /* FeedTableViewCell.xib */; };
 		3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B76C13C22398191005CA53E /* GoogleService-Info.plist */; };
 		3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */; };
 		60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60430CCB2231CC630033C92F /* AppDelegate.swift */; };
@@ -37,6 +39,8 @@
 		17C6E8512239B30D004665F0 /* MessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		17C6E8532239B31F004665F0 /* ProfileView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProfileView.xib; sourceTree = "<group>"; };
 		1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MeMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B6465422249A5CF00F286B0 /* FeedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
+		3B6465432249A5CF00F286B0 /* FeedTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedTableViewCell.xib; sourceTree = "<group>"; };
 		3B76C13C22398191005CA53E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		60430CC82231CC630033C92F /* MeMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,6 +79,8 @@
 		17C6E8462239A9D3004665F0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3B6465422249A5CF00F286B0 /* FeedTableViewCell.swift */,
+				3B6465432249A5CF00F286B0 /* FeedTableViewCell.xib */,
 				17C6E8472239ABF9004665F0 /* HomeView.swift */,
 				17C6E8412239A983004665F0 /* HomeView.xib */,
 				17C6E8492239AE5B004665F0 /* DiscoverView.swift */,
@@ -197,6 +203,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B6465452249A5CF00F286B0 /* FeedTableViewCell.xib in Resources */,
 				60430CD62231CC650033C92F /* LaunchScreen.storyboard in Resources */,
 				17C6E84C2239AE6A004665F0 /* DiscoverView.xib in Resources */,
 				3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */,
@@ -283,6 +290,7 @@
 				60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */,
 				17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */,
 				17C6E8402239A88A004665F0 /* MainViewController.swift in Sources */,
+				3B6465442249A5CF00F286B0 /* FeedTableViewCell.swift in Sources */,
 				17C6E84A2239AE5B004665F0 /* DiscoverView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

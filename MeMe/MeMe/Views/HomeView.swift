@@ -8,16 +8,26 @@
 
 import UIKit
 
-class HomeView: UIView {
-
+let HomeTableCellId = "FeedTableViewCell"
+class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet var contentView: UIView!
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+    @IBOutlet weak var tableView: UITableView!
+    var data:[String] = ["hi"]
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return data.count
     }
-    */
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
+        cell.cellTitle.text = data[indexPath.row]
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //deselect row when tapped
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -33,6 +43,9 @@ class HomeView: UIView {
         Bundle.main.loadNibNamed("HomeView", owner: self, options: nil)
         addSubview(contentView)
         contentView.frame = self.bounds
+        tableView.register(UINib.init(nibName: HomeTableCellId, bundle: nil), forCellReuseIdentifier: HomeTableCellId)
+        tableView.delegate = self
+        tableView.dataSource = self
     }
-
+    
 }
