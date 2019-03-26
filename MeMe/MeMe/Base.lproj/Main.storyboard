@@ -101,10 +101,10 @@
                                 <rect key="frame" x="0.0" y="687" width="414" height="49"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <items>
-                                    <tabBarItem title="Home" id="Qla-sK-fEo"/>
-                                    <tabBarItem tag="1" title="Discover" id="fOh-vf-fV8"/>
-                                    <tabBarItem tag="2" title="Messages" id="Ptu-nV-UKL"/>
-                                    <tabBarItem tag="3" title="Profile" id="py6-ya-bVF"/>
+                                    <tabBarItem title="Home" image="home" id="Qla-sK-fEo"/>
+                                    <tabBarItem tag="1" title="Discover" image="globe_earth" id="fOh-vf-fV8"/>
+                                    <tabBarItem tag="2" title="Messages" image="message" id="Ptu-nV-UKL"/>
+                                    <tabBarItem tag="3" title="Profile" image="user_male" id="py6-ya-bVF"/>
                                 </items>
                             </tabBar>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oPv-fE-1vl">
@@ -245,6 +245,12 @@
             <point key="canvasLocation" x="2047.826086956522" y="132.88043478260872"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="globe_earth" width="30" height="30"/>
+        <image name="home" width="30" height="30"/>
+        <image name="message" width="30" height="30"/>
+        <image name="user_male" width="30" height="30"/>
+    </resources>
     <inferredMetricsTieBreakers>
         <segue reference="nv7-M3-g2a"/>
     </inferredMetricsTieBreakers>
