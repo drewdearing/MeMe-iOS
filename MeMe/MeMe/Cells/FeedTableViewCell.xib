@@ -74,7 +74,7 @@
                             <constraint firstItem="e7k-4O-KLh" firstAttribute="centerX" secondItem="lkr-gv-57T" secondAttribute="centerX" id="wFw-lA-7rR"/>
                         </constraints>
                     </view>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7a5-vG-0G8">
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7a5-vG-0G8">
                         <rect key="frame" x="0.0" y="0.0" width="408" height="304.5"/>
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="5jY-fX-o8J">

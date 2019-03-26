@@ -17,6 +17,11 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet weak var downVoteCounter: UILabel!
     @IBOutlet weak var upVoteCounter: UILabel!
     
+    var memeURL:String?
+    var profileURL:String?
+    var uid:String?
+    var postID:String?
+    
     @IBAction func upVote(_ sender: Any) {
         print("hi")
     }

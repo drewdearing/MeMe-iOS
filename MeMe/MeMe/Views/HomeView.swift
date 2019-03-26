@@ -14,6 +14,7 @@ struct FeedCellData {
     var uid: String
     var post: String
     var imageURL: String
+    var profilePicURL: String
     var upvotes: Int
     var downvotes: Int
 }
@@ -31,6 +32,29 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
         cell.cellTitle.text = data[indexPath.row].username
+        cell.downVoteCounter.text = String(data[indexPath.row].downvotes)
+        cell.upVoteCounter.text = String(data[indexPath.row].upvotes)
+        cell.memeURL = data[indexPath.row].imageURL
+        cell.uid = data[indexPath.row].uid
+        cell.postID = data[indexPath.row].post
+        cell.profileURL = data[indexPath.row].profilePicURL
+        
+        if cell.memeURL != nil {
+            let url = URL(string: cell.memeURL!)
+            let data = try? Data(contentsOf: url!)
+            if let imageData = data {
+                cell.memePic.image = UIImage(data:imageData)
+            }
+        }
+        
+        if cell.profileURL != nil {
+            let url = URL(string: cell.profileURL!)
+            let data = try? Data(contentsOf: url!)
+            if let imageData = data {
+                cell.profilePic.image = UIImage(data:imageData)
+            }
+        }
+        
         cell.selectionStyle = .none
         return cell
     }
@@ -61,20 +85,39 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
         tableView.register(UINib.init(nibName: HomeTableCellId, bundle: nil), forCellReuseIdentifier: HomeTableCellId)
         tableView.delegate = self
         tableView.dataSource = self
-        getPosts()
+        getUserIDs()
     }
     
-    private func getPosts(){
+    private func getUserIDs(){
         if let currentUser = Auth.auth().currentUser {
-            print(currentUser.uid)
-            var posts:[String] = []
+            var users:[String] = [currentUser.uid]
             let userRef = Firestore.firestore().collection("users").document(currentUser.uid)
             userRef.getDocument { (document, error) in
                 if let document = document, document.exists {
                     if let data = document.data(){
-                        if let userPosts = data["posts"] as? [String] {
-                            for post in userPosts {
-                                posts.append(post)
+                        if let following = data["following"] as? [String] {
+                            for user in following {
+                                users.append(user)
+                            }
+                            self.getUsernames(users: users)
+                        }
+                    }
+                } else {
+                    print("User does not exist")
+                }
+            }
+        }
+    }
+    
+    private func getUsernames(users:[String]){
+        for user in users {
+            let userRef = Firestore.firestore().collection("users").document(user)
+            userRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    if let data = document.data(){
+                        if let username = data["username"] as? String {
+                            if let profilePicURL = data["profilePicURL"] as? String {
+                                self.addUserPosts(username: username, profilePicURL: profilePicURL, user: user)
                             }
                         }
                     }
@@ -82,8 +125,26 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
                     print("User does not exist")
                 }
             }
-            for post in posts {
-                //add posts
+        }
+    }
+    
+    private func addUserPosts(username:String, profilePicURL:String, user:String){
+        Firestore.firestore().collection("post").whereField("uid", isEqualTo: String(describing: user)).getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    let data = document.data()
+                    if let photoURL = data["photoURL"] as? String {
+                        if let upvotes = data["upvotes"] as? Int {
+                            if let downvotes = data["downvotes"] as? Int {
+                                let newPostCellData = FeedCellData(username: username, uid: user, post: document.documentID, imageURL: photoURL, profilePicURL: profilePicURL, upvotes: upvotes, downvotes: downvotes)
+                                self.data.append(newPostCellData)
+                                self.tableView.reloadData()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
