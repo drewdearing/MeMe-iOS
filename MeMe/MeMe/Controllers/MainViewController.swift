@@ -13,6 +13,7 @@ class MainViewController: UIViewController, UITabBarDelegate {
     @IBOutlet weak var currentScreenView: UIView!
     @IBOutlet weak var tabBar: UITabBar!
     @IBOutlet weak var navBarItem: UINavigationItem!
+    
     let views = [HomeView(), DiscoverView(), MessageView(), ProfileView()]
     let navBarTitles = ["Your Feed", "Discover", "Direct Messages", "Profile"]
     

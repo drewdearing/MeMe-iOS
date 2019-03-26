@@ -18,13 +18,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ue8-GW-7an">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="123456" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ue8-GW-7an">
                                 <rect key="frame" x="32" y="351.66666666666669" width="350" height="33"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                             </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="oCh-6l-5Ip">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="email@email.com" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="oCh-6l-5Ip">
                                 <rect key="frame" x="32" y="310.66666666666669" width="350" height="33"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
@@ -97,14 +97,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="10r-Ud-fOD">
-                                <rect key="frame" x="0.0" y="64" width="414" height="44"/>
-                                <items>
-                                    <navigationItem title="Your Feed" id="4S8-2S-iwT">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="compose" id="6ft-56-wpE"/>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <tabBar contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4VA-ef-zUn">
                                 <rect key="frame" x="0.0" y="687" width="414" height="49"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -116,29 +108,21 @@
                                 </items>
                             </tabBar>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oPv-fE-1vl">
-                                <rect key="frame" x="0.0" y="108" width="414" height="579"/>
+                                <rect key="frame" x="0.0" y="64" width="414" height="623"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="4VA-ef-zUn" firstAttribute="bottom" secondItem="wDr-8e-jCD" secondAttribute="bottom" id="B0c-da-ZUG"/>
-                            <constraint firstItem="10r-Ud-fOD" firstAttribute="trailing" secondItem="wDr-8e-jCD" secondAttribute="trailing" id="HpW-cy-6QL"/>
                             <constraint firstItem="4VA-ef-zUn" firstAttribute="bottom" secondItem="wDr-8e-jCD" secondAttribute="bottom" id="Htf-Mq-fY6"/>
                             <constraint firstItem="oPv-fE-1vl" firstAttribute="leading" secondItem="wDr-8e-jCD" secondAttribute="leading" id="Mz3-uk-m4z"/>
+                            <constraint firstItem="oPv-fE-1vl" firstAttribute="top" secondItem="wDr-8e-jCD" secondAttribute="top" id="N9u-Ft-VWV"/>
                             <constraint firstItem="4VA-ef-zUn" firstAttribute="top" secondItem="oPv-fE-1vl" secondAttribute="bottom" id="OVC-kC-XL8"/>
-                            <constraint firstItem="10r-Ud-fOD" firstAttribute="leading" secondItem="wDr-8e-jCD" secondAttribute="leading" id="RKd-H1-O4J"/>
                             <constraint firstItem="4VA-ef-zUn" firstAttribute="leading" secondItem="wDr-8e-jCD" secondAttribute="leading" id="Tza-Te-dc0"/>
                             <constraint firstItem="4VA-ef-zUn" firstAttribute="leading" secondItem="wDr-8e-jCD" secondAttribute="leading" id="UFe-bP-SnJ"/>
                             <constraint firstItem="4VA-ef-zUn" firstAttribute="trailing" secondItem="wDr-8e-jCD" secondAttribute="trailing" id="aCA-Qn-g35"/>
                             <constraint firstItem="oPv-fE-1vl" firstAttribute="trailing" secondItem="wDr-8e-jCD" secondAttribute="trailing" id="bMT-Tq-5xb"/>
-                            <constraint firstItem="oPv-fE-1vl" firstAttribute="top" secondItem="10r-Ud-fOD" secondAttribute="bottom" id="emI-rj-gU8"/>
-                            <constraint firstItem="oPv-fE-1vl" firstAttribute="top" secondItem="10r-Ud-fOD" secondAttribute="bottom" id="fba-ji-CW8"/>
-                            <constraint firstItem="10r-Ud-fOD" firstAttribute="top" secondItem="wDr-8e-jCD" secondAttribute="top" id="fgx-di-daZ"/>
-                            <constraint firstItem="10r-Ud-fOD" firstAttribute="trailing" secondItem="wDr-8e-jCD" secondAttribute="trailing" id="gAh-wj-6IQ"/>
-                            <constraint firstItem="4VA-ef-zUn" firstAttribute="top" secondItem="oPv-fE-1vl" secondAttribute="bottom" id="loX-cK-Hl0"/>
-                            <constraint firstItem="10r-Ud-fOD" firstAttribute="leading" secondItem="wDr-8e-jCD" secondAttribute="leading" id="oqO-XT-BGg"/>
-                            <constraint firstItem="10r-Ud-fOD" firstAttribute="top" secondItem="wDr-8e-jCD" secondAttribute="top" id="whx-bJ-b2c"/>
                             <constraint firstItem="4VA-ef-zUn" firstAttribute="trailing" secondItem="wDr-8e-jCD" secondAttribute="trailing" id="zHn-J3-BpX"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="wDr-8e-jCD"/>
@@ -146,7 +130,7 @@
                     <navigationItem key="navigationItem" id="oUK-IU-Vbt"/>
                     <connections>
                         <outlet property="currentScreenView" destination="oPv-fE-1vl" id="dOX-wF-AiV"/>
-                        <outlet property="navBarItem" destination="4S8-2S-iwT" id="Y59-bf-UsQ"/>
+                        <outlet property="navBarItem" destination="oUK-IU-Vbt" id="fgi-fF-31P"/>
                         <outlet property="tabBar" destination="4VA-ef-zUn" id="5sN-cp-dO0"/>
                     </connections>
                 </viewController>

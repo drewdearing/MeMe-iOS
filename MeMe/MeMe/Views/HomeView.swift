@@ -24,6 +24,10 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 352
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //deselect row when tapped
         tableView.deselectRow(at: indexPath, animated: true)
