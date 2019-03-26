@@ -7,12 +7,22 @@
 //
 
 import UIKit
+import Firebase
+
+struct FeedCellData {
+    var username: String
+    var uid: String
+    var post: String
+    var imageURL: String
+    var upvotes: Int
+    var downvotes: Int
+}
 
 let HomeTableCellId = "FeedTableViewCell"
 class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var tableView: UITableView!
-    var data:[String] = ["hi"]
+    var data:[FeedCellData] = []
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
@@ -20,7 +30,7 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
-        cell.cellTitle.text = data[indexPath.row]
+        cell.cellTitle.text = data[indexPath.row].username
         cell.selectionStyle = .none
         return cell
     }
@@ -51,6 +61,31 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
         tableView.register(UINib.init(nibName: HomeTableCellId, bundle: nil), forCellReuseIdentifier: HomeTableCellId)
         tableView.delegate = self
         tableView.dataSource = self
+        getPosts()
+    }
+    
+    private func getPosts(){
+        if let currentUser = Auth.auth().currentUser {
+            print(currentUser.uid)
+            var posts:[String] = []
+            let userRef = Firestore.firestore().collection("users").document(currentUser.uid)
+            userRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    if let data = document.data(){
+                        if let userPosts = data["posts"] as? [String] {
+                            for post in userPosts {
+                                posts.append(post)
+                            }
+                        }
+                    }
+                } else {
+                    print("User does not exist")
+                }
+            }
+            for post in posts {
+                //add posts
+            }
+        }
     }
     
 }
