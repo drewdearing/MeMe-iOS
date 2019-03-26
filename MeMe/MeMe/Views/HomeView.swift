@@ -21,6 +21,7 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
         cell.cellTitle.text = data[indexPath.row]
+        cell.selectionStyle = .none
         return cell
     }
     
