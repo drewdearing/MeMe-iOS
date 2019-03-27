@@ -355,7 +355,8 @@
                                         </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="79F-se-fB3">
                                             <connections>
-                                                <segue destination="ltT-66-CwW" kind="show" identifier="MainViewVCIdentifier" id="0Q5-he-3O8"/>
+                                                <action selector="postMeme:" destination="EzA-CQ-eHu" id="Bze-4f-5ng"/>
+                                                <segue destination="ltT-66-CwW" kind="show" identifier="DoneViewVCIdentifier" id="0Q5-he-3O8"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
