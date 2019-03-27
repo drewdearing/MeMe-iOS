@@ -338,8 +338,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="J8r-jc-YKq">
-                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="J8r-jc-YKq">
+                                <rect key="frame" x="0.0" y="64" width="414" height="523"/>
                             </imageView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5kl-SE-6TA">
                                 <rect key="frame" x="0.0" y="20" width="414" height="44"/>
@@ -361,6 +361,12 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
+                            <textField opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="iRW-q6-E52">
+                                <rect key="frame" x="20" y="642" width="374" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -369,8 +375,10 @@
                             <constraint firstItem="5kl-SE-6TA" firstAttribute="top" secondItem="LRz-Xh-BVN" secondAttribute="top" id="J7l-Wr-gMN"/>
                             <constraint firstItem="J8r-jc-YKq" firstAttribute="top" secondItem="5kl-SE-6TA" secondAttribute="bottom" id="SQe-PR-TVs"/>
                             <constraint firstItem="J8r-jc-YKq" firstAttribute="leading" secondItem="LRz-Xh-BVN" secondAttribute="leading" id="YUy-ld-s9p"/>
-                            <constraint firstItem="LRz-Xh-BVN" firstAttribute="bottom" secondItem="J8r-jc-YKq" secondAttribute="bottom" id="hcN-TP-5fC"/>
+                            <constraint firstItem="iRW-q6-E52" firstAttribute="top" secondItem="J8r-jc-YKq" secondAttribute="bottom" constant="55" id="nLi-fT-fWb"/>
+                            <constraint firstItem="LRz-Xh-BVN" firstAttribute="trailing" secondItem="iRW-q6-E52" secondAttribute="trailing" constant="20" id="o0D-z5-jRH"/>
                             <constraint firstItem="5kl-SE-6TA" firstAttribute="leading" secondItem="LRz-Xh-BVN" secondAttribute="leading" id="ss9-Y0-rVl"/>
+                            <constraint firstItem="iRW-q6-E52" firstAttribute="leading" secondItem="LRz-Xh-BVN" secondAttribute="leading" constant="20" id="yLD-2b-kfr"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="LRz-Xh-BVN"/>
                     </view>
