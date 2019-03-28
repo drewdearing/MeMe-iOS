@@ -356,7 +356,6 @@
                                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="79F-se-fB3">
                                             <connections>
                                                 <action selector="postMeme:" destination="EzA-CQ-eHu" id="Bze-4f-5ng"/>
-                                                <segue destination="ltT-66-CwW" kind="show" identifier="DoneViewVCIdentifier" id="0Q5-he-3O8"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
@@ -386,6 +385,7 @@
                     <connections>
                         <outlet property="descriptionField" destination="iRW-q6-E52" id="kqr-MN-d4x"/>
                         <outlet property="memeImageView" destination="J8r-jc-YKq" id="Ec8-R2-0gj"/>
+                        <segue destination="ltT-66-CwW" kind="show" identifier="FinishEditMemeSegue" id="GFV-HC-jZj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qcp-hv-c14" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -418,7 +418,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="KvP-MJ-yl5"/>
-        <segue reference="PsX-WR-UKk"/>
-        <segue reference="0Q5-he-3O8"/>
+        <segue reference="twd-rc-ydB"/>
+        <segue reference="GFV-HC-jZj"/>
     </inferredMetricsTieBreakers>
 </document>
