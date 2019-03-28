@@ -42,7 +42,13 @@ class RegisterViewController: UIViewController {
                             print(user.user.uid)
                             Firestore.firestore().collection("users").document(user.user.uid).setData([
                                 "username": username,
-                                "email": email
+                                "email": email,
+                                "followers": [String](),
+                                "following": [String](),
+                                "numFollowing": 0,
+                                "numFollowers": 0,
+                                "posts": [String](),
+                                "profilePicURL": "https://cdn.bulbagarden.net/upload/c/c6/094Gengar.png"
                             ]) { err in
                                 if let err = err {
                                     user.user.delete { error in
