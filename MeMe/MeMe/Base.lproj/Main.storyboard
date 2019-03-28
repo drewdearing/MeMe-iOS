@@ -153,7 +153,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="currentScreenView" destination="oPv-fE-1vl" id="dOX-wF-AiV"/>
-                        <outlet property="navBarItem" destination="oUK-IU-Vbt" id="fgi-fF-31P"/>
+                        <outlet property="navBarItem" destination="KGV-3F-92r" id="tPf-yw-nTU"/>
                         <outlet property="tabBar" destination="4VA-ef-zUn" id="5sN-cp-dO0"/>
                     </connections>
                 </viewController>
@@ -417,7 +417,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="KvP-MJ-yl5"/>
-        <segue reference="twd-rc-ydB"/>
+        <segue reference="PsX-WR-UKk"/>
         <segue reference="0Q5-he-3O8"/>
     </inferredMetricsTieBreakers>
 </document>

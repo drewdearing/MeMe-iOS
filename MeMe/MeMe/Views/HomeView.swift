@@ -9,8 +9,13 @@
 import UIKit
 import Firebase
 
-struct FeedCellData {
+struct FeedContainer:Codable {
+    var posts: [FeedCellData]
+}
+
+struct FeedCellData: Codable {
     var username: String
+    var description: String
     var uid: String
     var post: String
     var imageURL: String
@@ -23,21 +28,23 @@ let HomeTableCellId = "FeedTableViewCell"
 class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var tableView: UITableView!
-    var data:[FeedCellData] = []
+    var postData:[FeedCellData] = []
+    var currentPage = 1
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+        return postData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
-        cell.cellTitle.text = data[indexPath.row].username
-        cell.downVoteCounter.text = String(data[indexPath.row].downvotes)
-        cell.upVoteCounter.text = String(data[indexPath.row].upvotes)
-        cell.memeURL = data[indexPath.row].imageURL
-        cell.uid = data[indexPath.row].uid
-        cell.postID = data[indexPath.row].post
-        cell.profileURL = data[indexPath.row].profilePicURL
+        cell.cellTitle.text = postData[indexPath.row].username
+        cell.downVoteCounter.text = String(postData[indexPath.row].downvotes)
+        cell.descriptionLabel.text = postData[indexPath.row].description
+        cell.upVoteCounter.text = String(postData[indexPath.row].upvotes)
+        cell.memeURL = postData[indexPath.row].imageURL
+        cell.uid = postData[indexPath.row].uid
+        cell.postID = postData[indexPath.row].post
+        cell.profileURL = postData[indexPath.row].profilePicURL
         
         if cell.memeURL != nil {
             let url = URL(string: cell.memeURL!)
@@ -85,67 +92,30 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
         tableView.register(UINib.init(nibName: HomeTableCellId, bundle: nil), forCellReuseIdentifier: HomeTableCellId)
         tableView.delegate = self
         tableView.dataSource = self
-        getUserIDs()
+        getPosts()
     }
     
-    private func getUserIDs(){
+    private func getPosts() {
         if let currentUser = Auth.auth().currentUser {
-            var users:[String] = [currentUser.uid]
-            let userRef = Firestore.firestore().collection("users").document(currentUser.uid)
-            userRef.getDocument { (document, error) in
-                if let document = document, document.exists {
-                    if let data = document.data(){
-                        if let following = data["following"] as? [String] {
-                            for user in following {
-                                users.append(user)
-                            }
-                            self.getUsernames(users: users)
-                        }
+            var urlPathBase = "https://us-central1-meme-d3805.cloudfunctions.net/getUserFeed"
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            urlPathBase = urlPathBase.appending("&page="+String(self.currentPage))
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "GET"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in
+                guard let data = data else { return }
+                do {
+                    let ideaDeck = try JSONDecoder().decode(FeedContainer.self, from: data)
+                    self.postData = ideaDeck.posts
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
                     }
-                } else {
-                    print("User does not exist")
+                } catch let jsonErr {
+                    print("Error: \(jsonErr)")
                 }
             }
-        }
-    }
-    
-    private func getUsernames(users:[String]){
-        for user in users {
-            let userRef = Firestore.firestore().collection("users").document(user)
-            userRef.getDocument { (document, error) in
-                if let document = document, document.exists {
-                    if let data = document.data(){
-                        if let username = data["username"] as? String {
-                            if let profilePicURL = data["profilePicURL"] as? String {
-                                self.addUserPosts(username: username, profilePicURL: profilePicURL, user: user)
-                            }
-                        }
-                    }
-                } else {
-                    print("User does not exist")
-                }
-            }
-        }
-    }
-    
-    private func addUserPosts(username:String, profilePicURL:String, user:String){
-        Firestore.firestore().collection("post").whereField("uid", isEqualTo: String(describing: user)).getDocuments() { (querySnapshot, err) in
-            if let err = err {
-                print("Error getting documents: \(err)")
-            } else {
-                for document in querySnapshot!.documents {
-                    let data = document.data()
-                    if let photoURL = data["photoURL"] as? String {
-                        if let upvotes = data["upvotes"] as? Int {
-                            if let downvotes = data["downvotes"] as? Int {
-                                let newPostCellData = FeedCellData(username: username, uid: user, post: document.documentID, imageURL: photoURL, profilePicURL: profilePicURL, upvotes: upvotes, downvotes: downvotes)
-                                self.data.append(newPostCellData)
-                                self.tableView.reloadData()
-                            }
-                        }
-                    }
-                }
-            }
+            task.resume()
         }
     }
     
