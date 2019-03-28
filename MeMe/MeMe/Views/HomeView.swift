@@ -88,6 +88,13 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
         getUserIDs()
     }
     
+    private func getData(uid: String, page: Int) {
+        
+        
+    }
+    
+    
+    
     private func getUserIDs(){
         if let currentUser = Auth.auth().currentUser {
             var users:[String] = [currentUser.uid]

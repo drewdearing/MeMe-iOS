@@ -384,6 +384,7 @@
                         <viewLayoutGuide key="safeArea" id="LRz-Xh-BVN"/>
                     </view>
                     <connections>
+                        <outlet property="descriptionField" destination="iRW-q6-E52" id="kqr-MN-d4x"/>
                         <outlet property="memeImageView" destination="J8r-jc-YKq" id="Ec8-R2-0gj"/>
                     </connections>
                 </viewController>
