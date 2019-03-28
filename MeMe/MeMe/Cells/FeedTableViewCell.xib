@@ -58,9 +58,17 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qlt-01-RBD">
+                                <rect key="frame" x="20" y="58" width="303" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="qlt-01-RBD" secondAttribute="bottom" constant="8" id="1SC-75-BTZ"/>
+                            <constraint firstItem="VY9-J0-xi8" firstAttribute="leading" secondItem="qlt-01-RBD" secondAttribute="trailing" constant="8" id="FF4-6o-DpH"/>
                             <constraint firstItem="lkr-gv-57T" firstAttribute="leading" secondItem="VY9-J0-xi8" secondAttribute="trailing" constant="1" id="NU6-Iw-xlS"/>
                             <constraint firstAttribute="trailing" secondItem="lkr-gv-57T" secondAttribute="trailing" constant="8" id="RIe-aW-1zm"/>
                             <constraint firstItem="lkr-gv-57T" firstAttribute="top" secondItem="e7k-4O-KLh" secondAttribute="bottom" id="UZr-xq-5yx"/>
@@ -92,14 +100,16 @@
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O84-Sq-ege">
                         <rect key="frame" x="128" y="312.5" width="260" height="21"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
                     <constraint firstItem="kbH-rn-BnL" firstAttribute="top" secondItem="7a5-vG-0G8" secondAttribute="bottom" id="3vF-In-uGS"/>
+                    <constraint firstItem="qlt-01-RBD" firstAttribute="top" secondItem="5jY-fX-o8J" secondAttribute="bottom" constant="8" id="4qh-Gb-v3z"/>
                     <constraint firstItem="5jY-fX-o8J" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="5ks-NL-OQz"/>
+                    <constraint firstItem="qlt-01-RBD" firstAttribute="leading" secondItem="5jY-fX-o8J" secondAttribute="leading" id="74f-Mh-1Ue"/>
                     <constraint firstItem="O84-Sq-ege" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="B4p-HV-vuY"/>
                     <constraint firstItem="7a5-vG-0G8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="DWV-dE-wd9"/>
                     <constraint firstItem="7a5-vG-0G8" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="LCl-V2-sD0"/>
@@ -115,6 +125,7 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="cellTitle" destination="O84-Sq-ege" id="Ym6-f2-1HH"/>
+                <outlet property="descriptionLabel" destination="qlt-01-RBD" id="Nx8-Jx-o7S"/>
                 <outlet property="downVoteButton" destination="lkr-gv-57T" id="b4U-OD-Ti3"/>
                 <outlet property="downVoteCounter" destination="e7k-4O-KLh" id="phy-e9-UN4"/>
                 <outlet property="memePic" destination="7a5-vG-0G8" id="qQm-tX-Jq3"/>

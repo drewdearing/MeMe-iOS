@@ -16,6 +16,7 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet weak var downVoteButton: UIButton!
     @IBOutlet weak var downVoteCounter: UILabel!
     @IBOutlet weak var upVoteCounter: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
     var memeURL:String?
     var profileURL:String?
