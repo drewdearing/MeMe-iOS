@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MainViewController: UIViewController, UITabBarDelegate {
+class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate {
 
     @IBOutlet weak var currentScreenView: UIView!
     @IBOutlet weak var tabBar: UITabBar!
@@ -16,14 +16,15 @@ class MainViewController: UIViewController, UITabBarDelegate {
     
     let views = [HomeView(), DiscoverView(), MessageView(), ProfileView()]
     let navBarTitles = ["Your Feed", "Discover", "Direct Messages", "Profile"]
+    var delegates:[editMemeVCDelegate] = []
     
     var currentView:Int?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
         tabBar.delegate = self
+        delegates.append(views[0] as! editMemeVCDelegate)
+        delegates.append(views[1] as! editMemeVCDelegate)
     }
     
     private func setScreenView(i: Int){
@@ -32,7 +33,7 @@ class MainViewController: UIViewController, UITabBarDelegate {
         }
         currentScreenView.addSubview(views[i])
         views[i].frame = currentScreenView.bounds
-        navBarItem.title = navBarTitles[i]
+        //navBarItem.title = navBarTitles[i]
         self.currentView = i
     }
     
@@ -49,15 +50,10 @@ class MainViewController: UIViewController, UITabBarDelegate {
         setScreenView(i: item.tag)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func addMeme(newFeed: FeedCellData) {
+        for delegate in delegates {
+            delegate.addMeme(newFeed: newFeed)
+        }
     }
-    */
 
 }

@@ -9,6 +9,20 @@
 import UIKit
 import Firebase
 
+struct Profile: Codable {
+    let username:String
+    let email:String
+    let numFollowing:Int
+    let numFollowers:Int
+    let profilePicURL:String
+}
+
+func getCurrentProfile() -> Profile?{
+    let data = UserDefaults.standard.value(forKey: "currentProfile") as! Data
+    let profile:Profile? = try? PropertyListDecoder().decode(Profile.self, from: data)
+    return profile
+}
+
 class LoginViewController: UIViewController {
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var emailField: UITextField!
@@ -35,7 +49,24 @@ class LoginViewController: UIViewController {
                 Auth.auth().signIn(withEmail: email, password: password) { [weak self] user, error in
                     guard let strongSelf = self else { return }
                     if let user = user {
-                        self?.performSegue(withIdentifier: "LoginSegue", sender: self)
+                        Firestore.firestore().collection("users").document(user.user.uid).getDocument(completion: { (doc, err) in
+                            if let doc = doc {
+                                if(doc.exists){
+                                    print(doc.data())
+                                    let data = doc.data()
+                                    let username = data!["username"] as! String
+                                    let email = data!["email"] as! String
+                                    let profilePicURL = data!["profilePicURL"] as! String
+                                    let numFollowing = Int(data!["numFollowing"] as! NSNumber)
+                                    let numFollowers = Int(data!["numFollowers"] as! NSNumber)
+                                    
+                                    let newUser = Profile(username: username, email: email, numFollowing: numFollowing, numFollowers: numFollowers, profilePicURL: profilePicURL)
+                                    UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
+                                    self?.performSegue(withIdentifier: "LoginSegue", sender: self)
+                                }
+                            }
+                        })
+                        
                     }
                     else{
                         self?.statusLabel.text = "Could not sign in."

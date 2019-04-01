@@ -9,16 +9,32 @@
 import UIKit
 import Firebase
 import FirebaseStorage
+import SVProgressHUD
+
+protocol editMemeVCDelegate {
+    func addMeme(newFeed: FeedCellData)
+}
 
 class EditMemeViewController: UIViewController {
     
     @IBOutlet weak var memeImageView: UIImageView!
-    var selectedImage: UIImage!
     @IBOutlet weak var descriptionField: UITextField!
+    @IBOutlet weak var doneButton: UIBarButtonItem!
+    
+    var selectedImage: UIImage!
+    var delegate: editMemeVCDelegate?
+    var returnVC: MainViewController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        for controller in self.navigationController!.viewControllers as Array {
+            if controller.isKind(of: MainViewController.self) {
+                self.delegate = controller as? editMemeVCDelegate
+                self.returnVC = controller as? MainViewController
+            }
+        }
         
         if selectedImage != nil {
             memeImageView.image = selectedImage
@@ -30,12 +46,23 @@ class EditMemeViewController: UIViewController {
         self.view.endEditing(true)
     }
     
-    
     @IBAction func postMeme(_ sender: Any) {
         addToStorage()
     }
     
+    func lockUI(){
+        descriptionField.isUserInteractionEnabled = false
+        doneButton.isEnabled = false
+    }
+    
+    func unlockUI(){
+        descriptionField.isEnabled = true
+        doneButton.isEnabled = true
+    }
+    
     func addToStorage(){
+        lockUI()
+        SVProgressHUD.show(withStatus: "Loading...")
         let storage = Storage.storage()
         let storageRef = storage.reference()
         let data = selectedImage.pngData()
@@ -47,41 +74,48 @@ class EditMemeViewController: UIViewController {
         let metadata = StorageMetadata()
         metadata.contentType = "image/png"
         
-        let uploadTask = imageRef.putData(data!, metadata: metadata) { (metadata, error) in
-            guard let metadata = metadata else {
-                // Uh-oh, an error occurred!
-                return
-            }
-            // Metadata contains file metadata such as size, content-type.
-            let size = metadata.size
-            // You can also access to download URL after upload.
+        imageRef.putData(data!, metadata: metadata) { (metadata, error) in
             imageRef.downloadURL { (url, error) in
-                //do things that u want to do after download is done
-                if let urlText = url?.absoluteString {
-                    let currentUser = Auth.auth().currentUser
-                    let download = urlText
-                    ref.setData([
-                        "bottomText": "Meme",
-                        "description": self.descriptionField.text!,
-                        "downvotes": 0,
-                        "photoURL": download,
-                        "timestamp": NSDate(),
-                        "topText": "Dank",
-                        "uid": currentUser!.uid,
-                        "upvotes": 0
-                    ]) { err in
-                        if let err = err {
-                            print("Error adding document: \(err)")
-                        } else {
-                            print("Document added with ID: \(ref.documentID)")
-                            self.performSegue(withIdentifier: "FinishEditMemeSegue", sender: self)
-                        }
-                    }
-                }
-                guard let downloadURL = url else {
+                guard url != nil else {
                     // Uh-oh, an error occurred!
+                    self.unlockUI()
                     return
                 }
+                //do things that u want to do after download is done
+                if let urlText = url?.absoluteString {
+                    self.addToFirestore(download: urlText, ref: ref)
+                    self.passPost(imageName: imageName, download: urlText)
+                }
+            }
+        }
+    }
+    
+    func passPost(imageName:String, download:String){
+        let currentUser = Auth.auth().currentUser
+        if let profile = getCurrentProfile() {
+            let data = FeedCellData(username: profile.username, description: self.descriptionField.text!, uid: currentUser!.uid, post: imageName, imageURL: download, profilePicURL: profile.profilePicURL, upvotes: 0, downvotes: 0)
+            SVProgressHUD.dismiss()
+            self.delegate?.addMeme(newFeed: data)
+            self.navigationController!.popToViewController(self.returnVC!, animated: true)
+        }
+    }
+    
+    func addToFirestore(download:String, ref:DocumentReference){
+        let currentUser = Auth.auth().currentUser
+        ref.setData([
+            "bottomText": "Meme",
+            "description": self.descriptionField.text!,
+            "downvotes": 0,
+            "photoURL": download,
+            "timestamp": NSDate(),
+            "topText": "Dank",
+            "uid": currentUser!.uid,
+            "upvotes": 0
+        ]) { err in
+            if let err = err {
+                print("Error adding document: \(err)")
+            } else {
+                print("Document added with ID: \(ref.documentID)")
             }
         }
     }

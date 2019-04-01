@@ -22,10 +22,22 @@ struct FeedCellData: Codable {
     var profilePicURL: String
     var upvotes: Int
     var downvotes: Int
+    
+    init(username:String, description:String, uid:String, post:String, imageURL:String, profilePicURL:String, upvotes: Int, downvotes:Int){
+        self.username = username
+        self.description = description
+        self.uid = uid
+        self.post = post
+        self.imageURL = imageURL
+        self.profilePicURL = profilePicURL
+        self.upvotes = upvotes
+        self.downvotes = downvotes
+    }
 }
 
 let HomeTableCellId = "FeedTableViewCell"
-class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
+class HomeView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDelegate {
+
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var tableView: UITableView!
     var postData:[FeedCellData] = []
@@ -117,6 +129,11 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource {
             }
             task.resume()
         }
+    }
+    
+    func addMeme(newFeed: FeedCellData) {
+        postData.insert(newFeed, at: 0)
+        tableView.reloadData()
     }
     
 }

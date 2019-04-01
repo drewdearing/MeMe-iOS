@@ -36,6 +36,7 @@ class RegisterViewController: UIViewController {
             if let username = userNameField.text{
                 if let password = passwordField.text  {
                     lockUI()
+                    let profilePic = "https://cdn.bulbagarden.net/upload/c/c6/094Gengar.png"
                     statusLabel.text = "loading..."
                     Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
                         if let user = authResult {
@@ -48,7 +49,7 @@ class RegisterViewController: UIViewController {
                                 "numFollowing": 0,
                                 "numFollowers": 0,
                                 "posts": [String](),
-                                "profilePicURL": "https://cdn.bulbagarden.net/upload/c/c6/094Gengar.png"
+                                "profilePicURL": profilePic
                             ]) { err in
                                 if let err = err {
                                     user.user.delete { error in
@@ -60,6 +61,8 @@ class RegisterViewController: UIViewController {
                                     }
                                 } else {
                                     self.statusLabel.text = "User created!"
+                                    let newUser = Profile(username: username, email: email, numFollowing: 0, numFollowers: 0, profilePicURL: profilePic)
+                                    UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
                                     //go to home
                                     self.performSegue(withIdentifier: "RegisterSegue", sender: self)
                                 }

@@ -9,7 +9,8 @@
 import UIKit
 import Firebase
 
-class DiscoverView: UIView, UITableViewDelegate, UITableViewDataSource {
+class DiscoverView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDelegate {
+    
     var postData:[FeedCellData] = []
     var currentPage = 1
 
@@ -68,6 +69,10 @@ class DiscoverView: UIView, UITableViewDelegate, UITableViewDataSource {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         commonInit()
+    }
+    
+    func addMeme(newFeed: FeedCellData) {
+        print("sup")
     }
     
     private func commonInit() {

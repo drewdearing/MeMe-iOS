@@ -98,10 +98,13 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
             editMemeVCDestination.selectedImage = images[indexPath.row]
             self.navigationController?.pushViewController(editMemeVCDestination, animated: true)
         }
-        
-        
+
     }
     
+    @IBAction func cancelButton(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true, completion: nil)
+    }
     //    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     //        if segue.identifier == editMemeSegueIdentifier,
     //            let editMemeVCDestination = segue.destination as? EditMemeViewController {
