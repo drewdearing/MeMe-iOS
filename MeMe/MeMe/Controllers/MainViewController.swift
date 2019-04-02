@@ -14,8 +14,9 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
     @IBOutlet weak var tabBar: UITabBar!
     @IBOutlet weak var navBarItem: UINavigationItem!
     
-    let views = [HomeView(), DiscoverView(), MessageView(), ProfileView()]
+    var views:[UIView?] = [HomeView(), nil, nil, nil]
     let navBarTitles = ["Your Feed", "Discover", "Direct Messages", "Profile"]
+    let viewTypes = [HomeView.self, DiscoverView.self, MessageView.self, ProfileView.self]
     var delegates:[editMemeVCDelegate] = []
     
     var currentView:Int?
@@ -24,16 +25,29 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
         super.viewDidLoad()
         tabBar.delegate = self
         delegates.append(views[0] as! editMemeVCDelegate)
-        delegates.append(views[1] as! editMemeVCDelegate)
     }
     
     private func setScreenView(i: Int){
         if let current = self.currentView {
-            views[current].removeFromSuperview()
+            if let v = views[current] {
+                v.removeFromSuperview()
+            }
         }
-        currentScreenView.addSubview(views[i])
-        views[i].frame = currentScreenView.bounds
-        //navBarItem.title = navBarTitles[i]
+        if let v = views[i] {
+            currentScreenView.addSubview(v)
+            v.frame = currentScreenView.bounds
+            navBarItem.title = navBarTitles[i]
+        }
+        else{
+            let v = viewTypes[i].init()
+            currentScreenView.addSubview(v)
+            v.frame = currentScreenView.bounds
+            if i <= 1 {
+                delegates.append(v as! editMemeVCDelegate)
+            }
+            views[i] = v
+            navBarItem.title = navBarTitles[i]
+        }
         self.currentView = i
     }
     
@@ -50,9 +64,10 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
         setScreenView(i: item.tag)
     }
     
-    func addMeme(newFeed: FeedCellData) {
+    func addMeme(post: FeedCellData) {
+        print(delegates.count)
         for delegate in delegates {
-            delegate.addMeme(newFeed: newFeed)
+            delegate.addMeme(post: post)
         }
     }
 

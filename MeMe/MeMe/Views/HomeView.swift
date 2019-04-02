@@ -7,40 +7,44 @@
 //
 
 import UIKit
+import CoreData
 import Firebase
+import SVProgressHUD
 
 struct FeedContainer:Codable {
     var posts: [FeedCellData]
 }
 
 struct FeedCellData: Codable {
-    var username: String
-    var description: String
-    var uid: String
-    var post: String
-    var imageURL: String
-    var profilePicURL: String
-    var upvotes: Int
-    var downvotes: Int
+    let username: String
+    let description: String
+    let uid: String
+    let post: String
+    let imageURL: String
+    let profilePicURL: String
+    let upvotes: Int
+    let downvotes: Int
+    let timestamp: Timestamp
+}
+
+struct Timestamp: Codable {
+    let _seconds:Int
     
-    init(username:String, description:String, uid:String, post:String, imageURL:String, profilePicURL:String, upvotes: Int, downvotes:Int){
-        self.username = username
-        self.description = description
-        self.uid = uid
-        self.post = post
-        self.imageURL = imageURL
-        self.profilePicURL = profilePicURL
-        self.upvotes = upvotes
-        self.downvotes = downvotes
+    init(){
+        let currentTime = NSDate()
+        self._seconds = Int(currentTime.timeIntervalSince1970)
     }
 }
 
+let appDelegate = UIApplication.shared.delegate as? AppDelegate
 let HomeTableCellId = "FeedTableViewCell"
 class HomeView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDelegate {
 
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var tableView: UITableView!
-    var postData:[FeedCellData] = []
+    var postData:[FeedCell] = []
+    var imageData:[String:UIImage] = [:]
+    var profilePicData:[String:UIImage] = [:]
     var currentPage = 1
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -51,26 +55,49 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDe
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
         cell.cellTitle.text = postData[indexPath.row].username
         cell.downVoteCounter.text = String(postData[indexPath.row].downvotes)
-        cell.descriptionLabel.text = postData[indexPath.row].description
+        cell.descriptionLabel.text = postData[indexPath.row].desc
         cell.upVoteCounter.text = String(postData[indexPath.row].upvotes)
         cell.memeURL = postData[indexPath.row].imageURL
         cell.uid = postData[indexPath.row].uid
         cell.postID = postData[indexPath.row].post
         cell.profileURL = postData[indexPath.row].profilePicURL
-        
-        if cell.memeURL != nil {
-            let url = URL(string: cell.memeURL!)
-            let data = try? Data(contentsOf: url!)
-            if let imageData = data {
-                cell.memePic.image = UIImage(data:imageData)
+        DispatchQueue.global(qos: .background).async {
+            if let memePic = self.imageData[self.postData[indexPath.row].post] {
+                DispatchQueue.main.async {
+                    cell.memePic.image = memePic
+                }
             }
-        }
-        
-        if cell.profileURL != nil {
-            let url = URL(string: cell.profileURL!)
-            let data = try? Data(contentsOf: url!)
-            if let imageData = data {
-                cell.profilePic.image = UIImage(data:imageData)
+            else{
+                if cell.memeURL != nil {
+                    let url = URL(string: cell.memeURL!)
+                    let data = try? Data(contentsOf: url!)
+                    if let imgData = data {
+                        let image = UIImage(data:imgData)
+                        DispatchQueue.main.async {
+                            cell.memePic.image = image
+                        }
+                        self.imageData[self.postData[indexPath.row].post] = image
+                    }
+                }
+            }
+            let profilePic = self.profilePicData[self.postData[indexPath.row].uid]
+            if profilePic != nil && !self.postData[indexPath.row].dirty {
+                DispatchQueue.main.async {
+                    cell.profilePic.image = profilePic
+                }
+            }
+            else{
+                if cell.profileURL != nil {
+                    let url = URL(string: cell.profileURL!)
+                    let data = try? Data(contentsOf: url!)
+                    if let imgData = data {
+                        let image = UIImage(data:imgData)
+                        DispatchQueue.main.async {
+                            cell.profilePic.image = image
+                        }
+                        self.profilePicData[self.postData[indexPath.row].uid] = image
+                    }
+                }
             }
         }
         
@@ -104,7 +131,33 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDe
         tableView.register(UINib.init(nibName: HomeTableCellId, bundle: nil), forCellReuseIdentifier: HomeTableCellId)
         tableView.delegate = self
         tableView.dataSource = self
-        getPosts()
+        loadPosts()
+    }
+    
+    private func loadPosts(){
+        if let context = appDelegate?.persistentContainer.viewContext {
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName:"FeedCell")
+            fetchRequest.predicate = NSPredicate(format: "feed == TRUE")
+            fetchRequest.includesPropertyValues = true
+            let asyncRequest = NSAsynchronousFetchRequest(fetchRequest: fetchRequest) { results in
+                if let cache = results.finalResult {
+                    self.postData = cache as! [FeedCell]
+                    self.update()
+                    self.getPosts()
+                }
+            }
+            
+            do {
+                let privateManagedObjectContext: NSManagedObjectContext = {
+                    let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+                    moc.parent = context
+                    return moc
+                }()
+                try privateManagedObjectContext.execute(asyncRequest)
+            } catch let error {
+                print("NSAsynchronousFetchRequest error: \(error)")
+            }
+        }
     }
     
     private func getPosts() {
@@ -118,10 +171,9 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDe
             let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in
                 guard let data = data else { return }
                 do {
-                    let ideaDeck = try JSONDecoder().decode(FeedContainer.self, from: data)
-                    self.postData = ideaDeck.posts
+                    let postContainer = try JSONDecoder().decode(FeedContainer.self, from: data)
                     DispatchQueue.main.async {
-                        self.tableView.reloadData()
+                        self.addPostsToCache(data:postContainer.posts)
                     }
                 } catch let jsonErr {
                     print("Error: \(jsonErr)")
@@ -131,9 +183,91 @@ class HomeView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDe
         }
     }
     
-    func addMeme(newFeed: FeedCellData) {
-        postData.insert(newFeed, at: 0)
-        tableView.reloadData()
+    func cellFromData(post: FeedCellData, context:NSManagedObjectContext) -> FeedCell? {
+        let newCell = FeedCell(context: context)
+        newCell.desc = post.description
+        newCell.downvotes = Int32(post.downvotes)
+        newCell.imageURL = post.imageURL
+        newCell.post = post.post
+        newCell.profilePicURL = post.profilePicURL
+        newCell.uid = post.uid
+        newCell.upvotes = Int32(post.upvotes)
+        newCell.username = post.username
+        newCell.feed = true
+        newCell.dirty = false
+        newCell.seconds = Int64(post.timestamp._seconds)
+        return newCell
     }
     
+    func addMeme(post: FeedCellData) {
+        print("ho")
+        if let context = appDelegate?.persistentContainer.viewContext {
+            if let cell = cellFromData(post: post, context: context) {
+                print("ho3")
+                self.addCell(newPost: cell)
+                do {
+                    try context.save()
+                    update()
+                }
+                catch{
+                    print("error saving")
+                }
+            }
+        }
+    }
+    
+    func addCell(newPost: FeedCell) {
+        postData.append(newPost)
+    }
+    
+    func update(){
+        DispatchQueue.main.async {
+            self.postData = self.postData.sorted(by: {$0.seconds > $1.seconds})
+            self.tableView.reloadData()
+        }
+    }
+    
+    func addPostsToCache(data:[FeedCellData]){
+        let useHUD = postData.count <= 0
+        if(useHUD){
+            SVProgressHUD.show(withStatus: "Loading...")
+        }
+        if let context = appDelegate?.persistentContainer.viewContext {
+            let taskGroup = DispatchGroup()
+            for post in data {
+                taskGroup.enter()
+                let cache = self.postData.filter { $0.post == post.post }
+                if cache.count > 0 {
+                    for cachedPost in cache {
+                        cachedPost.downvotes = Int32(post.downvotes)
+                        cachedPost.upvotes = Int32(post.upvotes)
+                        cachedPost.username = post.username
+                        if cachedPost.profilePicURL != post.profilePicURL {
+                            cachedPost.profilePicURL = post.profilePicURL
+                            cachedPost.dirty = true
+                        }
+                    }
+                }
+                else{
+                    if let newCell = cellFromData(post: post, context: context) {
+                        self.addCell(newPost: newCell)
+                    }
+                }
+                taskGroup.leave()
+            }
+            
+            taskGroup.notify(queue: .main) {
+                do {
+                    try context.save()
+                    self.update()
+                    if(useHUD){
+                        SVProgressHUD.dismiss()
+                    }
+                }
+                catch{
+                    print("cant save")
+                }
+            }
+        }
+    }
 }

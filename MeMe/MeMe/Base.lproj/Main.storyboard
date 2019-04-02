@@ -148,6 +148,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="currentScreenView" destination="oPv-fE-1vl" id="dOX-wF-AiV"/>
+                        <outlet property="navBarItem" destination="oUK-IU-Vbt" id="YYj-Np-Wmm"/>
                         <outlet property="tabBar" destination="4VA-ef-zUn" id="5sN-cp-dO0"/>
                     </connections>
                 </viewController>
@@ -362,7 +363,6 @@
         <!--Navigation Controller-->
         <scene sceneID="EOg-fQ-bfc">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="qR9-ic-wCv" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="vhv-nj-JQL" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="5AY-Ky-xO0">
@@ -374,6 +374,7 @@
                         <segue destination="ltT-66-CwW" kind="relationship" relationship="rootViewController" id="ygL-Rs-ZF1"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qR9-ic-wCv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2047.826086956522" y="132.88043478260872"/>
         </scene>

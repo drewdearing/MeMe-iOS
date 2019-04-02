@@ -62,11 +62,11 @@ class LoginViewController: UIViewController {
                                     
                                     let newUser = Profile(username: username, email: email, numFollowing: numFollowing, numFollowers: numFollowers, profilePicURL: profilePicURL)
                                     UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
+                                    print("LOGIN SEGUE")
                                     self?.performSegue(withIdentifier: "LoginSegue", sender: self)
                                 }
                             }
                         })
-                        
                     }
                     else{
                         self?.statusLabel.text = "Could not sign in."

@@ -71,7 +71,7 @@ class DiscoverView: UIView, UITableViewDelegate, UITableViewDataSource, editMeme
         commonInit()
     }
     
-    func addMeme(newFeed: FeedCellData) {
+    func addMeme(post: FeedCellData) {
         print("sup")
     }
     
