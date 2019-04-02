@@ -8,6 +8,9 @@
 
 import UIKit
 
+private let groupChatSettingsStoryIdentifier = "GroupChatSettingsVCID"
+private let profileSettingsStoryIdentifier = "ProfileSettingsVCID"
+
 class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate {
 
     @IBOutlet weak var currentScreenView: UIView!
@@ -27,6 +30,25 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
         delegates.append(views[0] as! editMemeVCDelegate)
     }
     
+    @IBAction func pressLeftNavButton(_ sender: Any) {
+        performSegue(withIdentifier: "newMemeSegue", sender: self)
+    }
+    
+    @IBAction func pressRightNavButton(_ sender: Any) {
+        if let i = currentView {
+            switch i {
+            case 2:
+                performSegue(withIdentifier: "GroupChatSettingsSegue", sender: self)
+                break
+            case 3:
+                performSegue(withIdentifier: "ProfileSettingsSegue", sender: self)
+                break
+            default:
+                break
+            }
+        }
+    }
+    
     private func setScreenView(i: Int){
         if let current = self.currentView {
             if let v = views[current] {
@@ -42,13 +64,41 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
             let v = viewTypes[i].init()
             currentScreenView.addSubview(v)
             v.frame = currentScreenView.bounds
-            if i <= 1 {
+            if v.isKind(of: FeedView.self) {
                 delegates.append(v as! editMemeVCDelegate)
             }
             views[i] = v
             navBarItem.title = navBarTitles[i]
         }
+        updateNav(i)
         self.currentView = i
+    }
+    
+    func updateNav(_ i:Int){
+        switch i {
+        case 0, 1:
+            navBarItem.rightBarButtonItem!.isEnabled = false
+            navBarItem.rightBarButtonItem!.tintColor = UIColor.clear
+            navBarItem.leftBarButtonItem!.isEnabled = true
+            navBarItem.leftBarButtonItem!.tintColor = nil
+            break
+        case 2:
+            navBarItem.rightBarButtonItem!.image = #imageLiteral(resourceName: "plus-filled")
+            navBarItem.rightBarButtonItem!.isEnabled = true
+            navBarItem.rightBarButtonItem!.tintColor = nil
+            navBarItem.leftBarButtonItem!.isEnabled = false
+            navBarItem.leftBarButtonItem!.tintColor = UIColor.clear
+            break
+        case 3:
+            navBarItem.rightBarButtonItem!.image = #imageLiteral(resourceName: "settings")
+            navBarItem.rightBarButtonItem!.isEnabled = true
+            navBarItem.rightBarButtonItem!.tintColor = nil
+            navBarItem.leftBarButtonItem!.isEnabled = false
+            navBarItem.leftBarButtonItem!.tintColor = UIColor.clear
+            break
+        default:
+            break
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

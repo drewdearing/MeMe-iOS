@@ -93,7 +93,7 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        let mainStoryBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let mainStoryBoard: UIStoryboard = UIStoryboard(name: "NewMeme", bundle: nil)
         if let editMemeVCDestination = mainStoryBoard.instantiateViewController(withIdentifier: editMemeStoryIdentifier) as? EditMemeViewController {
             editMemeVCDestination.selectedImage = images[indexPath.row]
             self.navigationController?.pushViewController(editMemeVCDestination, animated: true)

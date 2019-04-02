@@ -8,9 +8,14 @@
 
 import UIKit
 
-class MessageView: UIView {
+private let cellIdentifier = "GroupChatTableViewCell"
 
+class MessageView: UIView, UITableViewDelegate, UITableViewDataSource {
+    
     @IBOutlet var contentView: UIView!
+    
+    private var groupChats: [GroupChat] = []
+    @IBOutlet weak var groupChatsTableView: UITableView!
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -26,6 +31,38 @@ class MessageView: UIView {
         Bundle.main.loadNibNamed("MessageView", owner: self, options: nil)
         addSubview(contentView)
         contentView.frame = self.bounds
+        groupChatsTableView.register(UINib.init(nibName: cellIdentifier, bundle: nil), forCellReuseIdentifier: cellIdentifier)
+        groupChatsTableView.delegate = self
+        groupChatsTableView.dataSource = self
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return groupChats.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let groupChatCell = groupChatsTableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath as IndexPath) as? GroupChatTableViewCell
+        
+        let row = indexPath.row
+        let groupChat = groupChats[row]
+        
+        groupChatCell?.groupNameLabel.text = groupChat.groupChatName
+        groupChatCell?.unreadMessagesLabel.text = String(groupChat.unreadMessages)
+        
+        return groupChatCell!
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 64
+    }
+    
+    func tableView(_ tableView: UITableView, widthForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.bounds.width
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        groupChatsTableView.deselectRow(at: indexPath, animated: true)
     }
     
 }
