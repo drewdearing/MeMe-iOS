@@ -41,6 +41,7 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="feedView" destination="wGl-cJ-GBh" id="StH-dJ-mKs"/>
                     </connections>
