@@ -10,7 +10,7 @@ import UIKit
 
 private let cellIdentifier = "GroupChatTableViewCell"
 
-class MessageView: UIView, UITableViewDelegate, UITableViewDataSource {
+class MessageView: TabView, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet var contentView: UIView!
     
@@ -25,18 +25,6 @@ class MessageView: UIView, UITableViewDelegate, UITableViewDataSource {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         commonInit()
-    }
-    
-    func push(view:NavigationView){
-        addSubview(view)
-        view.frame = self.bounds
-    }
-    
-    func pop(){
-        if subviews.count > 1 {
-            let view = subviews[subviews.count - 1]
-            view.removeFromSuperview()
-        }
     }
     
     private func commonInit() {

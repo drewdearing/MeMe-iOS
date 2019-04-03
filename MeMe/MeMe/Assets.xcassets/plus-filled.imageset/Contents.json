@@ -2,12 +2,10 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "icons8-plus-math-filled-30.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "icons8-plus-math-filled-60.png",
       "scale" : "2x"
     },
     {

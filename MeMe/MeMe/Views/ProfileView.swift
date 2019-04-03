@@ -10,7 +10,7 @@ import UIKit
 
 private let reuseIdentifier = "ProfileCellIdentifier"
 
-class ProfileView: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class ProfileView: TabView, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     @IBOutlet var contentView: UIView!
     
     @IBOutlet weak var backgroundImageView: UIImageView!

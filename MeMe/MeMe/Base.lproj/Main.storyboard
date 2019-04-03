@@ -140,12 +140,12 @@
                         <viewLayoutGuide key="safeArea" id="wDr-8e-jCD"/>
                     </view>
                     <navigationItem key="navigationItem" id="oUK-IU-Vbt">
-                        <barButtonItem key="leftBarButtonItem" image="compose" id="7ix-FZ-qa2">
+                        <barButtonItem key="leftBarButtonItem" image="compose" style="plain" id="7ix-FZ-qa2">
                             <connections>
                                 <action selector="pressLeftNavButton:" destination="ltT-66-CwW" id="h4n-Y4-crD"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" image="plus-filled" id="ANY-sV-YyE">
+                        <barButtonItem key="rightBarButtonItem" image="plus-filled" style="plain" id="ANY-sV-YyE">
                             <connections>
                                 <action selector="pressRightNavButton:" destination="ltT-66-CwW" id="8Nb-Z5-ekx"/>
                             </connections>
@@ -325,11 +325,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="compose" width="30" height="30"/>
+        <image name="compose" width="24" height="24"/>
         <image name="globe_earth" width="30" height="30"/>
         <image name="home" width="30" height="30"/>
         <image name="message" width="30" height="30"/>
-        <image name="plus-filled" width="30" height="30"/>
+        <image name="plus-filled" width="19" height="19"/>
         <image name="user_male" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>

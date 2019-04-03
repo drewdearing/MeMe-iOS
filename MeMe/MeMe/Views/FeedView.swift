@@ -41,7 +41,7 @@ var profilePicData:[String:UIImage] = [:]
 
 let appDelegate = UIApplication.shared.delegate as? AppDelegate
 
-class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDelegate {
+class FeedView: TabView, UITableViewDelegate, UITableViewDataSource, editMemeVCDelegate {
 
     var postData:[FeedCell] = []
     var currentPage = 1

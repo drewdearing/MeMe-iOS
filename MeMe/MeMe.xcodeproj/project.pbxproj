@@ -46,6 +46,7 @@
 		3B860CD52252C3E800831C41 /* MeMe.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3B860CD32252C3E800831C41 /* MeMe.xcdatamodeld */; };
 		3B860CE12252C9FA00831C41 /* FeedCell+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B860CDF2252C9FA00831C41 /* FeedCell+CoreDataClass.swift */; };
 		3B860CE22252C9FA00831C41 /* FeedCell+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B860CE02252C9FA00831C41 /* FeedCell+CoreDataProperties.swift */; };
+		3B9B6F43225455FD005A52B4 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9B6F42225455FD005A52B4 /* TabView.swift */; };
 		3BB8349522532FB600DE1D01 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB8349422532FB600DE1D01 /* FeedView.swift */; };
 		3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */; };
 		6037F704224AD13F000D0E57 /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6037F703224AD13F000D0E57 /* GalleryViewController.swift */; };
@@ -97,6 +98,7 @@
 		3B860CD42252C3E800831C41 /* MeMe.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeMe.xcdatamodel; sourceTree = "<group>"; };
 		3B860CDF2252C9FA00831C41 /* FeedCell+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedCell+CoreDataClass.swift"; sourceTree = "<group>"; };
 		3B860CE02252C9FA00831C41 /* FeedCell+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedCell+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3B9B6F42225455FD005A52B4 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		3BB8349422532FB600DE1D01 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
 		3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		6037F703224AD13F000D0E57 /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				17A35FB42254291200C2362D /* GroupSettingsView.swift */,
 				17A35FB822542FE000C2362D /* NavigationView.swift */,
 				17A35FB62254292500C2362D /* GroupSettingsView.xib */,
+				3B9B6F42225455FD005A52B4 /* TabView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -428,6 +431,7 @@
 				3BB8349522532FB600DE1D01 /* FeedView.swift in Sources */,
 				17A35FAB22541BD000C2362D /* ProfilePostCollectionViewCell.swift in Sources */,
 				17A35F962254185600C2362D /* PostViewController.swift in Sources */,
+				3B9B6F43225455FD005A52B4 /* TabView.swift in Sources */,
 				17C6E8402239A88A004665F0 /* MainViewController.swift in Sources */,
 				17A35F90225402A900C2362D /* GroupChatTableViewCell.swift in Sources */,
 				6037F704224AD13F000D0E57 /* GalleryViewController.swift in Sources */,

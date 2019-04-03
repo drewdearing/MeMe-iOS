@@ -17,7 +17,7 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
     @IBOutlet weak var tabBar: UITabBar!
     @IBOutlet weak var navBarItem: UINavigationItem!
     
-    var views:[UIView?] = [HomeView(), nil, nil, nil]
+    var views:[TabView?] = [HomeView(), nil, nil, nil]
     let navBarTitles = ["Your Feed", "Discover", "Direct Messages", "Profile"]
     let viewTypes = [HomeView.self, DiscoverView.self, MessageView.self, ProfileView.self]
     var delegates:[editMemeVCDelegate] = []
@@ -28,44 +28,52 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
         super.viewDidLoad()
         tabBar.delegate = self
         delegates.append(views[0] as! editMemeVCDelegate)
+        navBarItem.backBarButtonItem = UIBarButtonItem(title: "Hi", style: .plain, target: nil, action: nil)
+        navBarItem.backBarButtonItem?.setTitlePositionAdjustment(UIOffset(horizontal: -10, vertical: -10), for: .default)
     }
     
     @IBAction func pressLeftNavButton(_ sender: Any) {
         if let i = currentView {
-            switch i {
-            case 0,1:
-                performSegue(withIdentifier: "newMemeSegue", sender: self)
-            case 2:
-                if let v = views[i] {
-                    let v = v as? MessageView
-                    if(v!.subviews.count > 1){
-                        v?.pop()
-                        updateNav(i)
+            if let v = views[i] {
+                if v.subviews.count > 1 {
+                    v.pop()
+                    updateNav(i)
+                }
+                else{
+                    switch i {
+                    case 0,1:
+                        performSegue(withIdentifier: "newMemeSegue", sender: self)
+                    default:
+                        break
                     }
                 }
-                break
-            default:
-                break
             }
         }
     }
     
     @IBAction func pressRightNavButton(_ sender: Any) {
         if let i = currentView {
-            switch i {
-            case 2:
-                if let v = views[i] {
-                    let v = v as? MessageView
-                    let new = GroupSettingsView()
-                    v?.push(view: new)
-                    updateNav(i)
+            if let v = views[i] {
+                if v.subviews.count > 1 {
+                    let subView = v.subviews[v.subviews.count - 1] as! NavigationView
+                    subView.pressRightNavButton()
                 }
-                break
-            case 3:
-                performSegue(withIdentifier: "ProfileSettingsSegue", sender: self)
-                break
-            default:
-                break
+                else{
+                    switch i {
+                    case 2:
+                        if let v = views[i] {
+                            let new = GroupSettingsView()
+                            v.push(view: new)
+                            updateNav(i)
+                        }
+                        break
+                    case 3:
+                        performSegue(withIdentifier: "ProfileSettingsSegue", sender: self)
+                        break
+                    default:
+                        break
+                    }
+                }
             }
         }
     }
@@ -94,57 +102,54 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
     }
     
     func updateNav(_ i:Int){
-        switch i {
-        case 0, 1:
-            navBarItem.rightBarButtonItem!.isEnabled = false
-            navBarItem.rightBarButtonItem!.tintColor = UIColor.clear
-            navBarItem.leftBarButtonItem!.isEnabled = true
-            navBarItem.leftBarButtonItem!.tintColor = nil
-            navBarItem.title = navBarTitles[i]
-            break
-        case 2:
-            if let v = views[i] {
-                if(v.subviews.count > 1){
-                    let navigationView = v.subviews[v.subviews.count - 1] as! NavigationView
-                    navBarItem.title = navigationView.title
-                    let button = UIButton(type: .system)
-                    button.setImage(#imageLiteral(resourceName: "back"), for: .normal)
-                    button.setTitle("Back", for: .normal)
-                    button.sizeToFit()
-                    button.addTarget(self, action: #selector(pressLeftNavButton), for: .touchUpInside)
-                    navBarItem.leftBarButtonItem = UIBarButtonItem(customView: button)
-                    navBarItem.leftBarButtonItem?.isEnabled = true
-                    
-                    if navigationView.rightNavButton {
-                        navBarItem.rightBarButtonItem?.isEnabled = true
-                        navBarItem.rightBarButtonItem?.tintColor = nil
-                        navBarItem.rightBarButtonItem?.image = navigationView.rightNavButtonIcon
-                    }
-                    else{
-                        navBarItem.rightBarButtonItem?.isEnabled = false
-                        navBarItem.rightBarButtonItem?.tintColor = UIColor.clear
-                    }
+        if let v = views[i] {
+            if(v.subviews.count > 1){
+                let navigationView = v.subviews[v.subviews.count - 1] as! NavigationView
+                navBarItem.title = navigationView.title
+                navBarItem.leftBarButtonItem!.image = #imageLiteral(resourceName: "back-1")
+                navBarItem.leftBarButtonItem!.isEnabled = true
+                navBarItem.leftBarButtonItem!.tintColor = nil
+                
+                if navigationView.rightNavButton {
+                    navBarItem.rightBarButtonItem?.isEnabled = true
+                    navBarItem.rightBarButtonItem?.tintColor = nil
+                    navBarItem.rightBarButtonItem?.image = navigationView.rightNavButtonIcon
                 }
                 else{
+                    navBarItem.rightBarButtonItem?.isEnabled = false
+                    navBarItem.rightBarButtonItem?.tintColor = UIColor.clear
+                }
+            }
+            else{
+                switch i {
+                case 0, 1:
+                    navBarItem.leftBarButtonItem!.image = #imageLiteral(resourceName: "compose")
+                    navBarItem.rightBarButtonItem!.isEnabled = false
+                    navBarItem.rightBarButtonItem!.tintColor = UIColor.clear
+                    navBarItem.leftBarButtonItem!.isEnabled = true
+                    navBarItem.leftBarButtonItem!.tintColor = nil
+                    navBarItem.title = navBarTitles[i]
+                    break
+                case 2:
                     navBarItem.rightBarButtonItem!.image = #imageLiteral(resourceName: "plus-filled")
                     navBarItem.rightBarButtonItem!.isEnabled = true
                     navBarItem.rightBarButtonItem!.tintColor = nil
                     navBarItem.leftBarButtonItem!.isEnabled = false
                     navBarItem.leftBarButtonItem!.tintColor = UIColor.clear
                     navBarItem.title = navBarTitles[i]
+                    break
+                case 3:
+                    navBarItem.rightBarButtonItem!.image = #imageLiteral(resourceName: "settings")
+                    navBarItem.rightBarButtonItem!.isEnabled = true
+                    navBarItem.rightBarButtonItem!.tintColor = nil
+                    navBarItem.leftBarButtonItem!.isEnabled = false
+                    navBarItem.leftBarButtonItem!.tintColor = UIColor.clear
+                    navBarItem.title = navBarTitles[i]
+                    break
+                default:
+                    break
                 }
             }
-            break
-        case 3:
-            navBarItem.rightBarButtonItem!.image = #imageLiteral(resourceName: "settings")
-            navBarItem.rightBarButtonItem!.isEnabled = true
-            navBarItem.rightBarButtonItem!.tintColor = nil
-            navBarItem.leftBarButtonItem!.isEnabled = false
-            navBarItem.leftBarButtonItem!.tintColor = UIColor.clear
-            navBarItem.title = navBarTitles[i]
-            break
-        default:
-            break
         }
     }
     
