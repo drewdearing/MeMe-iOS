@@ -31,14 +31,35 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
     }
     
     @IBAction func pressLeftNavButton(_ sender: Any) {
-        performSegue(withIdentifier: "newMemeSegue", sender: self)
+        if let i = currentView {
+            switch i {
+            case 0,1:
+                performSegue(withIdentifier: "newMemeSegue", sender: self)
+            case 2:
+                if let v = views[i] {
+                    let v = v as? MessageView
+                    if(v!.subviews.count > 1){
+                        v?.pop()
+                        updateNav(i)
+                    }
+                }
+                break
+            default:
+                break
+            }
+        }
     }
     
     @IBAction func pressRightNavButton(_ sender: Any) {
         if let i = currentView {
             switch i {
             case 2:
-                performSegue(withIdentifier: "GroupChatSettingsSegue", sender: self)
+                if let v = views[i] {
+                    let v = v as? MessageView
+                    let new = GroupSettingsView()
+                    v?.push(view: new)
+                    updateNav(i)
+                }
                 break
             case 3:
                 performSegue(withIdentifier: "ProfileSettingsSegue", sender: self)
@@ -58,7 +79,6 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
         if let v = views[i] {
             currentScreenView.addSubview(v)
             v.frame = currentScreenView.bounds
-            navBarItem.title = navBarTitles[i]
         }
         else{
             let v = viewTypes[i].init()
@@ -68,7 +88,6 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
                 delegates.append(v as! editMemeVCDelegate)
             }
             views[i] = v
-            navBarItem.title = navBarTitles[i]
         }
         updateNav(i)
         self.currentView = i
@@ -81,13 +100,40 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
             navBarItem.rightBarButtonItem!.tintColor = UIColor.clear
             navBarItem.leftBarButtonItem!.isEnabled = true
             navBarItem.leftBarButtonItem!.tintColor = nil
+            navBarItem.title = navBarTitles[i]
             break
         case 2:
-            navBarItem.rightBarButtonItem!.image = #imageLiteral(resourceName: "plus-filled")
-            navBarItem.rightBarButtonItem!.isEnabled = true
-            navBarItem.rightBarButtonItem!.tintColor = nil
-            navBarItem.leftBarButtonItem!.isEnabled = false
-            navBarItem.leftBarButtonItem!.tintColor = UIColor.clear
+            if let v = views[i] {
+                if(v.subviews.count > 1){
+                    let navigationView = v.subviews[v.subviews.count - 1] as! NavigationView
+                    navBarItem.title = navigationView.title
+                    let button = UIButton(type: .system)
+                    button.setImage(#imageLiteral(resourceName: "back"), for: .normal)
+                    button.setTitle("Back", for: .normal)
+                    button.sizeToFit()
+                    button.addTarget(self, action: #selector(pressLeftNavButton), for: .touchUpInside)
+                    navBarItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+                    navBarItem.leftBarButtonItem?.isEnabled = true
+                    
+                    if navigationView.rightNavButton {
+                        navBarItem.rightBarButtonItem?.isEnabled = true
+                        navBarItem.rightBarButtonItem?.tintColor = nil
+                        navBarItem.rightBarButtonItem?.image = navigationView.rightNavButtonIcon
+                    }
+                    else{
+                        navBarItem.rightBarButtonItem?.isEnabled = false
+                        navBarItem.rightBarButtonItem?.tintColor = UIColor.clear
+                    }
+                }
+                else{
+                    navBarItem.rightBarButtonItem!.image = #imageLiteral(resourceName: "plus-filled")
+                    navBarItem.rightBarButtonItem!.isEnabled = true
+                    navBarItem.rightBarButtonItem!.tintColor = nil
+                    navBarItem.leftBarButtonItem!.isEnabled = false
+                    navBarItem.leftBarButtonItem!.tintColor = UIColor.clear
+                    navBarItem.title = navBarTitles[i]
+                }
+            }
             break
         case 3:
             navBarItem.rightBarButtonItem!.image = #imageLiteral(resourceName: "settings")
@@ -95,6 +141,7 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
             navBarItem.rightBarButtonItem!.tintColor = nil
             navBarItem.leftBarButtonItem!.isEnabled = false
             navBarItem.leftBarButtonItem!.tintColor = UIColor.clear
+            navBarItem.title = navBarTitles[i]
             break
         default:
             break

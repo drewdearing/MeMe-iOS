@@ -27,6 +27,9 @@
 		17A35FAF22541FC300C2362D /* GroupChatSettings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17A35FAE22541FC300C2362D /* GroupChatSettings.storyboard */; };
 		17A35FB1225424E900C2362D /* Post.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17A35FB0225424E900C2362D /* Post.storyboard */; };
 		17A35FB32254251E00C2362D /* ProfileSettings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17A35FB22254251E00C2362D /* ProfileSettings.storyboard */; };
+		17A35FB52254291200C2362D /* GroupSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35FB42254291200C2362D /* GroupSettingsView.swift */; };
+		17A35FB72254292500C2362D /* GroupSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17A35FB62254292500C2362D /* GroupSettingsView.xib */; };
+		17A35FB922542FE000C2362D /* NavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35FB822542FE000C2362D /* NavigationView.swift */; };
 		17C6E8402239A88A004665F0 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C6E83F2239A88A004665F0 /* MainViewController.swift */; };
 		17C6E8422239A983004665F0 /* HomeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8412239A983004665F0 /* HomeView.xib */; };
 		17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C6E8472239ABF9004665F0 /* HomeView.swift */; };
@@ -75,6 +78,9 @@
 		17A35FAE22541FC300C2362D /* GroupChatSettings.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = GroupChatSettings.storyboard; sourceTree = "<group>"; };
 		17A35FB0225424E900C2362D /* Post.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Post.storyboard; sourceTree = "<group>"; };
 		17A35FB22254251E00C2362D /* ProfileSettings.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ProfileSettings.storyboard; sourceTree = "<group>"; };
+		17A35FB42254291200C2362D /* GroupSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupSettingsView.swift; sourceTree = "<group>"; };
+		17A35FB62254292500C2362D /* GroupSettingsView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GroupSettingsView.xib; sourceTree = "<group>"; };
+		17A35FB822542FE000C2362D /* NavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationView.swift; sourceTree = "<group>"; };
 		17C6E83F2239A88A004665F0 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		17C6E8412239A983004665F0 /* HomeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeView.xib; sourceTree = "<group>"; };
 		17C6E8472239ABF9004665F0 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -156,6 +162,9 @@
 				17C6E8512239B30D004665F0 /* MessageView.xib */,
 				17C6E84F2239B2E9004665F0 /* ProfileView.swift */,
 				17C6E8532239B31F004665F0 /* ProfileView.xib */,
+				17A35FB42254291200C2362D /* GroupSettingsView.swift */,
+				17A35FB822542FE000C2362D /* NavigationView.swift */,
+				17A35FB62254292500C2362D /* GroupSettingsView.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -309,6 +318,7 @@
 				17A35FAA22541BD000C2362D /* ProfilePostCollectionViewCell.xib in Resources */,
 				17A35FAF22541FC300C2362D /* GroupChatSettings.storyboard in Resources */,
 				17A35FAD22541E7600C2362D /* GroupChat.storyboard in Resources */,
+				17A35FB72254292500C2362D /* GroupSettingsView.xib in Resources */,
 				3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */,
 				60430CD62231CC650033C92F /* LaunchScreen.storyboard in Resources */,
 				17A35FA622541B6500C2362D /* PotentialUserTableViewCell.xib in Resources */,
@@ -411,6 +421,7 @@
 				3B860CE12252C9FA00831C41 /* FeedCell+CoreDataClass.swift in Sources */,
 				17A35F9D2254193500C2362D /* User.swift in Sources */,
 				3B860CD52252C3E800831C41 /* MeMe.xcdatamodeld in Sources */,
+				17A35FB922542FE000C2362D /* NavigationView.swift in Sources */,
 				17A35F9F2254194100C2362D /* Post.swift in Sources */,
 				60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */,
 				17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */,
@@ -422,6 +433,7 @@
 				6037F704224AD13F000D0E57 /* GalleryViewController.swift in Sources */,
 				17A35F8C2254022200C2362D /* GroupChatSettingsViewController.swift in Sources */,
 				17C6E84A2239AE5B004665F0 /* DiscoverView.swift in Sources */,
+				17A35FB52254291200C2362D /* GroupSettingsView.swift in Sources */,
 				3B3F47C32249ACBA00B2C5A0 /* FeedTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

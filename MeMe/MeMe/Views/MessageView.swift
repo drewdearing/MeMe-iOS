@@ -27,6 +27,18 @@ class MessageView: UIView, UITableViewDelegate, UITableViewDataSource {
         commonInit()
     }
     
+    func push(view:NavigationView){
+        addSubview(view)
+        view.frame = self.bounds
+    }
+    
+    func pop(){
+        if subviews.count > 1 {
+            let view = subviews[subviews.count - 1]
+            view.removeFromSuperview()
+        }
+    }
+    
     private func commonInit() {
         Bundle.main.loadNibNamed("MessageView", owner: self, options: nil)
         addSubview(contentView)
