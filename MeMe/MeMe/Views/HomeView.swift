@@ -33,25 +33,17 @@ class HomeView: FeedView {
         tableView.delegate = self
         tableView.dataSource = self
         self.urlPath = "https://us-central1-meme-d3805.cloudfunctions.net/getUserFeed"
+        feed = true
         loadPosts()
-    }
-    
-    override func loadPosts(predicate: NSPredicate? = NSPredicate(format: "feed == TRUE")) {
-        super.loadPosts(predicate:predicate)
-    }
-    
-    override func cellFromData(post: FeedCellData, context: NSManagedObjectContext) -> FeedCell? {
-        var cell = super.cellFromData(post: post, context: context)
-        if cell != nil {
-            cell!.feed = true
-        }
-        return cell
     }
     
     override func update() {
         DispatchQueue.main.async {
-            self.postData = self.postData.sorted(by: {$0.seconds > $1.seconds})
-            self.tableView.reloadData()
+            let newData = Array(self.postData.values).sorted(by: {$0.seconds > $1.seconds})
+            if !self.data.elementsEqual(newData) {
+                self.data = newData
+                self.tableView.reloadData()
+            }
         }
     }
     

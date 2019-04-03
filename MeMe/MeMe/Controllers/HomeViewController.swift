@@ -8,7 +8,8 @@
 
 import UIKit
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, NewMemeDelegate {
+    
     @IBOutlet weak var feedView: HomeView!
     
     override func viewDidLoad() {
@@ -16,15 +17,22 @@ class HomeViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        if feedView.loaded {
+            feedView.getPosts()
+        }
+    }
+    
+    func addMeme(post: FeedCellData) {
+        feedView.addPost(post: post)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "NewMemeSegue" {
             let destinationNavigationController = segue.destination as! UINavigationController
             let dest = destinationNavigationController.topViewController as! GalleryViewController
-            dest.delegates.append(feedView)
+            dest.delegate = self
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        //feedView.getPosts()
-    }
 }

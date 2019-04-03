@@ -36,37 +36,39 @@ struct Timestamp: Codable {
     }
 }
 
-var imageData:[String:UIImage] = [:]
-var profilePicData:[String:UIImage] = [:]
-var taskGroup:DispatchGroup?
-var taskQueue:[[FeedCellData]] = []
-
 let appDelegate = UIApplication.shared.delegate as? AppDelegate
+let cache = Cache.get()
 
-class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDelegate {
+class FeedView: UIView, UITableViewDelegate, UITableViewDataSource {
 
-    var postData:[FeedCell] = []
+    var postData:[String:FeedCell] = [:]
+    var data:[FeedCell] = []
+    var feed = false
     var currentPage = 1
     var urlPath = ""
+    var loaded = false
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return postData.count
+        return data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
+        let feedCell = data[indexPath.row]
         cell.memePic.image = nil
         cell.profilePic.image = nil
-        cell.cellTitle.text = postData[indexPath.row].username
-        cell.downVoteCounter.text = String(postData[indexPath.row].downvotes)
-        cell.descriptionLabel.text = postData[indexPath.row].desc
-        cell.upVoteCounter.text = String(postData[indexPath.row].upvotes)
-        cell.memeURL = postData[indexPath.row].imageURL
-        cell.uid = postData[indexPath.row].uid
-        cell.postID = postData[indexPath.row].post
-        cell.profileURL = postData[indexPath.row].profilePicURL
+        cell.cellTitle.text = feedCell.username
+        cell.downVoteCounter.text = String(feedCell.downvotes)
+        cell.descriptionLabel.text = feedCell.desc
+        cell.upVoteCounter.text = String(feedCell.upvotes)
+        cell.memeURL = feedCell.imageURL
+        cell.uid = feedCell.uid
+        cell.postID = feedCell.post
+        cell.profileURL = feedCell.profilePicURL
+        cell.selectionStyle = .none
+        
         DispatchQueue.global(qos: .background).async {
-            if let memePic = imageData[self.postData[indexPath.row].post] {
+            if let memePic = cache.getImage(id: feedCell.post) {
                 DispatchQueue.main.async {
                     cell.memePic.image = memePic
                 }
@@ -80,12 +82,11 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDe
                         DispatchQueue.main.async {
                             cell.memePic.image = image
                         }
-                        imageData[self.postData[indexPath.row].post] = image
+                        cache.addImage(id: feedCell.post, image: image)
                     }
                 }
             }
-            let profilePic = profilePicData[self.postData[indexPath.row].uid]
-            if profilePic != nil && !self.postData[indexPath.row].dirty {
+            if let profilePic = cache.getImage(id: feedCell.uid) {
                 DispatchQueue.main.async {
                     cell.profilePic.image = profilePic
                 }
@@ -99,13 +100,12 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDe
                         DispatchQueue.main.async {
                             cell.profilePic.image = image
                         }
-                        profilePicData[self.postData[indexPath.row].uid] = image
+                        cache.addProfilePic(id: feedCell.uid, image: image)
                     }
                 }
             }
         }
         
-        cell.selectionStyle = .none
         return cell
     }
     
@@ -118,37 +118,26 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDe
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    func loadPosts(predicate:NSPredicate? = nil){
+    func loadPosts(){
         print("loading posts")
-        if let context = appDelegate?.persistentContainer.viewContext {
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName:"FeedCell")
-            if predicate != nil {
-                fetchRequest.predicate = predicate
+        DispatchQueue.global(qos: .background).async {
+            let data = cache.getPosts(feed: self.feed)
+            for post in data {
+                self.postData[post.post] = post
             }
-            fetchRequest.includesPropertyValues = true
-            let asyncRequest = NSAsynchronousFetchRequest(fetchRequest: fetchRequest) { results in
-                if let cache = results.finalResult {
-                    self.postData = cache as! [FeedCell]
-                    self.update()
-                    self.getPosts()
-                }
-            }
-            
-            do {
-                let privateManagedObjectContext: NSManagedObjectContext = {
-                    let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-                    moc.parent = context
-                    return moc
-                }()
-                try privateManagedObjectContext.execute(asyncRequest)
-            } catch let error {
-                print("NSAsynchronousFetchRequest error: \(error)")
-            }
+            self.update()
+            self.getPosts()
         }
     }
     
     func getPosts() {
         if let currentUser = Auth.auth().currentUser {
+            let useHUD = self.postData.count <= 0
+            if useHUD {
+                DispatchQueue.main.async {
+                    SVProgressHUD.show(withStatus: "loading...")
+                }
+            }
             var urlPathBase = self.urlPath
             urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
             urlPathBase = urlPathBase.appending("&page="+String(self.currentPage))
@@ -160,7 +149,17 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDe
                 do {
                     let postContainer = try JSONDecoder().decode(FeedContainer.self, from: data)
                     DispatchQueue.main.async {
-                        self.addPostsToCache(data:postContainer.posts)
+                        let cells = cache.addPosts(data: postContainer.posts, feed: self.feed)
+                        for cell in cells {
+                            self.postData[cell.post] = cell
+                        }
+                        if useHUD {
+                            DispatchQueue.main.async {
+                                SVProgressHUD.dismiss()
+                            }
+                        }
+                        self.loaded = true
+                        self.update()
                     }
                 } catch let jsonErr {
                     print("Error: \(jsonErr)")
@@ -170,102 +169,15 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDe
         }
     }
     
-    func cellFromData(post: FeedCellData, context:NSManagedObjectContext) -> FeedCell? {
-        let newCell = FeedCell(context: context)
-        newCell.desc = post.description
-        newCell.downvotes = Int32(post.downvotes)
-        newCell.imageURL = post.imageURL
-        newCell.post = post.post
-        newCell.profilePicURL = post.profilePicURL
-        newCell.uid = post.uid
-        newCell.upvotes = Int32(post.upvotes)
-        newCell.username = post.username
-        newCell.feed = false
-        newCell.dirty = false
-        newCell.seconds = Int64(post.timestamp._seconds)
-        return newCell
-    }
-    
-    func addMeme(post: FeedCellData) {
-        if let context = appDelegate?.persistentContainer.viewContext {
-            if let cell = cellFromData(post: post, context: context) {
-                self.addCell(newPost: cell)
-                do {
-                    try context.save()
-                    update()
-                }
-                catch{
-                    print("error saving")
-                }
-            }
+    func addPost(post: FeedCellData) {
+        if let cell = cache.addPost(data: post, feed: feed){
+            postData[cell.post] = cell
+            update()
         }
-    }
-    
-    func addCell(newPost: FeedCell) {
-        postData.append(newPost)
     }
     
     func update(){
         //override me
-    }
-    
-    func addPostsToCache(data:[FeedCellData]){
-        let useHUD = postData.count <= 0
-        if(useHUD){
-            SVProgressHUD.show(withStatus: "Loading...")
-        }
-        if let context = appDelegate?.persistentContainer.viewContext {
-            taskQueue.append(data)
-            updateCache(context: context, useHUD: useHUD)
-        }
-    }
-    
-    func updateCache(context:NSManagedObjectContext, useHUD:Bool){
-        if taskGroup == nil && taskQueue.count > 0 {
-            taskGroup = DispatchGroup()
-            let taskData = taskQueue[0]
-            for post in taskData {
-                taskGroup!.enter()
-                let cache = self.postData.filter { $0.post == post.post }
-                if cache.count > 0 {
-                    for cachedPost in cache {
-                        cachedPost.downvotes = Int32(post.downvotes)
-                        cachedPost.upvotes = Int32(post.upvotes)
-                        cachedPost.username = post.username
-                        if cachedPost.profilePicURL != post.profilePicURL {
-                            cachedPost.profilePicURL = post.profilePicURL
-                            cachedPost.dirty = true
-                        }
-                    }
-                }
-                else{
-                    if let newCell = cellFromData(post: post, context: context) {
-                        self.addCell(newPost: newCell)
-                    }
-                }
-                taskGroup!.leave()
-            }
-            
-            taskGroup!.notify(queue: .main) {
-                do {
-                    try context.save()
-                    taskQueue.removeFirst()
-                    taskGroup = nil
-                    if taskQueue.count > 0 {
-                        self.updateCache(context: context, useHUD: useHUD)
-                    }
-                    else{
-                        self.update()
-                        if(useHUD){
-                            SVProgressHUD.dismiss()
-                        }
-                    }
-                }
-                catch{
-                    print("cant save")
-                }
-            }
-        }
     }
 
 }

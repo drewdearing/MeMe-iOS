@@ -36,8 +36,11 @@ class DiscoverView: FeedView {
     
     override func update(){
         DispatchQueue.main.async {
-            self.postData = self.postData.sorted(by: {($0.upvotes - $0.downvotes) > ($1.upvotes - $1.downvotes)})
-            self.tableView.reloadData()
+            let newData = Array(self.postData.values).sorted(by: {($0.upvotes - $0.downvotes) > ($1.upvotes - $1.downvotes)})
+            if !self.data.elementsEqual(newData) {
+                self.data = newData
+                self.tableView.reloadData()
+            }
         }
     }
     

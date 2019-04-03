@@ -48,6 +48,7 @@
 		3B9B6F43225455FD005A52B4 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9B6F42225455FD005A52B4 /* TabView.swift */; };
 		3BB8349522532FB600DE1D01 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB8349422532FB600DE1D01 /* FeedView.swift */; };
 		3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */; };
+		3BE25156225527B600B8FCAC /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE25155225527B600B8FCAC /* Cache.swift */; };
 		3BEC94202254745E003AE517 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC941F2254745E003AE517 /* Home.storyboard */; };
 		3BEC942222547470003AE517 /* Discover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC942122547470003AE517 /* Discover.storyboard */; };
 		3BEC942422547489003AE517 /* Messages.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC942322547489003AE517 /* Messages.storyboard */; };
@@ -106,6 +107,7 @@
 		3B9B6F42225455FD005A52B4 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		3BB8349422532FB600DE1D01 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
 		3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		3BE25155225527B600B8FCAC /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		3BEC941F2254745E003AE517 /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
 		3BEC942122547470003AE517 /* Discover.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Discover.storyboard; sourceTree = "<group>"; };
 		3BEC942322547489003AE517 /* Messages.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Messages.storyboard; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				17A35F9A2254192200C2362D /* GroupChat.swift */,
 				17A35F9C2254193500C2362D /* User.swift */,
 				17A35F9E2254194100C2362D /* Post.swift */,
+				3BE25155225527B600B8FCAC /* Cache.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -445,6 +448,7 @@
 				17A35F92225403B300C2362D /* GroupChatViewController.swift in Sources */,
 				17A35F9B2254192200C2362D /* GroupChat.swift in Sources */,
 				17C6E84E2239B2D8004665F0 /* MessageView.swift in Sources */,
+				3BE25156225527B600B8FCAC /* Cache.swift in Sources */,
 				3BEC942A22547F90003AE517 /* HomeViewController.swift in Sources */,
 				3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */,
 				17A35FA322541A9F00C2362D /* CurrentUserTableViewCell.swift in Sources */,

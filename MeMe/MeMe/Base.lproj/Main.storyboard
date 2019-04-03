@@ -246,6 +246,7 @@
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="8Pr-Dg-yl1" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="VDG-Xb-NQ0">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
@@ -268,6 +269,6 @@
         <image name="user_male" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ECo-sq-gZD"/>
+        <segue reference="cPc-iF-BUM"/>
     </inferredMetricsTieBreakers>
 </document>

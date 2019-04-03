@@ -11,7 +11,7 @@ import Firebase
 import FirebaseStorage
 import SVProgressHUD
 
-protocol editMemeVCDelegate {
+protocol NewMemeDelegate {
     func addMeme(post: FeedCellData)
 }
 
@@ -22,7 +22,7 @@ class EditMemeViewController: UIViewController {
     @IBOutlet weak var doneButton: UIBarButtonItem!
     
     var selectedImage: UIImage!
-    var delegates: [editMemeVCDelegate]?
+    var delegate:NewMemeDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,11 +86,7 @@ class EditMemeViewController: UIViewController {
         if let profile = getCurrentProfile() {
             let data = FeedCellData(username: profile.username, description: self.descriptionField.text!, uid: currentUser!.uid, post: imageName, imageURL: download, profilePicURL: profile.profilePicURL, upvotes: 0, downvotes: 0, timestamp: Timestamp())
             SVProgressHUD.dismiss()
-            if delegates != nil {
-                for delegate in delegates! {
-                    delegate.addMeme(post: data)
-                }
-            }
+            delegate?.addMeme(post: data)
             dismiss(animated: true)
         }
     }

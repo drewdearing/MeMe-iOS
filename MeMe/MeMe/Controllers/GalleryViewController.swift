@@ -17,8 +17,7 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     
     @IBOutlet weak var galleryCollectionView: UICollectionView!
     private var images: [UIImage] = []
-    var delegates: [editMemeVCDelegate] = []
-    
+    var delegate:NewMemeDelegate?
     private var selectedCellIndex: Int!
     
     override func viewDidLoad() {
@@ -97,7 +96,7 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
         let mainStoryBoard: UIStoryboard = UIStoryboard(name: "NewMeme", bundle: nil)
         if let editMemeVCDestination = mainStoryBoard.instantiateViewController(withIdentifier: editMemeStoryIdentifier) as? EditMemeViewController {
             editMemeVCDestination.selectedImage = images[indexPath.row]
-            editMemeVCDestination.delegates = delegates
+            editMemeVCDestination.delegate = delegate
             self.navigationController?.pushViewController(editMemeVCDestination, animated: true)
         }
 
