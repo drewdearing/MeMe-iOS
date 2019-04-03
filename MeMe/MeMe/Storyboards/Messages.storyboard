@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="jI4-VD-qre">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Messages-->
+        <scene sceneID="gf3-8g-Wds">
+            <objects>
+                <viewController id="RrJ-0C-1cs" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="TcO-Ys-hK1">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="wm8-TE-93a"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Messages" id="zBj-V2-pyb">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Obb-E8-IHo">
+                            <connections>
+                                <segue destination="pl9-RY-rkP" kind="show" id="HhJ-Ob-wKd"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UYT-uv-gag" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1514.4000000000001" y="3.1484257871064472"/>
+        </scene>
+        <!--GroupChatSettings-->
+        <scene sceneID="c4X-Rw-Yrm">
+            <objects>
+                <viewControllerPlaceholder storyboardName="GroupChatSettings" id="pl9-RY-rkP" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3cv-Bm-BR7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2134" y="-172"/>
+        </scene>
+        <!--Messages-->
+        <scene sceneID="Hfu-Bj-sMY">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="jI4-VD-qre" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Messages" image="message" id="NDN-55-rGR"/>
+                    <toolbarItems/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="FmM-ga-1zv">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="RrJ-0C-1cs" kind="relationship" relationship="rootViewController" id="PVE-nj-jOg"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="asD-Oq-e48" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="575.20000000000005" y="3.1484257871064472"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="message" width="30" height="30"/>
+    </resources>
+</document>

@@ -17,6 +17,7 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     
     @IBOutlet weak var galleryCollectionView: UICollectionView!
     private var images: [UIImage] = []
+    var delegates: [editMemeVCDelegate] = []
     
     private var selectedCellIndex: Int!
     
@@ -96,24 +97,14 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
         let mainStoryBoard: UIStoryboard = UIStoryboard(name: "NewMeme", bundle: nil)
         if let editMemeVCDestination = mainStoryBoard.instantiateViewController(withIdentifier: editMemeStoryIdentifier) as? EditMemeViewController {
             editMemeVCDestination.selectedImage = images[indexPath.row]
+            editMemeVCDestination.delegates = delegates
             self.navigationController?.pushViewController(editMemeVCDestination, animated: true)
         }
 
     }
     
     @IBAction func cancelButton(_ sender: Any) {
-        self.navigationController?.popViewController(animated: true)
         self.dismiss(animated: true, completion: nil)
     }
-    //    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    //        if segue.identifier == editMemeSegueIdentifier,
-    //            let editMemeVCDestination = segue.destination as? EditMemeViewController {
-    //
-    //            print("Selected Cell, Segue:", selectedCellIndex)
-    //
-    //            editMemeVCDestination.selectedImage = images[galleryCollectionView.]
-    //        }
-    //    }
-    
     
 }

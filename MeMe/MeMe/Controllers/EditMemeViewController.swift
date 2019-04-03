@@ -22,19 +22,10 @@ class EditMemeViewController: UIViewController {
     @IBOutlet weak var doneButton: UIBarButtonItem!
     
     var selectedImage: UIImage!
-    var delegate: editMemeVCDelegate?
-    var returnVC: MainViewController?
+    var delegates: [editMemeVCDelegate]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
-        for controller in self.navigationController!.viewControllers as Array {
-            if controller.isKind(of: MainViewController.self) {
-                self.delegate = controller as? editMemeVCDelegate
-                self.returnVC = controller as? MainViewController
-            }
-        }
         
         if selectedImage != nil {
             memeImageView.image = selectedImage
@@ -95,8 +86,12 @@ class EditMemeViewController: UIViewController {
         if let profile = getCurrentProfile() {
             let data = FeedCellData(username: profile.username, description: self.descriptionField.text!, uid: currentUser!.uid, post: imageName, imageURL: download, profilePicURL: profile.profilePicURL, upvotes: 0, downvotes: 0, timestamp: Timestamp())
             SVProgressHUD.dismiss()
-            self.delegate?.addMeme(post: data)
-            self.navigationController!.popToViewController(self.returnVC!, animated: true)
+            if delegates != nil {
+                for delegate in delegates! {
+                    delegate.addMeme(post: data)
+                }
+            }
+            dismiss(animated: true)
         }
     }
     

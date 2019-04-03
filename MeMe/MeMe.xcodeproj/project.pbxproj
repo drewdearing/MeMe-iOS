@@ -11,7 +11,6 @@
 		17A35F8F225402A900C2362D /* GroupChatTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17A35F8D225402A900C2362D /* GroupChatTableViewCell.xib */; };
 		17A35F90225402A900C2362D /* GroupChatTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F8E225402A900C2362D /* GroupChatTableViewCell.swift */; };
 		17A35F92225403B300C2362D /* GroupChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F91225403B300C2362D /* GroupChatViewController.swift */; };
-		17A35F942254099C00C2362D /* NewMeme.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17A35F932254099C00C2362D /* NewMeme.storyboard */; };
 		17A35F962254185600C2362D /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F952254185600C2362D /* PostViewController.swift */; };
 		17A35F982254187E00C2362D /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */; };
 		17A35F9B2254192200C2362D /* GroupChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F9A2254192200C2362D /* GroupChat.swift */; };
@@ -49,6 +48,13 @@
 		3B9B6F43225455FD005A52B4 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9B6F42225455FD005A52B4 /* TabView.swift */; };
 		3BB8349522532FB600DE1D01 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB8349422532FB600DE1D01 /* FeedView.swift */; };
 		3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */; };
+		3BEC94202254745E003AE517 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC941F2254745E003AE517 /* Home.storyboard */; };
+		3BEC942222547470003AE517 /* Discover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC942122547470003AE517 /* Discover.storyboard */; };
+		3BEC942422547489003AE517 /* Messages.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC942322547489003AE517 /* Messages.storyboard */; };
+		3BEC942622547492003AE517 /* Profile.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC942522547492003AE517 /* Profile.storyboard */; };
+		3BEC942822547B85003AE517 /* NewMeme.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC942722547B85003AE517 /* NewMeme.storyboard */; };
+		3BEC942A22547F90003AE517 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BEC942922547F90003AE517 /* HomeViewController.swift */; };
+		3BEC942C22548302003AE517 /* DiscoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BEC942B22548302003AE517 /* DiscoverViewController.swift */; };
 		6037F704224AD13F000D0E57 /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6037F703224AD13F000D0E57 /* GalleryViewController.swift */; };
 		6037F706224AD165000D0E57 /* EditMemeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6037F705224AD165000D0E57 /* EditMemeViewController.swift */; };
 		60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60430CCB2231CC630033C92F /* AppDelegate.swift */; };
@@ -63,7 +69,6 @@
 		17A35F8D225402A900C2362D /* GroupChatTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = GroupChatTableViewCell.xib; path = MeMe/Controllers/GroupChatTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		17A35F8E225402A900C2362D /* GroupChatTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroupChatTableViewCell.swift; path = MeMe/Controllers/GroupChatTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		17A35F91225403B300C2362D /* GroupChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChatViewController.swift; sourceTree = "<group>"; };
-		17A35F932254099C00C2362D /* NewMeme.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NewMeme.storyboard; sourceTree = "<group>"; };
 		17A35F952254185600C2362D /* PostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
 		17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsViewController.swift; sourceTree = "<group>"; };
 		17A35F9A2254192200C2362D /* GroupChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChat.swift; sourceTree = "<group>"; };
@@ -101,6 +106,13 @@
 		3B9B6F42225455FD005A52B4 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		3BB8349422532FB600DE1D01 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
 		3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		3BEC941F2254745E003AE517 /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
+		3BEC942122547470003AE517 /* Discover.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Discover.storyboard; sourceTree = "<group>"; };
+		3BEC942322547489003AE517 /* Messages.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Messages.storyboard; sourceTree = "<group>"; };
+		3BEC942522547492003AE517 /* Profile.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Profile.storyboard; sourceTree = "<group>"; };
+		3BEC942722547B85003AE517 /* NewMeme.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NewMeme.storyboard; sourceTree = "<group>"; };
+		3BEC942922547F90003AE517 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		3BEC942B22548302003AE517 /* DiscoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewController.swift; sourceTree = "<group>"; };
 		6037F703224AD13F000D0E57 /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
 		6037F705224AD165000D0E57 /* EditMemeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMemeViewController.swift; sourceTree = "<group>"; };
 		60430CC82231CC630033C92F /* MeMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,6 +151,8 @@
 		17C6E8452239A9B7004665F0 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3BEC942922547F90003AE517 /* HomeViewController.swift */,
+				3BEC942B22548302003AE517 /* DiscoverViewController.swift */,
 				60430CCD2231CC630033C92F /* LoginViewController.swift */,
 				3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */,
 				17C6E83F2239A88A004665F0 /* MainViewController.swift */,
@@ -199,6 +213,18 @@
 			path = Entities;
 			sourceTree = "<group>";
 		};
+		3BEC941E22547436003AE517 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				3BEC941F2254745E003AE517 /* Home.storyboard */,
+				3BEC942122547470003AE517 /* Discover.storyboard */,
+				3BEC942322547489003AE517 /* Messages.storyboard */,
+				3BEC942522547492003AE517 /* Profile.storyboard */,
+				3BEC942722547B85003AE517 /* NewMeme.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
 		60430CBF2231CC630033C92F = {
 			isa = PBXGroup;
 			children = (
@@ -220,6 +246,7 @@
 		60430CCA2231CC630033C92F /* MeMe */ = {
 			isa = PBXGroup;
 			children = (
+				3BEC941E22547436003AE517 /* Storyboards */,
 				17A35F99225418F500C2362D /* Models */,
 				3B860CDE2252C9E600831C41 /* Entities */,
 				3B3F47C02249AC9F00B2C5A0 /* Cells */,
@@ -233,7 +260,6 @@
 				17A35FAE22541FC300C2362D /* GroupChatSettings.storyboard */,
 				17A35FB22254251E00C2362D /* ProfileSettings.storyboard */,
 				17A35FB0225424E900C2362D /* Post.storyboard */,
-				17A35F932254099C00C2362D /* NewMeme.storyboard */,
 				60430CD22231CC650033C92F /* Assets.xcassets */,
 				60430CD42231CC650033C92F /* LaunchScreen.storyboard */,
 				60430CD72231CC650033C92F /* Info.plist */,
@@ -323,13 +349,17 @@
 				17A35FAD22541E7600C2362D /* GroupChat.storyboard in Resources */,
 				17A35FB72254292500C2362D /* GroupSettingsView.xib in Resources */,
 				3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */,
+				3BEC942222547470003AE517 /* Discover.storyboard in Resources */,
 				60430CD62231CC650033C92F /* LaunchScreen.storyboard in Resources */,
+				3BEC942822547B85003AE517 /* NewMeme.storyboard in Resources */,
+				3BEC942622547492003AE517 /* Profile.storyboard in Resources */,
 				17A35FA622541B6500C2362D /* PotentialUserTableViewCell.xib in Resources */,
 				17C6E84C2239AE6A004665F0 /* DiscoverView.xib in Resources */,
 				3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */,
+				3BEC942422547489003AE517 /* Messages.storyboard in Resources */,
 				17C6E8522239B30D004665F0 /* MessageView.xib in Resources */,
 				17A35F8F225402A900C2362D /* GroupChatTableViewCell.xib in Resources */,
-				17A35F942254099C00C2362D /* NewMeme.storyboard in Resources */,
+				3BEC94202254745E003AE517 /* Home.storyboard in Resources */,
 				17C6E8542239B31F004665F0 /* ProfileView.xib in Resources */,
 				60430CD32231CC650033C92F /* Assets.xcassets in Resources */,
 				60430CD12231CC630033C92F /* Main.storyboard in Resources */,
@@ -415,6 +445,7 @@
 				17A35F92225403B300C2362D /* GroupChatViewController.swift in Sources */,
 				17A35F9B2254192200C2362D /* GroupChat.swift in Sources */,
 				17C6E84E2239B2D8004665F0 /* MessageView.swift in Sources */,
+				3BEC942A22547F90003AE517 /* HomeViewController.swift in Sources */,
 				3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */,
 				17A35FA322541A9F00C2362D /* CurrentUserTableViewCell.swift in Sources */,
 				60430CCE2231CC630033C92F /* LoginViewController.swift in Sources */,
@@ -435,6 +466,7 @@
 				17C6E8402239A88A004665F0 /* MainViewController.swift in Sources */,
 				17A35F90225402A900C2362D /* GroupChatTableViewCell.swift in Sources */,
 				6037F704224AD13F000D0E57 /* GalleryViewController.swift in Sources */,
+				3BEC942C22548302003AE517 /* DiscoverViewController.swift in Sources */,
 				17A35F8C2254022200C2362D /* GroupChatSettingsViewController.swift in Sources */,
 				17C6E84A2239AE5B004665F0 /* DiscoverView.swift in Sources */,
 				17A35FB52254291200C2362D /* GroupSettingsView.swift in Sources */,
@@ -586,7 +618,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = NQ4HQ86RQ7;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MeMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -605,7 +637,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = NQ4HQ86RQ7;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = MeMe/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -6,7 +6,7 @@
 //  Copyright © 2019 meme. All rights reserved.
 //
 
-import UIKit
+/*import UIKit
 
 private let groupChatSettingsStoryIdentifier = "GroupChatSettingsVCID"
 private let profileSettingsStoryIdentifier = "ProfileSettingsVCID"
@@ -173,4 +173,4 @@ class MainViewController: UIViewController, UITabBarDelegate, editMemeVCDelegate
         }
     }
 
-}
+}*/

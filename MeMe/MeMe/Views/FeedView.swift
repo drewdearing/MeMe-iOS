@@ -38,10 +38,12 @@ struct Timestamp: Codable {
 
 var imageData:[String:UIImage] = [:]
 var profilePicData:[String:UIImage] = [:]
+var taskGroup:DispatchGroup?
+var taskQueue:[[FeedCellData]] = []
 
 let appDelegate = UIApplication.shared.delegate as? AppDelegate
 
-class FeedView: TabView, UITableViewDelegate, UITableViewDataSource, editMemeVCDelegate {
+class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, editMemeVCDelegate {
 
     var postData:[FeedCell] = []
     var currentPage = 1
@@ -53,6 +55,8 @@ class FeedView: TabView, UITableViewDelegate, UITableViewDataSource, editMemeVCD
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
+        cell.memePic.image = nil
+        cell.profilePic.image = nil
         cell.cellTitle.text = postData[indexPath.row].username
         cell.downVoteCounter.text = String(postData[indexPath.row].downvotes)
         cell.descriptionLabel.text = postData[indexPath.row].desc
@@ -115,6 +119,7 @@ class FeedView: TabView, UITableViewDelegate, UITableViewDataSource, editMemeVCD
     }
     
     func loadPosts(predicate:NSPredicate? = nil){
+        print("loading posts")
         if let context = appDelegate?.persistentContainer.viewContext {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName:"FeedCell")
             if predicate != nil {
@@ -175,7 +180,7 @@ class FeedView: TabView, UITableViewDelegate, UITableViewDataSource, editMemeVCD
         newCell.uid = post.uid
         newCell.upvotes = Int32(post.upvotes)
         newCell.username = post.username
-        newCell.feed = true
+        newCell.feed = false
         newCell.dirty = false
         newCell.seconds = Int64(post.timestamp._seconds)
         return newCell
@@ -210,9 +215,17 @@ class FeedView: TabView, UITableViewDelegate, UITableViewDataSource, editMemeVCD
             SVProgressHUD.show(withStatus: "Loading...")
         }
         if let context = appDelegate?.persistentContainer.viewContext {
-            let taskGroup = DispatchGroup()
-            for post in data {
-                taskGroup.enter()
+            taskQueue.append(data)
+            updateCache(context: context, useHUD: useHUD)
+        }
+    }
+    
+    func updateCache(context:NSManagedObjectContext, useHUD:Bool){
+        if taskGroup == nil && taskQueue.count > 0 {
+            taskGroup = DispatchGroup()
+            let taskData = taskQueue[0]
+            for post in taskData {
+                taskGroup!.enter()
                 let cache = self.postData.filter { $0.post == post.post }
                 if cache.count > 0 {
                     for cachedPost in cache {
@@ -230,15 +243,22 @@ class FeedView: TabView, UITableViewDelegate, UITableViewDataSource, editMemeVCD
                         self.addCell(newPost: newCell)
                     }
                 }
-                taskGroup.leave()
+                taskGroup!.leave()
             }
             
-            taskGroup.notify(queue: .main) {
+            taskGroup!.notify(queue: .main) {
                 do {
                     try context.save()
-                    self.update()
-                    if(useHUD){
-                        SVProgressHUD.dismiss()
+                    taskQueue.removeFirst()
+                    taskGroup = nil
+                    if taskQueue.count > 0 {
+                        self.updateCache(context: context, useHUD: useHUD)
+                    }
+                    else{
+                        self.update()
+                        if(useHUD){
+                            SVProgressHUD.dismiss()
+                        }
                     }
                 }
                 catch{
