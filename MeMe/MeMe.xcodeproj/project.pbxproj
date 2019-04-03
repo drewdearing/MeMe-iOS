@@ -39,6 +39,7 @@
 		17C6E8522239B30D004665F0 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8512239B30D004665F0 /* MessageView.xib */; };
 		17C6E8542239B31F004665F0 /* ProfileView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8532239B31F004665F0 /* ProfileView.xib */; };
 		23BD7A5C5DD54070A9759157 /* Pods_MeMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */; };
+		3B143719225572D100331A5B /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B143718225572D100331A5B /* TabViewController.swift */; };
 		3B3F47C32249ACBA00B2C5A0 /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F47C12249ACBA00B2C5A0 /* FeedTableViewCell.swift */; };
 		3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */; };
 		3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B76C13C22398191005CA53E /* GoogleService-Info.plist */; };
@@ -98,6 +99,7 @@
 		17C6E8512239B30D004665F0 /* MessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		17C6E8532239B31F004665F0 /* ProfileView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProfileView.xib; sourceTree = "<group>"; };
 		1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MeMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B143718225572D100331A5B /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		3B3F47C12249ACBA00B2C5A0 /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTableViewCell.swift; path = MeMe/Cells/FeedTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FeedTableViewCell.xib; path = MeMe/Cells/FeedTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		3B76C13C22398191005CA53E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				17A35F91225403B300C2362D /* GroupChatViewController.swift */,
 				17A35F952254185600C2362D /* PostViewController.swift */,
 				17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */,
+				3B143718225572D100331A5B /* TabViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -449,6 +452,7 @@
 				17A35F9B2254192200C2362D /* GroupChat.swift in Sources */,
 				17C6E84E2239B2D8004665F0 /* MessageView.swift in Sources */,
 				3BE25156225527B600B8FCAC /* Cache.swift in Sources */,
+				3B143719225572D100331A5B /* TabViewController.swift in Sources */,
 				3BEC942A22547F90003AE517 /* HomeViewController.swift in Sources */,
 				3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */,
 				17A35FA322541A9F00C2362D /* CurrentUserTableViewCell.swift in Sources */,

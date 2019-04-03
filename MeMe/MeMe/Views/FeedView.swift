@@ -109,6 +109,12 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    func reload() {
+        if loaded {
+            loadPosts()
+        }
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 352
     }
@@ -130,7 +136,7 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func getPosts() {
+    private func getPosts() {
         if let currentUser = Auth.auth().currentUser {
             let useHUD = self.postData.count <= 0
             if useHUD {
