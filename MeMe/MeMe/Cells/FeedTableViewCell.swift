@@ -7,6 +7,12 @@
 //
 
 import UIKit
+import Firebase
+
+struct VoteData: Codable {
+    let upvotes:Int
+    let downvotes:Int
+}
 
 class FeedTableViewCell: UITableViewCell {
     @IBOutlet weak var cellTitle: UILabel!
@@ -24,11 +30,31 @@ class FeedTableViewCell: UITableViewCell {
     var postID:String?
     
     @IBAction func upVote(_ sender: Any) {
-        print("hi")
+        if let currentUser = Auth.auth().currentUser {
+            var urlPathBase = "https://us-central1-meme-d3805.cloudfunctions.net/upvote"
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            urlPathBase = urlPathBase.appending("&post=" + postID!)
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "PUT"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in
+                guard let data = data else { return }
+                do {
+                    let voteData = try JSONDecoder().decode(VoteData.self, from: data)
+                    DispatchQueue.main.async {
+                        self.upVoteCounter.text = String(voteData.upvotes)
+                        self.downVoteCounter.text = String(voteData.downvotes)
+                    }
+                } catch let jsonErr {
+                    print("Error: \(jsonErr)")
+                }
+            }
+            task.resume()
+        }
     }
     
     @IBAction func downVote(_ sender: Any) {
-        print("hi")
+        
     }
     
     override func awakeFromNib() {

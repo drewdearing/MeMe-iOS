@@ -10,26 +10,32 @@ var db = admin.firestore();
 const calculateVotes = (postID) => {
     let postDB = db.collection('post').doc(postID);
     let votesDB = postDB.collection('votes');
-    return votesDB.get().then((votes) => {
-        var upvotes = 0;
-        var downvotes = 0;
-        votes.docs.forEach((vote) => {
-            let up = vote.get('up')
-            if(up){
-                upvotes++;
-            }
-            else{
-                downvotes++;
-            }
-        });
-        postDB.update({
-            upvotes: upvotes,
-            downvotes: downvotes
+    return new Promise((resolve, reject) => {
+        votesDB.get().then((votes) => {
+            var upvotes = 0;
+            var downvotes = 0;
+            votes.docs.forEach((vote) => {
+                let up = vote.get('up')
+                if(up){
+                    upvotes++;
+                }
+                else{
+                    downvotes++;
+                }
+            });
+            let data = {
+                upvotes: upvotes,
+                downvotes: downvotes
+            };
+            postDB.update(data);
+            resolve(data)
+        }).catch((data) => {
+            reject(data)
         });
     });
 }
 
-exports.onVoteCreate = functions.firestore
+/*exports.onVoteCreate = functions.firestore
 .document('post/{postID}/votes/{uid}')
 .onCreate((snap, context) => {
     return calculateVotes(context.params.postID)
@@ -45,7 +51,7 @@ exports.onVoteDelete = functions.firestore
 .document('post/{postID}/votes/{uid}')
 .onDelete((snap, context) => {
     return calculateVotes(context.params.postID)
-});
+});*/
 
 exports.onPostCreate = functions.firestore
 .document('post/{postID}')
@@ -78,6 +84,36 @@ exports.onPostDelete = functions.firestore
                 posts:posts
             });
         }
+    });
+});
+
+exports.upvote = functions.https.onRequest((req, res) => {
+    let uid = req.query.uid;
+    let postID = req.query.post;
+    let voteRef = db.collection('post').doc(postID).collection('votes').doc(uid)
+    voteRef.set({
+        up: true
+    }).then((doc) => {
+        calculateVotes(postID).then((data) => {
+            res.status(200).json(data);
+        });
+    }).catch((data) => {
+        res.status(400).json(data)
+    });
+});
+
+exports.downvote = functions.https.onRequest((req, res) => {
+    let uid = req.query.uid;
+    let postID = req.query.post;
+    let voteRef = db.collection('post').doc(postID).collection('votes').doc(uid)
+    voteRef.set({
+        up: false
+    }).then((doc) => {
+        calculateVotes(postID).then((data) => {
+            res.status(200).json(data);
+        });
+    }).catch((data) => {
+        res.status(400).json(data)
     });
 });
 
