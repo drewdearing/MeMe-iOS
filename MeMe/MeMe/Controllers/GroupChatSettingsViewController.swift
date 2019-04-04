@@ -19,14 +19,18 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     var groupChat: GroupChat!
     
     @IBOutlet weak var groupChatNameTextField: UITextField!
+    @IBOutlet weak var groupChatNameLabel: UILabel!
+    @IBOutlet weak var editButton: UIButton!
     
     @IBOutlet weak var currentMemebersTableView: UITableView!
     private var currentMembers: [User] = []
+    private var isEdit = false
     
     @IBOutlet weak var searchMemberBar: UISearchBar!
     
-    @IBOutlet weak var potentialMembersTableView: UITableView!
-    private var potentialMembers: [User] = []
+    
+    //@IBOutlet weak var potentialMembersTableView: UITableView!
+    //private var potentialMembers: [User] = []
     
     
     override func viewDidLoad() {
@@ -36,10 +40,10 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         currentMemebersTableView.delegate = self
         currentMemebersTableView.dataSource = self
         
-        potentialMembersTableView.delegate = self
-        potentialMembersTableView.dataSource = self
+        //potentialMembersTableView.delegate = self
+        //potentialMembersTableView.dataSource = self
         
-        setNavigationBarItems()
+        //setNavigationBarItems()
     }
     
     private func setNavigationBarItems() {
@@ -52,53 +56,58 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView.accessibilityIdentifier == currentMemebersTableViewIdentifier {
-            return currentMembers.count
-        } else {
-            return potentialMembers.count
-        }
+        return currentMembers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if tableView.accessibilityIdentifier == currentMemebersTableViewIdentifier {
-            let currentUserCell = tableView.dequeueReusableCell(withIdentifier: currentMemebersCellIdentifier, for: indexPath as IndexPath) as? CurrentUserTableViewCell
+        let currentUserCell = tableView.dequeueReusableCell(withIdentifier: currentMemebersCellIdentifier, for: indexPath as IndexPath) as? CurrentUserTableViewCell
             
-            let row = indexPath.row
-            let user = currentMembers[row]
+        let row = indexPath.row
+        let user = currentMembers[row]
             
-            //            currentUserCell.imageView = user
-            //            currentUserCell?.usernameLabel.text = user.username
-            return currentUserCell!
-            
-        } else {
-            let potentialUserCell = tableView.dequeueReusableCell(withIdentifier: potentialMembersCellIdentifier, for: indexPath as IndexPath) as? PotentialUserTableViewCell
-            
-            let row = indexPath.row
-            let user = potentialMembers[row]
-            
-            //            potentialUserCell.imageView = user
-            //            potentialUserCell?.usernameLabel.text = user.username
-            return potentialUserCell!
-        }
+        //            currentUserCell.imageView = user
+        //            currentUserCell?.usernameLabel.text = user.username
+        return currentUserCell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if tableView.accessibilityIdentifier == currentMemebersTableViewIdentifier {
-            let row = indexPath.row
-            currentMembers.remove(at: row)
-            currentMemebersTableView.reloadData()
+        let row = indexPath.row
+        currentMembers.remove(at: row)
+        currentMemebersTableView.reloadData()
+    }
+    
+    @IBAction func editButton(_ sender: Any) {
+        if(isEdit) {
+            saveName()
         } else {
-            let row = indexPath.row
-            let user = potentialMembers[row]
-            currentMembers.append(user)
-            potentialMembers.remove(at: row)
-            currentMemebersTableView.reloadData()
-            potentialMembersTableView.reloadData()
+            //editButton.setImage(, for: .normal)
+            editButton.setImage(#imageLiteral(resourceName: "home"), for: .normal)
+            groupChatNameLabel.isHidden = true
+            groupChatNameTextField.isHidden = false
+            groupChatNameTextField.textInputView.isUserInteractionEnabled = true
+            groupChatNameTextField.becomeFirstResponder()
+            isEdit = true
         }
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+        saveName()
+    }
     
+    func saveName() {
+        if let name = groupChatNameTextField.text {
+            isEdit = false
+            editButton.setImage(#imageLiteral(resourceName: "settings"), for: .normal)
+            groupChatNameLabel.text = name
+            groupChatNameLabel.isHidden = false
+            groupChatNameTextField.clearsOnBeginEditing = true
+            groupChatNameTextField.placeholder = name
+            groupChatNameTextField.isHidden = true
+            groupChatNameTextField.textInputView.isUserInteractionEnabled = false
+            groupChatNameTextField.resignFirstResponder()
+        }
+    }
     
     /*
      // MARK: - Navigation

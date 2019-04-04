@@ -116,11 +116,15 @@ class Cache {
     }
     
     func addImage(id:String, image:UIImage?){
-        imageData[id] = image
+        if let i = image {
+            imageData[id] = i
+        }
     }
     
     func addProfilePic(id:String, image:UIImage?){
-        profilePicData[id] = image
+        if let i = image {
+            profilePicData[id] = i
+        }
     }
     
     private func updateCore() {

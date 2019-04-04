@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1745B70222557E6800DDFB34 /* AddMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1745B70122557E6800DDFB34 /* AddMembersViewController.swift */; };
 		17A35F8C2254022200C2362D /* GroupChatSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F8B2254022200C2362D /* GroupChatSettingsViewController.swift */; };
 		17A35F8F225402A900C2362D /* GroupChatTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17A35F8D225402A900C2362D /* GroupChatTableViewCell.xib */; };
 		17A35F90225402A900C2362D /* GroupChatTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F8E225402A900C2362D /* GroupChatTableViewCell.swift */; };
@@ -66,6 +67,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1745B70122557E6800DDFB34 /* AddMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMembersViewController.swift; sourceTree = "<group>"; };
 		17A35F8B2254022200C2362D /* GroupChatSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChatSettingsViewController.swift; sourceTree = "<group>"; };
 		17A35F8D225402A900C2362D /* GroupChatTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = GroupChatTableViewCell.xib; path = MeMe/Controllers/GroupChatTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		17A35F8E225402A900C2362D /* GroupChatTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroupChatTableViewCell.swift; path = MeMe/Controllers/GroupChatTableViewCell.swift; sourceTree = SOURCE_ROOT; };
@@ -162,6 +164,7 @@
 				6037F703224AD13F000D0E57 /* GalleryViewController.swift */,
 				6037F705224AD165000D0E57 /* EditMemeViewController.swift */,
 				17A35F8B2254022200C2362D /* GroupChatSettingsViewController.swift */,
+				1745B70122557E6800DDFB34 /* AddMembersViewController.swift */,
 				17A35F91225403B300C2362D /* GroupChatViewController.swift */,
 				17A35F952254185600C2362D /* PostViewController.swift */,
 				17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */,
@@ -460,6 +463,7 @@
 				17A35F9D2254193500C2362D /* User.swift in Sources */,
 				3B860CD52252C3E800831C41 /* MeMe.xcdatamodeld in Sources */,
 				17A35FB922542FE000C2362D /* NavigationView.swift in Sources */,
+				1745B70222557E6800DDFB34 /* AddMembersViewController.swift in Sources */,
 				17A35F9F2254194100C2362D /* Post.swift in Sources */,
 				60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */,
 				17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */,
