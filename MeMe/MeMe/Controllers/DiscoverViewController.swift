@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DiscoverViewController: UIViewController, NewMemeDelegate {
+class DiscoverViewController: TabViewController, NewMemeDelegate {
     @IBOutlet weak var feedView: DiscoverView!
     
     override func viewDidLoad() {
@@ -18,9 +18,7 @@ class DiscoverViewController: UIViewController, NewMemeDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if feedView.loaded {
-            feedView.getPosts()
-        }
+        feedView.reload()
     }
     
     func addMeme(post: FeedCellData) {
@@ -33,6 +31,11 @@ class DiscoverViewController: UIViewController, NewMemeDelegate {
             let dest = destinationNavigationController.topViewController as! GalleryViewController
             dest.delegate = self
         }
+    }
+    
+    override func update() {
+        feedView.reload()
+        feedView.scrollToTop()
     }
     
 }

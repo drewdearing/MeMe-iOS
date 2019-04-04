@@ -44,4 +44,9 @@ class DiscoverView: FeedView {
         }
     }
     
+    func scrollToTop() {
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+    }
+    
 }

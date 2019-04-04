@@ -240,10 +240,10 @@
             </objects>
             <point key="canvasLocation" x="1043" y="1033"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Main View Controller-->
         <scene sceneID="Q8U-d3-GkB">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="8Pr-Dg-yl1" sceneMemberID="viewController">
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="8Pr-Dg-yl1" customClass="MainViewController" customModule="MeMe" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="VDG-Xb-NQ0">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
