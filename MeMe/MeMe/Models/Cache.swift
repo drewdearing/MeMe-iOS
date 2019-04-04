@@ -162,6 +162,8 @@ class Cache {
             newCell.username = post.username
             newCell.feed = feed
             newCell.seconds = Int64(post.timestamp._seconds)
+            newCell.upvoted = post.upvoted
+            newCell.downvoted = post.downvoted
             return newCell
         }
         return nil

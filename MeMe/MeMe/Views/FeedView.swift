@@ -25,6 +25,8 @@ struct FeedCellData: Codable {
     let upvotes: Int
     let downvotes: Int
     let timestamp: Timestamp
+    let upvoted: Bool
+    let downvoted: Bool
 }
 
 struct Timestamp: Codable {
@@ -34,12 +36,16 @@ struct Timestamp: Codable {
         let currentTime = NSDate()
         self._seconds = Int(currentTime.timeIntervalSince1970)
     }
+    
+    init(s:Int){
+        self._seconds = s
+    }
 }
 
 let appDelegate = UIApplication.shared.delegate as? AppDelegate
 let cache = Cache.get()
 
-class FeedView: UIView, UITableViewDelegate, UITableViewDataSource {
+class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDelegate {
 
     var postData:[String:FeedCell] = [:]
     var data:[FeedCell] = []
@@ -55,57 +61,8 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
         let feedCell = data[indexPath.row]
-        cell.memePic.image = nil
-        cell.profilePic.image = nil
-        cell.cellTitle.text = feedCell.username
-        cell.downVoteCounter.text = String(feedCell.downvotes)
-        cell.descriptionLabel.text = feedCell.desc
-        cell.upVoteCounter.text = String(feedCell.upvotes)
-        cell.memeURL = feedCell.imageURL
-        cell.uid = feedCell.uid
-        cell.postID = feedCell.post
-        cell.profileURL = feedCell.profilePicURL
-        cell.selectionStyle = .none
-        
-        DispatchQueue.global(qos: .background).async {
-            if let memePic = cache.getImage(id: feedCell.post) {
-                DispatchQueue.main.async {
-                    cell.memePic.image = memePic
-                }
-            }
-            else{
-                if cell.memeURL != nil {
-                    let url = URL(string: cell.memeURL!)
-                    let data = try? Data(contentsOf: url!)
-                    if let imgData = data {
-                        let image = UIImage(data:imgData)
-                        DispatchQueue.main.async {
-                            cell.memePic.image = image
-                        }
-                        cache.addImage(id: feedCell.post, image: image)
-                    }
-                }
-            }
-            if let profilePic = cache.getImage(id: feedCell.uid) {
-                DispatchQueue.main.async {
-                    cell.profilePic.image = profilePic
-                }
-            }
-            else{
-                if cell.profileURL != nil {
-                    let url = URL(string: cell.profileURL!)
-                    let data = try? Data(contentsOf: url!)
-                    if let imgData = data {
-                        let image = UIImage(data:imgData)
-                        DispatchQueue.main.async {
-                            cell.profilePic.image = image
-                        }
-                        cache.addProfilePic(id: feedCell.uid, image: image)
-                    }
-                }
-            }
-        }
-        
+        cell.fill(feedCell: feedCell)
+        cell.delegate = self
         return cell
     }
     
@@ -175,10 +132,12 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func addPost(post: FeedCellData) {
+    func addPost(post: FeedCellData, feed:Bool) {
         if let cell = cache.addPost(data: post, feed: feed){
-            postData[cell.post] = cell
-            update()
+            if !self.feed || feed {
+                postData[cell.post] = cell
+                update()
+            }
         }
     }
     

@@ -21,8 +21,8 @@ class DiscoverViewController: TabViewController, NewMemeDelegate {
         feedView.reload()
     }
     
-    func addMeme(post: FeedCellData) {
-        feedView.addPost(post: post)
+    func addMeme(post: FeedCellData, feed:Bool) {
+        feedView.addPost(post: post, feed:feed)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
