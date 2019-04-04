@@ -13,7 +13,8 @@ private let reuseIdentifier = "GalleryCellIdentifier"
 
 private let editMemeStoryIdentifier = "EditMemeVCID"
 
-class GalleryViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class GalleryViewController: UIViewController, UICollectionViewDataSource,
+    UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     @IBOutlet weak var galleryCollectionView: UICollectionView!
     private var images: [UIImage] = []

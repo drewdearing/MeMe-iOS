@@ -10,30 +10,37 @@ import UIKit
 
 private let groupChatSettingsStoryIdentifier = "GroupChatSettingsVCID"
 
-class GroupChatViewController: UIViewController {
+private let cellReuseIdentifier = "MessageTableViewCell"
+
+class GroupChatViewController: UIViewController,
+    UITableViewDelegate, UITableViewDataSource{
     
+    @IBOutlet var messagesTableView: UITableView!
     
     var groupChat: GroupChat!
+    var messages: [Message] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        setNavigationBar()
     }
     
-    private func setNavigationBar() {
-        self.navigationItem.title = groupChat.groupChatName
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(GroupChatViewController.editGroupChat))
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let messageCell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath as IndexPath) as! MessageTableViewCell
         
-    }
-    
-    @objc func editGroupChat() {
-        let mainStoryBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        if let groupChatSettingsVCDestination = mainStoryBoard.instantiateViewController(withIdentifier: groupChatSettingsStoryIdentifier) as? GroupChatSettingsViewController {
-            groupChatSettingsVCDestination.groupChat = groupChat
-            self.navigationController?.pushViewController(groupChatSettingsVCDestination, animated: true)
-        }
+        let row = indexPath.row
+        
+        messageCell.disableReceiver()
+//        messageCell.senderMessageLabel.text = message.message
+//        messageCell.senderMemeImageView.isHidden = true
+        
+        return messageCell
+        
     }
     
 }

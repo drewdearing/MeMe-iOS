@@ -78,7 +78,6 @@
                             <constraint firstItem="6PY-lA-kUg" firstAttribute="top" secondItem="ue8-GW-7an" secondAttribute="bottom" constant="8" id="LUg-f6-SDU"/>
                             <constraint firstItem="ue8-GW-7an" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="32" id="ZSz-tt-akG"/>
                             <constraint firstItem="h72-sA-OGC" firstAttribute="top" secondItem="ue8-GW-7an" secondAttribute="bottom" constant="8" id="Zmc-51-RnU"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="h72-sA-OGC" secondAttribute="bottom" constant="313.32999999999998" id="eIQ-jG-mCe"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ue8-GW-7an" secondAttribute="trailing" constant="32" id="fdj-2h-U8Y"/>
                             <constraint firstItem="ue8-GW-7an" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ih6-7j-gWi"/>
                             <constraint firstItem="ue8-GW-7an" firstAttribute="top" secondItem="oCh-6l-5Ip" secondAttribute="bottom" constant="8" id="jz4-3J-7TM"/>
@@ -269,6 +268,6 @@
         <image name="user_male" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="cPc-iF-BUM"/>
+        <segue reference="ECo-sq-gZD"/>
     </inferredMetricsTieBreakers>
 </document>

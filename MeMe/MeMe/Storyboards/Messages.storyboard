@@ -13,11 +13,58 @@
         <!--Messages-->
         <scene sceneID="gf3-8g-Wds">
             <objects>
-                <viewController id="RrJ-0C-1cs" sceneMemberID="viewController">
+                <viewController id="RrJ-0C-1cs" customClass="GroupChatsViewController" customModule="MeMe" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="TcO-Ys-hK1">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="WlT-mb-muc">
+                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="GroupChatTableViewCell" id="IDM-4Q-Hp2" customClass="GroupChatTableViewCell" customModule="MeMe" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="IDM-4Q-Hp2" id="tBB-B4-DJW">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="252" text="GroupChatName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kE9-IG-YN2">
+                                                    <rect key="frame" x="23" y="11.5" width="295" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="###" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4CB-sJ-Fpt">
+                                                    <rect key="frame" x="334" y="11" width="33" height="22"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="kE9-IG-YN2" firstAttribute="leading" secondItem="tBB-B4-DJW" secondAttribute="leadingMargin" constant="8" id="BAB-Vs-yf0"/>
+                                                <constraint firstAttribute="trailing" secondItem="4CB-sJ-Fpt" secondAttribute="trailing" constant="8" id="E9T-Mh-MwG"/>
+                                                <constraint firstItem="kE9-IG-YN2" firstAttribute="centerY" secondItem="tBB-B4-DJW" secondAttribute="centerY" id="VKc-Qx-Spb"/>
+                                                <constraint firstItem="4CB-sJ-Fpt" firstAttribute="leading" secondItem="kE9-IG-YN2" secondAttribute="trailing" constant="16" id="cA2-ak-opn"/>
+                                                <constraint firstItem="4CB-sJ-Fpt" firstAttribute="centerY" secondItem="tBB-B4-DJW" secondAttribute="centerY" id="ntT-kB-c89"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="groupNameLabel" destination="kE9-IG-YN2" id="NS8-qb-Jkh"/>
+                                            <outlet property="unreadMessagesLabel" destination="4CB-sJ-Fpt" id="ImG-pP-nQj"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="wm8-TE-93a" firstAttribute="trailing" secondItem="WlT-mb-muc" secondAttribute="trailing" id="DoS-oG-wyI"/>
+                            <constraint firstItem="WlT-mb-muc" firstAttribute="top" secondItem="wm8-TE-93a" secondAttribute="top" id="NPt-u3-kXB"/>
+                            <constraint firstItem="WlT-mb-muc" firstAttribute="leading" secondItem="wm8-TE-93a" secondAttribute="leading" id="h4l-k4-xWW"/>
+                            <constraint firstItem="wm8-TE-93a" firstAttribute="bottom" secondItem="WlT-mb-muc" secondAttribute="bottom" id="wFb-7v-xcs"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="wm8-TE-93a"/>
                     </view>
                     <navigationItem key="navigationItem" title="Messages" id="zBj-V2-pyb">
@@ -27,6 +74,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="groupChatsTableView" destination="WlT-mb-muc" id="DU2-Tj-8EM"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UYT-uv-gag" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
