@@ -78,7 +78,7 @@
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sSA-0m-QTx">
                                 <rect key="frame" x="327" y="42.5" width="41" height="30"/>
-                                <state key="normal" image="settings"/>
+                                <state key="normal" image="edit"/>
                                 <connections>
                                     <action selector="editButton:" destination="kUP-gb-nUb" eventType="touchUpInside" id="Akt-Us-DZr"/>
                                 </connections>
@@ -231,6 +231,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="settings" width="30" height="30"/>
+        <image name="edit" width="30" height="30"/>
     </resources>
 </document>

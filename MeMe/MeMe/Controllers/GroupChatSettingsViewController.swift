@@ -80,8 +80,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         if(isEdit) {
             saveName()
         } else {
-            //editButton.setImage(, for: .normal)
-            editButton.setImage(#imageLiteral(resourceName: "home"), for: .normal)
+            editButton.setImage(#imageLiteral(resourceName: "checkmark"), for: .normal)
             groupChatNameLabel.isHidden = true
             groupChatNameTextField.isHidden = false
             groupChatNameTextField.textInputView.isUserInteractionEnabled = true
@@ -98,7 +97,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     func saveName() {
         if let name = groupChatNameTextField.text {
             isEdit = false
-            editButton.setImage(#imageLiteral(resourceName: "settings"), for: .normal)
+            editButton.setImage(#imageLiteral(resourceName: "edit"), for: .normal)
             groupChatNameLabel.text = name
             groupChatNameLabel.isHidden = false
             groupChatNameTextField.clearsOnBeginEditing = true
