@@ -76,6 +76,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="groupChatsTableView" destination="WlT-mb-muc" id="DU2-Tj-8EM"/>
+                        <segue destination="x1G-Oj-f5W" kind="show" identifier="ChatSelectSegue" id="H1L-8D-Ujm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UYT-uv-gag" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -89,6 +90,14 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3cv-Bm-BR7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2134" y="-172"/>
+        </scene>
+        <!--Chat-->
+        <scene sceneID="t9Q-Zn-Qih">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Chat" id="x1G-Oj-f5W" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vMl-ti-lD5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2134" y="-30"/>
         </scene>
         <!--Messages-->
         <scene sceneID="Hfu-Bj-sMY">

@@ -92,9 +92,18 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kly-ua-yLu">
+                                <rect key="frame" x="109" y="95" width="49" height="29"/>
+                                <state key="normal" image="plus-filled"/>
+                                <connections>
+                                    <segue destination="GXr-JT-28z" kind="show" id="AMW-NW-hyM"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="Kly-ua-yLu" firstAttribute="leading" secondItem="hcR-Mp-wE8" secondAttribute="trailing" id="3E5-Ob-IvM"/>
+                            <constraint firstItem="Kly-ua-yLu" firstAttribute="top" secondItem="xOV-Tq-hpn" secondAttribute="bottom" constant="16" id="7r4-Do-bru"/>
                             <constraint firstItem="aUp-Gp-Hfc" firstAttribute="top" secondItem="hcR-Mp-wE8" secondAttribute="bottom" constant="8" id="J4v-OR-dXK"/>
                             <constraint firstItem="VAR-FJ-auA" firstAttribute="leading" secondItem="aZ9-YW-ZQN" secondAttribute="leading" constant="16" id="MbN-ts-kN3"/>
                             <constraint firstItem="VAR-FJ-auA" firstAttribute="centerY" secondItem="sSA-0m-QTx" secondAttribute="centerY" id="OrI-Wo-KmC"/>
@@ -108,16 +117,19 @@
                             <constraint firstItem="sSA-0m-QTx" firstAttribute="leading" secondItem="VAR-FJ-auA" secondAttribute="trailing" constant="8" id="gRI-1l-xbo"/>
                             <constraint firstItem="xOV-Tq-hpn" firstAttribute="leading" secondItem="aZ9-YW-ZQN" secondAttribute="leading" constant="16" id="jZj-Kp-gGS"/>
                             <constraint firstItem="hcR-Mp-wE8" firstAttribute="top" secondItem="VAR-FJ-auA" secondAttribute="bottom" constant="16" id="l1D-Lh-bnV"/>
+                            <constraint firstItem="Kly-ua-yLu" firstAttribute="centerY" secondItem="hcR-Mp-wE8" secondAttribute="centerY" id="qFy-Ta-mch"/>
+                            <constraint firstItem="aUp-Gp-Hfc" firstAttribute="top" secondItem="Kly-ua-yLu" secondAttribute="bottom" constant="8" id="sV8-0c-gTu"/>
                             <constraint firstItem="xOV-Tq-hpn" firstAttribute="top" secondItem="aZ9-YW-ZQN" secondAttribute="top" constant="16" id="tPg-7h-OTX"/>
                             <constraint firstItem="VAR-FJ-auA" firstAttribute="top" secondItem="aZ9-YW-ZQN" secondAttribute="top" constant="16" id="txf-fs-zFp"/>
+                            <constraint firstItem="aZ9-YW-ZQN" firstAttribute="trailing" secondItem="Kly-ua-yLu" secondAttribute="trailing" constant="217" id="wwE-OH-Ett"/>
                             <constraint firstItem="aUp-Gp-Hfc" firstAttribute="leading" secondItem="aZ9-YW-ZQN" secondAttribute="leading" id="xx9-Cn-B80"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="aZ9-YW-ZQN"/>
                     </view>
                     <navigationItem key="navigationItem" title="Group Settings" id="ZeY-fu-o02">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="Eqe-XN-Udz">
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="Eqe-XN-Udz">
                             <connections>
-                                <segue destination="GXr-JT-28z" kind="show" id="KEs-u8-dbV"/>
+                                <action selector="saveButton:" destination="kUP-gb-nUb" id="hck-OC-yaf"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -169,10 +181,13 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="URw-cw-D1v">
-                                                    <rect key="frame" x="322" y="19" width="30" height="30"/>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u17-z8-c4l">
+                                                    <rect key="frame" x="311" y="18" width="49" height="29"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <state key="normal" title="Add"/>
+                                                    <state key="normal" image="plus-filled"/>
+                                                    <connections>
+                                                        <action selector="addButton:" destination="GXr-JT-28z" eventType="touchUpInside" id="Ga6-Ro-4Kw"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -232,5 +247,6 @@
     </scenes>
     <resources>
         <image name="edit" width="30" height="30"/>
+        <image name="plus-filled" width="19" height="19"/>
     </resources>
 </document>

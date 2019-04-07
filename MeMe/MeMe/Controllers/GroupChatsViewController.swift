@@ -13,12 +13,13 @@ private let cellIdentifier = "GroupChatTableViewCell"
 class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet var groupChatsTableView: UITableView!
-    private var groupChats: [GroupChat] = []
+    private var groupChats: [GroupChat] = [GroupChat(id: "1sF1dOFQTu3xSYQsWl4Y", groupChatName: "sup")]
+    var selectedChat:GroupChat?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        groupChatsTableView.delegate = self
+        groupChatsTableView.dataSource = self
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -36,6 +37,19 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
         groupChatCell?.unreadMessagesLabel.text = String(groupChat.unreadMessages)
         
         return groupChatCell!
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        groupChatsTableView.deselectRow(at: indexPath, animated: true)
+        selectedChat = groupChats[indexPath.row]
+        performSegue(withIdentifier: "ChatSelectSegue", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ChatSelectSegue" {
+            let dest = segue.destination as! ChatViewController
+            dest.chat = selectedChat
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

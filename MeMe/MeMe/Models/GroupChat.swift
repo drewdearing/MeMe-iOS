@@ -11,9 +11,11 @@ import Foundation
 class GroupChat {
     var groupChatName: String!
     var unreadMessages: Int!
+    var groupId:String!
     
-    init(groupChatName: String, unreadMessages: Int) {
+    init(id:String, groupChatName: String) {
+        self.groupId = id
         self.groupChatName = groupChatName
-        self.unreadMessages = unreadMessages
+        self.unreadMessages = 0
     }
 }

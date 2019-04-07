@@ -9,10 +9,7 @@
 import UIKit
 
 private let currentMemebersTableViewIdentifier = "CurrentMemebersTableView"
-private let potentialMembersTableViewIdentifier = "PotentialMembersTableView"
-
 private let currentMemebersCellIdentifier = ""
-private let potentialMembersCellIdentifier = ""
 
 class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -28,31 +25,11 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     
     @IBOutlet weak var searchMemberBar: UISearchBar!
     
-    
-    //@IBOutlet weak var potentialMembersTableView: UITableView!
-    //private var potentialMembers: [User] = []
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         currentMemebersTableView.delegate = self
         currentMemebersTableView.dataSource = self
-        
-        //potentialMembersTableView.delegate = self
-        //potentialMembersTableView.dataSource = self
-        
-        //setNavigationBarItems()
-    }
-    
-    private func setNavigationBarItems() {
-        self.navigationItem.title = "Group Settings"
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(GroupChatSettingsViewController.saveGroupChatSettings))
-    }
-    
-    @objc func saveGroupChatSettings() {
-        // Save Groupchat settings and got to the new Group Chat
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -107,15 +84,9 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             groupChatNameTextField.resignFirstResponder()
         }
     }
+
     
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
+    @IBAction func saveButton(_ sender: Any) {
+        
+    }
 }

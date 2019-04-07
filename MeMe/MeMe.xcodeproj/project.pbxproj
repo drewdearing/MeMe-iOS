@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1745B70222557E6800DDFB34 /* AddMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1745B70122557E6800DDFB34 /* AddMembersViewController.swift */; };
+		177FB7A622598529002B7588 /* Chat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 177FB7A522598529002B7588 /* Chat.storyboard */; };
+		177FB7A822598576002B7588 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177FB7A722598576002B7588 /* ChatViewController.swift */; };
 		17A35F8C2254022200C2362D /* GroupChatSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F8B2254022200C2362D /* GroupChatSettingsViewController.swift */; };
 		17A35F8F225402A900C2362D /* GroupChatTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17A35F8D225402A900C2362D /* GroupChatTableViewCell.xib */; };
 		17A35F90225402A900C2362D /* GroupChatTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F8E225402A900C2362D /* GroupChatTableViewCell.swift */; };
@@ -73,6 +75,8 @@
 
 /* Begin PBXFileReference section */
 		1745B70122557E6800DDFB34 /* AddMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMembersViewController.swift; sourceTree = "<group>"; };
+		177FB7A522598529002B7588 /* Chat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chat.storyboard; sourceTree = "<group>"; };
+		177FB7A722598576002B7588 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		17A35F8B2254022200C2362D /* GroupChatSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChatSettingsViewController.swift; sourceTree = "<group>"; };
 		17A35F8D225402A900C2362D /* GroupChatTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = GroupChatTableViewCell.xib; path = MeMe/Controllers/GroupChatTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		17A35F8E225402A900C2362D /* GroupChatTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroupChatTableViewCell.swift; path = MeMe/Controllers/GroupChatTableViewCell.swift; sourceTree = SOURCE_ROOT; };
@@ -182,6 +186,7 @@
 				609987A52255E15D002EFA2F /* ProfileViewController.swift */,
 				17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */,
 				3B143718225572D100331A5B /* TabViewController.swift */,
+				177FB7A722598576002B7588 /* ChatViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -242,6 +247,7 @@
 				3BEC942322547489003AE517 /* Messages.storyboard */,
 				3BEC942522547492003AE517 /* Profile.storyboard */,
 				3BEC942722547B85003AE517 /* NewMeme.storyboard */,
+				177FB7A522598529002B7588 /* Chat.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -371,6 +377,7 @@
 				17A35FB72254292500C2362D /* GroupSettingsView.xib in Resources */,
 				3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */,
 				3BEC942222547470003AE517 /* Discover.storyboard in Resources */,
+				177FB7A622598529002B7588 /* Chat.storyboard in Resources */,
 				60430CD62231CC650033C92F /* LaunchScreen.storyboard in Resources */,
 				3BEC942822547B85003AE517 /* NewMeme.storyboard in Resources */,
 				3BEC942622547492003AE517 /* Profile.storyboard in Resources */,
@@ -406,6 +413,8 @@
 				"${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/MessageInputBar/MessageInputBar.framework",
+				"${BUILT_PRODUCTS_DIR}/MessageKit/MessageKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
@@ -420,6 +429,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl_grpc.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MessageInputBar.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MessageKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
@@ -483,6 +494,7 @@
 				17A35FB922542FE000C2362D /* NavigationView.swift in Sources */,
 				1745B70222557E6800DDFB34 /* AddMembersViewController.swift in Sources */,
 				17A35F9F2254194100C2362D /* Post.swift in Sources */,
+				177FB7A822598576002B7588 /* ChatViewController.swift in Sources */,
 				60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */,
 				17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */,
 				3BB8349522532FB600DE1D01 /* FeedView.swift in Sources */,

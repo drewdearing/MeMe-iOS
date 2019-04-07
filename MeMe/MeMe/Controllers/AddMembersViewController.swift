@@ -35,4 +35,6 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
         return cell!
     }
 
+    @IBAction func addButton(_ sender: Any) {
+    }
 }
