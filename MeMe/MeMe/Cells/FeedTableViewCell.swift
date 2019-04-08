@@ -89,7 +89,7 @@ class FeedTableViewCell: UITableViewCell {
                     cache.addImage(id: self.postID, image: image)
                 }
             }
-            if let profilePic = cache.getImage(id: feedCell.uid) {
+            if let profilePic = cache.getProfilePic(uid: feedCell.uid) {
                 DispatchQueue.main.async {
                     self.profilePic.image = profilePic
                 }

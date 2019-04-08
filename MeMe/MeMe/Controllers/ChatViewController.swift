@@ -35,11 +35,6 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
             }
         }
         
-        if let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout {
-            layout.textMessageSizeCalculator.outgoingAvatarSize = .zero
-            layout.textMessageSizeCalculator.incomingAvatarSize = .zero
-        }
-        
         messageInputBar.delegate = self
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
@@ -145,6 +140,67 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                 .foregroundColor: UIColor(white: 0.3, alpha: 1)
             ]
         )
+    }
+    
+    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        /* check if avatar is in local cache*/
+        if let avatar = cache.getProfilePic(uid: message.sender.id) {
+            avatarView.image = avatar
+        } else {
+            db.collection("users").document(message.sender.id).getDocument { (userDoc, err) in
+                if let doc = userDoc{
+                    if doc.exists {
+                        let profileURL = doc.data()!["profilePicURL"] as! String
+                        let url = URL(string: profileURL)
+                        let data = try? Data(contentsOf: url!)
+                        if let imgData = data {
+                            let image = UIImage(data:imgData)
+                            DispatchQueue.main.async {
+                                avatarView.image = image
+                            }
+                            cache.addProfilePic(id: message.sender.id, image: image)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath,
+                             in messagesCollectionView: MessagesCollectionView) -> Bool {
+        return false
+    }
+    
+    func footerViewSize(for message: MessageType, at indexPath: IndexPath,
+                        in messagesCollectionView: MessagesCollectionView) -> CGSize {
+        return CGSize(width: 0, height: 8)
+    }
+    
+    func heightForLocation(message: MessageType, at indexPath: IndexPath,
+                           with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 0
+    }
+    
+    func messageTopLabelAttributedText(
+        for message: MessageType,
+        at indexPath: IndexPath) -> NSAttributedString? {
+        
+        let name = message.sender.displayName
+        return NSAttributedString(
+            string: name,
+            attributes: [
+                .font: UIFont.preferredFont(forTextStyle: .caption1),
+                .foregroundColor: UIColor(white: 0.3, alpha: 1)
+            ]
+        )
+    }
+    
+    func messageTopLabelHeight(
+        for message: MessageType,
+        at indexPath: IndexPath,
+        in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        
+        return 12
     }
     
 }
