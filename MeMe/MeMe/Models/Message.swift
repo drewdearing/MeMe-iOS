@@ -70,4 +70,12 @@ struct Message: MessageType {
         self.messageId = id
         sentDate = NSDate() as Date
     }
+    
+    init(id:String, content:String = "", image:MessageImage? = nil, sender:Sender, date: Date) {
+        self.image = image
+        self.content = content
+        self.sender = sender
+        self.messageId = id
+        sentDate = date
+    }
 }

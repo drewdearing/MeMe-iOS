@@ -102,11 +102,12 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
             var image:MessageImage?
             let uid = data["uid"] as! String
             let name = data["name"] as! String
+            let date = data["sent"] as! Firebase.Timestamp
             let sender = Sender(id: uid, displayName: name)
             if isImage {
                 image = MessageImage(url: imageURL)
             }
-            let message = Message(id: id, content: content, image: image, sender: sender)
+            let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
             switch change.type {
             case .added:
                 insertMessage(message)
