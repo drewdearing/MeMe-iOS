@@ -19,26 +19,17 @@ class MessageImage: MediaItem {
     init(url:String){
         self.url = URL(string: url)
         self.placeholderImage = MessageImage.placeholderImage
-        self.size = placeholderImage.size
-    }
-    
-    func get(completion: (UIImage) -> (Void)){
-        if let img = image {
-            completion(img)
+        
+        let data = try? Data(contentsOf: self.url!)
+        if let imgData = data {
+            let download = UIImage(data:imgData)
+            self.image = download
+            self.size = self.image!.size
         }
         else{
-            let data = try? Data(contentsOf: url!)
-            if let imgData = data {
-                let image = UIImage(data:imgData)
-                self.size = image!.size
-                completion(image!)
-            }
-            else{
-                completion(MessageImage.placeholderImage)
-            }
+            self.size = self.placeholderImage.size
         }
     }
-    
 }
 
 struct Message: MessageType {

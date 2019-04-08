@@ -10,6 +10,7 @@ import UIKit
 import MessageKit
 import MessageInputBar
 import Firebase
+import Photos
 
 class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate {
     var chat:GroupChat!
@@ -142,6 +143,11 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         )
     }
     
+    func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
+        let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
+        return .bubbleTail(corner, .curved)
+    }
+    
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         /* check if avatar is in local cache*/
         if let avatar = cache.getProfilePic(uid: message.sender.id) {
@@ -201,6 +207,26 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         
         return 12
+    }
+    
+    func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        let message = message as! Message
+        var image = message.image
+        if let img = image?.image {
+            imageView.image = img
+        }
+        else{
+            let data = try? Data(contentsOf: image!.url!)
+            if let imgData = data {
+                let download = UIImage(data:imgData)
+                image!.image = download
+                image!.size = (download?.size)!
+                imageView.image = download
+            }
+            else{
+                imageView.image = image!.placeholderImage
+            }
+        }
     }
     
 }
