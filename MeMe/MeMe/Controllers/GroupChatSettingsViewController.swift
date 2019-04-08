@@ -12,7 +12,7 @@ import Firebase
 private let currentMemebersTableViewIdentifier = "CurrentMemebersTableView"
 private let currentMemebersCellIdentifier = "Cell"
 
-class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, addMembersDelegate {
     
     var groupChat: GroupChat!
     
@@ -25,6 +25,8 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     private var isEdit = false
     
     @IBOutlet weak var searchMemberBar: UISearchBar!
+    @IBOutlet weak var saveLabel: UIBarButtonItem!
+    @IBOutlet weak var vcTitle: UINavigationItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +53,11 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         let row = indexPath.row
         currentMembers.remove(at: row)
         currentMemebersTableView.reloadData()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "addMembersSegue") {
+        }
     }
     
     @IBAction func editButton(_ sender: Any) {
@@ -147,6 +154,16 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                     print("error bitch")
                 }
             }
+            saveLabel.isEnabled = false
+            saveLabel.tintColor = UIColor.clear
+            vcTitle.title = groupChatNameTextField.text
         }
+    }
+    
+    func addMember(name: String) {
+        print("HELLO")
+        print(currentMembers)
+        currentMembers.append(name)
+        currentMemebersTableView.reloadData()
     }
 }

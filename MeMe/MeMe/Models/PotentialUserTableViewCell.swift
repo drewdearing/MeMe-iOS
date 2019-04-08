@@ -8,10 +8,16 @@
 
 import UIKit
 
+protocol addMembersDelegate {
+    func addMember(name: String)
+}
+
 class PotentialUserTableViewCell: UITableViewCell {
     
     @IBOutlet weak var userProfileImageView: UIImageView!
     @IBOutlet weak var usernameLable: UILabel!
+    @IBOutlet weak var add: UIButton!
+    var delegate: addMembersDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -23,5 +29,11 @@ class PotentialUserTableViewCell: UITableViewCell {
         
         // Configure the view for the selected state
     }
-    
+
+    @IBAction func addButton(_ sender: Any) {
+        add.setImage(#imageLiteral(resourceName: "checkmark"), for: .normal)
+        if(delegate != nil) {
+            delegate?.addMember(name: usernameLable.text!)
+        }
+    }
 }

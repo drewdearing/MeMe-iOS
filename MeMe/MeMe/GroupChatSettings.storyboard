@@ -96,7 +96,7 @@
                                 <rect key="frame" x="319" y="95" width="49" height="29"/>
                                 <state key="normal" image="plus-filled"/>
                                 <connections>
-                                    <segue destination="GXr-JT-28z" kind="show" id="Mk2-9v-fWV"/>
+                                    <segue destination="GXr-JT-28z" kind="show" identifier="addMembersSegue" id="Mk2-9v-fWV"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -136,7 +136,9 @@
                         <outlet property="groupChatNameLabel" destination="VAR-FJ-auA" id="KIv-HB-I3N"/>
                         <outlet property="groupChatNameTextField" destination="xOV-Tq-hpn" id="dww-xX-vBt"/>
                         <outlet property="potentialMembersTableView" destination="p2N-lI-sgo" id="pcg-SJ-JSe"/>
+                        <outlet property="saveLabel" destination="Eqe-XN-Udz" id="1Og-sJ-XrZ"/>
                         <outlet property="searchMemberBar" destination="ou7-Hj-Bpo" id="0Rd-cn-nsq"/>
+                        <outlet property="vcTitle" destination="ZeY-fu-o02" id="Skh-vI-7sU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GyS-Xb-Fup" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -182,23 +184,31 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u17-z8-c4l">
-                                                    <rect key="frame" x="311" y="18" width="49" height="29"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BNh-pr-gjo">
+                                                    <rect key="frame" x="328" y="23.5" width="19" height="21"/>
                                                     <state key="normal" image="plus-filled"/>
+                                                    <connections>
+                                                        <action selector="addButton:" destination="S1m-TK-fe9" eventType="touchUpInside" id="UTO-nS-3AG"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="wDR-RQ-l5U" firstAttribute="top" secondItem="47k-KM-q5a" secondAttribute="topMargin" constant="10.5" id="4hN-Mt-Nyt"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="wDR-RQ-l5U" secondAttribute="bottom" constant="10.5" id="6kH-2W-h7L"/>
                                                 <constraint firstAttribute="bottom" secondItem="pOd-Oe-PRL" secondAttribute="bottom" constant="8" id="AwU-La-DlS"/>
+                                                <constraint firstItem="BNh-pr-gjo" firstAttribute="leading" secondItem="pOd-Oe-PRL" secondAttribute="trailing" constant="272" id="BXp-jW-RGn"/>
+                                                <constraint firstItem="BNh-pr-gjo" firstAttribute="top" secondItem="47k-KM-q5a" secondAttribute="topMargin" constant="12" id="FyN-Xt-Kvo"/>
+                                                <constraint firstItem="BNh-pr-gjo" firstAttribute="centerY" secondItem="wDR-RQ-l5U" secondAttribute="centerY" id="JVk-6g-WVQ"/>
                                                 <constraint firstItem="pOd-Oe-PRL" firstAttribute="leading" secondItem="47k-KM-q5a" secondAttribute="leading" constant="8" id="JeT-ht-TU9"/>
                                                 <constraint firstItem="wDR-RQ-l5U" firstAttribute="leading" secondItem="pOd-Oe-PRL" secondAttribute="trailing" constant="8" id="LMe-pH-yPt"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="wDR-RQ-l5U" secondAttribute="trailing" id="PJ5-dR-uFa"/>
                                                 <constraint firstItem="pOd-Oe-PRL" firstAttribute="top" secondItem="47k-KM-q5a" secondAttribute="top" constant="8" id="XXH-2y-KvJ"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="BNh-pr-gjo" secondAttribute="bottom" constant="8" id="acz-bz-3Fd"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="BNh-pr-gjo" secondAttribute="trailing" constant="13" id="laE-Uf-zB4"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="add" destination="BNh-pr-gjo" id="9gw-sV-omh"/>
                                             <outlet property="userProfileImageView" destination="pOd-Oe-PRL" id="l16-4B-yH4"/>
                                             <outlet property="usernameLable" destination="wDR-RQ-l5U" id="3M0-P0-co3"/>
                                         </connections>

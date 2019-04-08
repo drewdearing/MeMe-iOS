@@ -12,12 +12,12 @@ import SVProgressHUD
 
 class AddMembersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
+    @IBOutlet weak var tableViewCell: PotentialUserTableViewCell!
     @IBOutlet weak var potentialMembersTableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
     private var potentialMembers: [Container] = []
     private var currentPotentialMembers: [Container] = []
-    
     
     var loaded = false
     override func viewDidLoad() {
@@ -112,5 +112,4 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         
     }
-    
 }
