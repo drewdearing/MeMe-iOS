@@ -24,4 +24,7 @@ class CurrentUserTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    func setUsername(name : String) {
+        usernameLabel.text = name
+    }
 }

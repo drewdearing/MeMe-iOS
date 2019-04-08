@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import Firebase
 
 private let currentMemebersTableViewIdentifier = "CurrentMemebersTableView"
-private let currentMemebersCellIdentifier = ""
+private let currentMemebersCellIdentifier = "Cell"
 
 class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -20,7 +21,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     @IBOutlet weak var editButton: UIButton!
     
     @IBOutlet weak var currentMemebersTableView: UITableView!
-    private var currentMembers: [User] = []
+    private var currentMembers: [String] = []
     private var isEdit = false
     
     @IBOutlet weak var searchMemberBar: UISearchBar!
@@ -38,12 +39,11 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let currentUserCell = tableView.dequeueReusableCell(withIdentifier: currentMemebersCellIdentifier, for: indexPath as IndexPath) as? CurrentUserTableViewCell
-            
+        
         let row = indexPath.row
         let user = currentMembers[row]
-            
-        //            currentUserCell.imageView = user
-        //            currentUserCell?.usernameLabel.text = user.username
+        
+        currentUserCell?.setUsername(name: user)
         return currentUserCell!
     }
     
@@ -85,8 +85,68 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         }
     }
 
-    
-    @IBAction func saveButton(_ sender: Any) {
+    private func getMembers() {
+        let currentUser = Auth.auth().currentUser
         
+        let db = Firestore.firestore().collection("users")
+        
+        db.getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+                return
+            } else {
+                for document in querySnapshot!.documents {
+                    let temp = Firestore.firestore().collection("users").document(document.documentID).collection("groups").whereField("name", isEqualTo: "groupie")
+                    temp.getDocuments() { (nameSnapshot, err) in
+                        if let err2 = err {
+                            print("Error getting documents: \(err2)")
+                            return
+                        } else {
+                            for name in nameSnapshot!.documents {
+                                let uname = document.get("username")
+                                print (uname as! String)
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+    @IBAction func saveButton(_ sender: Any) {
+        if (groupChatNameTextField.text != "") {
+            let ref = Firestore.firestore().collection("groups").document()
+            let currentUser = Auth.auth().currentUser
+            ref.setData([
+                "name": groupChatNameTextField.text
+            ]) { err in
+                if let err = err {
+                    print("Error adding document: \(err)")
+                } else {
+                    print("Document added with ID: \(ref.documentID)")
+                }
+            }
+            
+            let ref_user = Firestore.firestore().collection("users")
+            
+            ref_user.document((currentUser?.uid)!).collection("groups").addDocument(data: [
+                "name": groupChatNameTextField.text
+            ]) { err in
+                if let err = err {
+                    print("Error adding document: \(err)")
+                } else {
+                    print("Document added")
+                }
+            }
+            ref_user.document((currentUser?.uid)!).getDocument { (document, error) in
+                if let username = document?.get("username") {
+                    self.currentMembers.removeAll()
+                    self.currentMembers.append(username as! String)
+                    self.currentMemebersTableView.reloadData()
+                }else{
+                    print("error bitch")
+                }
+            }
+        }
     }
 }
