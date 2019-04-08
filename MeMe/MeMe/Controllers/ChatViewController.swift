@@ -12,34 +12,6 @@ import MessageInputBar
 import Firebase
 
 class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate {
-    
-    func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        
-        // 1
-        guard let profile = getCurrentProfile() else {return}
-        let message = Message(id: (ref?.document().documentID)!, kind: MessageKind.text(text), sender: currentSender())
-        
-        // 2
-        save(message)
-        
-        // 3
-        inputBar.inputTextView.text = ""
-    }
-    
-    func currentSender() -> Sender {
-        let profile = getCurrentProfile()
-        return Sender(id: Auth.auth().currentUser!.uid, displayName: profile!.username)
-    }
-    
-    func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        return messages[indexPath.section]
-    }
-    
-    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-        return messages.count
-    }
-    
-    
     var chat:GroupChat!
     
     private var messages: [Message] = []
@@ -75,20 +47,14 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     }
     
     private func save(_ message: Message) {
-        
-        MessageKind.text("hj").text
-        
-        
-        
         ref?.document(message.messageId).setData([
             "id": message.messageId,
             "sent": message.sentDate,
-            "uid": message.uid,
-            "name": "yikes",
-            "kind": [
-                "type": message.kind
-            ]
-            
+            "uid": message.sender.id,
+            "name": message.sender.displayName,
+            "image": message.image != nil,
+            "imageURL": message.imageURL,
+            "content": message.content
         ]) { error in
             if let e = error {
                 print("ERROR")
@@ -129,21 +95,55 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     private func handleDocumentChange(_ change: DocumentChange) {
         if change.document.exists {
             let data = change.document.data()
-            var kind:MessageKind?
-            if let kindData = data["kind"] as? [String:String] {
-                if kindData["type"] == "text" {
-                    kind = MessageKind.text(kindData["content"]!)
-                }
+            let id = data["id"] as! String
+            let content = data["content"] as! String
+            let isImage = data["image"] as! Bool
+            let imageURL = data["imageURL"] as! String
+            var image:MessageImage?
+            let uid = data["uid"] as! String
+            let name = data["name"] as! String
+            let sender = Sender(id: uid, displayName: name)
+            if isImage {
+                image = MessageImage(url: imageURL)
             }
-            let message = Message(id: data["id"] as! String, kind: kind!, sender: Sender(id: data["uid"] as! String, displayName: data["name"] as! String))
+            let message = Message(id: id, content: content, image: image, sender: sender)
             switch change.type {
             case .added:
                 insertMessage(message)
-                
             default:
                 break
             }
         }
+    }
+    
+    func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
+        let message = Message(id: (ref?.document().documentID)!, content:text, image:nil, sender: currentSender())
+        save(message)
+        inputBar.inputTextView.text = ""
+    }
+    
+    func currentSender() -> Sender {
+        let profile = getCurrentProfile()
+        return Sender(id: Auth.auth().currentUser!.uid, displayName: profile!.username)
+    }
+    
+    func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
+        return messages[indexPath.section]
+    }
+    
+    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
+        return messages.count
+    }
+    
+    func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        let name = message.sender.displayName
+        return NSAttributedString(
+            string: name,
+            attributes: [
+                .font: UIFont.preferredFont(forTextStyle: .caption1),
+                .foregroundColor: UIColor(white: 0.3, alpha: 1)
+            ]
+        )
     }
     
 }

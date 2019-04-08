@@ -9,34 +9,63 @@
 import Foundation
 import MessageKit
 
-class Img : MediaItem {
+class MessageImage: MediaItem {
     var url: URL?
-    
     var image: UIImage?
-    
+    static var placeholderImage:UIImage = #imageLiteral(resourceName: "user_male")
     var placeholderImage: UIImage
-    
     var size: CGSize
     
+    init(url:String){
+        self.url = URL(string: url)
+        self.placeholderImage = MessageImage.placeholderImage
+        self.size = placeholderImage.size
+    }
+    
+    func get(completion: (UIImage) -> (Void)){
+        if let img = image {
+            completion(img)
+        }
+        else{
+            let data = try? Data(contentsOf: url!)
+            if let imgData = data {
+                let image = UIImage(data:imgData)
+                self.size = image!.size
+                completion(image!)
+            }
+            else{
+                completion(MessageImage.placeholderImage)
+            }
+        }
+    }
     
 }
 
 struct Message: MessageType {
-    var sender: Sender
     var messageId: String
-    var sentDate: Date
-    var content: String
-    var image: Bool
+    let content: String
+    let sentDate: Date
+    let sender: Sender
+    var image: MessageImage?
+    
     var kind: MessageKind {
-        if image {
-            return .photo(UIImage())
+        if let image = image {
+            return .photo(image)
         } else {
-        return .text(content)
+            return .text(content)
         }
     }
     
-    init(id:String, kind:MessageKind, sender:Sender) {
-        self.kind = kind
+    var imageURL:String {
+        if let image = image {
+            return (image.url?.absoluteString)!
+        }
+        return ""
+    }
+    
+    init(id:String, content:String = "", image:MessageImage? = nil, sender:Sender) {
+        self.image = image
+        self.content = content
         self.sender = sender
         self.messageId = id
         sentDate = NSDate() as Date
