@@ -15,8 +15,10 @@ class MessageImage: MediaItem {
     static var placeholderImage:UIImage = #imageLiteral(resourceName: "user_male")
     var placeholderImage: UIImage
     var size: CGSize
+    var postID: String
     
-    init(url:String){
+    init(url:String, post:String){
+        self.postID = post
         self.url = URL(string: url)
         self.placeholderImage = MessageImage.placeholderImage
         
@@ -29,6 +31,13 @@ class MessageImage: MediaItem {
         else{
             self.size = self.placeholderImage.size
         }
+    }
+    
+    init(image: UIImage, post:String){
+        self.image = image
+        self.size = image.size
+        self.placeholderImage = MessageImage.placeholderImage
+        self.postID = post
     }
 }
 
@@ -47,9 +56,9 @@ struct Message: MessageType {
         }
     }
     
-    var imageURL:String {
+    var postID: String {
         if let image = image {
-            return (image.url?.absoluteString)!
+            return image.postID
         }
         return ""
     }

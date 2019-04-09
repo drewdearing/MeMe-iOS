@@ -12,7 +12,7 @@ import MessageInputBar
 import Firebase
 import Photos
 
-class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate {
+class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate, MessageCellDelegate {
     var chat:GroupChat!
     
     private var messages: [Message] = []
@@ -40,6 +40,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
+        messagesCollectionView.messageCellDelegate = self
     }
     
     private func save(_ message: Message) {
@@ -48,8 +49,8 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
             "sent": message.sentDate,
             "uid": message.sender.id,
             "name": message.sender.displayName,
-            "image": message.image != nil,
-            "imageURL": message.imageURL,
+            "meme": message.image != nil,
+            "post": message.postID,
             "content": message.content
         ]) { error in
             if let e = error {
@@ -90,25 +91,41 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     
     private func handleDocumentChange(_ change: DocumentChange) {
         if change.document.exists {
-            let data = change.document.data()
-            let id = data["id"] as! String
-            let content = data["content"] as! String
-            let isImage = data["image"] as! Bool
-            let imageURL = data["imageURL"] as! String
-            var image:MessageImage?
-            let uid = data["uid"] as! String
-            let name = data["name"] as! String
-            let date = data["sent"] as! Firebase.Timestamp
-            let sender = Sender(id: uid, displayName: name)
-            if isImage {
-                image = MessageImage(url: imageURL)
-            }
-            let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
-            switch change.type {
-            case .added:
-                insertMessage(message)
-            default:
-                break
+            if change.type == .added {
+                let data = change.document.data()
+                let id = data["id"] as! String
+                let content = data["content"] as! String
+                let isImage = data["meme"] as! Bool
+                let postID = data["post"] as! String
+                let uid = data["uid"] as! String
+                let name = data["name"] as! String
+                let date = data["sent"] as! Firebase.Timestamp
+                let sender = Sender(id: uid, displayName: name)
+                if isImage {
+                    if let cachedImage = cache.getImage(id: postID){
+                        let image = MessageImage(image: cachedImage, post: postID)
+                        let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
+                        insertMessage(message)
+                    }
+                    else{
+                        db.collection("post").document(postID).getDocument { (postDoc, err) in
+                            if let doc = postDoc {
+                                if doc.exists {
+                                    if let data = doc.data() {
+                                        let url = data["photoURL"] as! String
+                                        let image = MessageImage(url: url, post: postID)
+                                        let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
+                                        self.insertMessage(message)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else{
+                    let message = Message(id: id, content: content, image: nil, sender: sender, date: date.dateValue())
+                    insertMessage(message)
+                }
             }
         }
     }
@@ -209,22 +226,16 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         return 12
     }
     
-    func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        let message = message as! Message
-        var image = message.image
-        if let img = image?.image {
-            imageView.image = img
-        }
-        else{
-            let data = try? Data(contentsOf: image!.url!)
-            if let imgData = data {
-                let download = UIImage(data:imgData)
-                image!.image = download
-                image!.size = (download?.size)!
-                imageView.image = download
-            }
-            else{
-                imageView.image = image!.placeholderImage
+    func didTapMessage(in cell: MessageCollectionViewCell) {
+        if let indexPath = messagesCollectionView.indexPath(for: cell) {
+            let message = messages[indexPath.section]
+            switch message.kind {
+            case .photo(let item):
+                let item = item as! MessageImage
+                print(item.postID)
+                //segue to individual post
+            default:
+                break
             }
         }
     }
