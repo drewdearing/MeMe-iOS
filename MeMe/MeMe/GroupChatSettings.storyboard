@@ -31,14 +31,14 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="aUp-Gp-Hfc">
-                                <rect key="frame" x="0.0" y="132" width="375" height="535"/>
+                                <rect key="frame" x="0.0" y="132" width="600" height="468"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="CurrentMemebersTableView" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="64" id="WHd-4K-aCZ" customClass="CurrentUserTableViewCell" customModule="MeMe" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="64"/>
+                                        <rect key="frame" x="0.0" y="28" width="600" height="64"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WHd-4K-aCZ" id="wPt-jv-RXu">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="63.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="63.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Y7e-EN-nip">
@@ -77,7 +77,7 @@
                                 </prototypes>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sSA-0m-QTx">
-                                <rect key="frame" x="327" y="42.5" width="41" height="30"/>
+                                <rect key="frame" x="327" y="42.5" width="266" height="30"/>
                                 <state key="normal" image="edit"/>
                                 <connections>
                                     <action selector="editButton:" destination="kUP-gb-nUb" eventType="touchUpInside" id="Akt-Us-DZr"/>
@@ -138,6 +138,7 @@
                         <outlet property="potentialMembersTableView" destination="p2N-lI-sgo" id="pcg-SJ-JSe"/>
                         <outlet property="saveLabel" destination="Eqe-XN-Udz" id="1Og-sJ-XrZ"/>
                         <outlet property="searchMemberBar" destination="ou7-Hj-Bpo" id="0Rd-cn-nsq"/>
+                        <outlet property="seguebutton" destination="D50-em-7Qs" id="T7T-lZ-5Sm"/>
                         <outlet property="vcTitle" destination="ZeY-fu-o02" id="Skh-vI-7sU"/>
                     </connections>
                 </viewController>
@@ -184,31 +185,26 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BNh-pr-gjo">
-                                                    <rect key="frame" x="328" y="23.5" width="19" height="21"/>
-                                                    <state key="normal" image="plus-filled"/>
-                                                    <connections>
-                                                        <action selector="addButton:" destination="S1m-TK-fe9" eventType="touchUpInside" id="UTO-nS-3AG"/>
-                                                    </connections>
-                                                </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ek4-lQ-hdM">
+                                                    <rect key="frame" x="269" y="25" width="91" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="wDR-RQ-l5U" firstAttribute="top" secondItem="47k-KM-q5a" secondAttribute="topMargin" constant="10.5" id="4hN-Mt-Nyt"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="wDR-RQ-l5U" secondAttribute="bottom" constant="10.5" id="6kH-2W-h7L"/>
                                                 <constraint firstAttribute="bottom" secondItem="pOd-Oe-PRL" secondAttribute="bottom" constant="8" id="AwU-La-DlS"/>
-                                                <constraint firstItem="BNh-pr-gjo" firstAttribute="leading" secondItem="pOd-Oe-PRL" secondAttribute="trailing" constant="272" id="BXp-jW-RGn"/>
-                                                <constraint firstItem="BNh-pr-gjo" firstAttribute="top" secondItem="47k-KM-q5a" secondAttribute="topMargin" constant="12" id="FyN-Xt-Kvo"/>
-                                                <constraint firstItem="BNh-pr-gjo" firstAttribute="centerY" secondItem="wDR-RQ-l5U" secondAttribute="centerY" id="JVk-6g-WVQ"/>
                                                 <constraint firstItem="pOd-Oe-PRL" firstAttribute="leading" secondItem="47k-KM-q5a" secondAttribute="leading" constant="8" id="JeT-ht-TU9"/>
                                                 <constraint firstItem="wDR-RQ-l5U" firstAttribute="leading" secondItem="pOd-Oe-PRL" secondAttribute="trailing" constant="8" id="LMe-pH-yPt"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="wDR-RQ-l5U" secondAttribute="trailing" id="PJ5-dR-uFa"/>
                                                 <constraint firstItem="pOd-Oe-PRL" firstAttribute="top" secondItem="47k-KM-q5a" secondAttribute="top" constant="8" id="XXH-2y-KvJ"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="BNh-pr-gjo" secondAttribute="bottom" constant="8" id="acz-bz-3Fd"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="BNh-pr-gjo" secondAttribute="trailing" constant="13" id="laE-Uf-zB4"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="add" destination="BNh-pr-gjo" id="9gw-sV-omh"/>
+                                            <outlet property="addlabel" destination="ek4-lQ-hdM" id="Ymf-L7-LKH"/>
                                             <outlet property="userProfileImageView" destination="pOd-Oe-PRL" id="l16-4B-yH4"/>
                                             <outlet property="usernameLable" destination="wDR-RQ-l5U" id="3M0-P0-co3"/>
                                         </connections>
