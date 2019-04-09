@@ -21,6 +21,9 @@
                         <viewLayoutGuide key="safeArea" id="eMf-Lo-KfB"/>
                     </view>
                     <navigationItem key="navigationItem" title="Chat" id="Bm3-Jb-hqr"/>
+                    <connections>
+                        <outlet property="navItem" destination="Bm3-Jb-hqr" id="jgN-TR-5Ce"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WKe-cn-Q2i" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

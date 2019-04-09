@@ -15,6 +15,7 @@ import Photos
 class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate, MessageCellDelegate {
     var chat:GroupChat!
     
+    @IBOutlet weak var navItem: UINavigationItem!
     private var messages: [Message] = []
     private var listener: ListenerRegistration?
     private let db = Firestore.firestore()
@@ -23,7 +24,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        navItem.title = chat.groupChatName
         ref = db.collection("groups").document((chat?.groupId)!).collection("messages")
         listener = ref?.addSnapshotListener{ query,error in
             guard let snapshot = query else {
