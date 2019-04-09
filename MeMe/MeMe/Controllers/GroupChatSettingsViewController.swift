@@ -12,10 +12,14 @@ import Firebase
 private let currentMemebersTableViewIdentifier = "CurrentMemebersTableView"
 private let currentMemebersCellIdentifier = "Cell"
 
+protocol addGroupsDelegate {
+    func addGroup(name: String, id: String)
+}
+
 class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, memberDelegate {
     
-    
     var groupChat: GroupChat!
+    var delegate: addGroupsDelegate?
     
     @IBOutlet weak var groupChatNameTextField: UITextField!
     @IBOutlet weak var groupChatNameLabel: UILabel!
@@ -25,7 +29,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     private var currentMembers: [String] = []
     private var isEdit = false
     var groupdocid = String ()
-    var uname = String ()
     
     @IBOutlet weak var searchMemberBar: UISearchBar!
     @IBOutlet weak var saveLabel: UIBarButtonItem!
@@ -53,7 +56,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         let user = currentMembers[row]
         
         currentUserCell?.setUsername(name: user)
-        uname = (currentUserCell?.usernameLabel.text)!
         return currentUserCell!
     }
     
@@ -124,7 +126,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                         } else {
                             for name in nameSnapshot!.documents {
                                 let uname = document.get("username")
-                                print (uname as! String)
                             }
                         }
                     }
@@ -188,6 +189,11 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             saveLabel.tintColor = UIColor.clear
             editButton.isHidden = false
             vcTitle.title = groupChatNameTextField.text
+            
+            if(delegate != nil) {
+                delegate?.addGroup(name: groupChatNameTextField.text!, id: refid)
+            }else{
+            }
         }
     }
     

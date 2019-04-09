@@ -25,6 +25,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     override func viewDidLoad() {
         super.viewDidLoad()
         navItem.title = chat.groupChatName
+        print("id is: " + (chat?.groupId)!)
         ref = db.collection("groups").document((chat?.groupId)!).collection("messages")
         listener = ref?.addSnapshotListener{ query,error in
             guard let snapshot = query else {

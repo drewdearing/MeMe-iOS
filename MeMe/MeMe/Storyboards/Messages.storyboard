@@ -70,7 +70,7 @@
                     <navigationItem key="navigationItem" title="Messages" id="zBj-V2-pyb">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="Obb-E8-IHo">
                             <connections>
-                                <segue destination="pl9-RY-rkP" kind="show" id="HhJ-Ob-wKd"/>
+                                <segue destination="pl9-RY-rkP" kind="show" identifier="GroupSettingsSegue" id="HhJ-Ob-wKd"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

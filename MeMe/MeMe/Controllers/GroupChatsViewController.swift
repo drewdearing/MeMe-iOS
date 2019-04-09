@@ -7,19 +7,22 @@
 //
 
 import UIKit
+import Firebase
 
 private let cellIdentifier = "GroupChatTableViewCell"
 
-class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, addGroupsDelegate {
 
     @IBOutlet var groupChatsTableView: UITableView!
-    private var groupChats: [GroupChat] = [GroupChat(id: "1sF1dOFQTu3xSYQsWl4Y", groupChatName: "sup")]
+    private var groupChats: [GroupChat] = []
     var selectedChat:GroupChat?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         groupChatsTableView.delegate = self
         groupChatsTableView.dataSource = self
+        
+        setUpGroups()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -49,6 +52,9 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
         if segue.identifier == "ChatSelectSegue" {
             let dest = segue.destination as! ChatViewController
             dest.chat = selectedChat
+        } else if segue.identifier == "GroupSettingsSegue" {
+            let dest = segue.destination as! GroupChatSettingsViewController
+            dest.delegate = self
         }
     }
     
@@ -56,14 +62,31 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
         return 64
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func setUpGroups() {
+        if let currentUser = Auth.auth().currentUser {
+            let q = DispatchQueue(label:"LoadGroups")
+            
+            q.sync {
+                let db = Firestore.firestore().collection("groups")
+                db.getDocuments() { (querySnapshot, err) in
+                    if let err = err {
+                        print("Error getting documents: \(err)")
+                        return
+                    } else {
+                        for document in querySnapshot!.documents {
+                            let name = document.get("name")
+                            let id = document.documentID
+                                self.groupChats.append(GroupChat(id: id, groupChatName: name as! String))
+                        }
+                    }
+                    //SVProgressHUD.dismiss()
+                    self.groupChatsTableView.reloadData()
+                }
+            }
+        }
     }
-    */
-
+    func addGroup(name: String, id: String) {
+        groupChats.append(GroupChat(id: id, groupChatName: name))
+        groupChatsTableView.reloadData()
+    }
 }
