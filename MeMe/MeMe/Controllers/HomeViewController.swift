@@ -22,8 +22,7 @@ class HomeViewController: TabViewController, NewMemeDelegate, PostNavigationDele
     }
     
     func navigateToPost(postVC: PostViewController) {
-        print("navigate")
-        self.navigationController?.pushViewController(postVC, animated: true)
+        navigationController?.pushViewController(postVC, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

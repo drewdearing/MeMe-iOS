@@ -26,6 +26,7 @@ class PostViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var followButton: UIButton!
     @IBOutlet weak var shareButton: UIButton!
+    @IBOutlet weak var navItem: UINavigationItem!
     
     var post: FeedCell!
     var index: IndexPath!
@@ -48,6 +49,7 @@ class PostViewController: UIViewController {
         userProfileImageView.layer.borderColor = UIColor.white.cgColor
         userProfileImageView.clipsToBounds = true
         fill(feedCell: post)
+        navItem.title = post.username+"'s meme"
     }
     
     func fill(feedCell:FeedCell){
@@ -69,6 +71,12 @@ class PostViewController: UIViewController {
         
         DispatchQueue.global(qos: .background).async {
             if let memePic = cache.getImage(id: feedCell.post) {
+                DispatchQueue.global(qos: .background).async {
+                    let color = memePic.averageColor
+                    DispatchQueue.main.async {
+                        self.postImageView.backgroundColor = color
+                    }
+                }
                 DispatchQueue.main.async {
                     self.postImageView.image = memePic
                 }
@@ -78,12 +86,20 @@ class PostViewController: UIViewController {
                 let data = try? Data(contentsOf: url!)
                 if let imgData = data {
                     let image = UIImage(data:imgData)
+                    DispatchQueue.global(qos: .background).async {
+                        let color = image!.averageColor
+                        DispatchQueue.main.async {
+                            self.postImageView.backgroundColor = color
+                        }
+                    }
                     DispatchQueue.main.async {
                         self.postImageView.image = image
                     }
                     cache.addImage(id: self.postID, image: image)
                 }
             }
+        }
+        DispatchQueue.global(qos: .background).async {
             if let profilePic = cache.getProfilePic(uid: feedCell.uid) {
                 DispatchQueue.main.async {
                     self.userProfileImageView.image = profilePic
