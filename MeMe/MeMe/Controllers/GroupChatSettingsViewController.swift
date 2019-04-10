@@ -26,7 +26,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     @IBOutlet weak var editButton: UIButton!
     
     @IBOutlet weak var currentMemebersTableView: UITableView!
-    private var currentMembers: [String] = []
+    private var currentMembers: [Container] = []
     private var isEdit = false
     var groupdocid = String ()
     var identity = String ()
@@ -52,10 +52,8 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             vcTitle.title = groupName
             groupChatNameLabel.text = groupName
             getMembers()
-            
-            
-            
         }
+        
         currentMemebersTableView.delegate = self	
         currentMemebersTableView.dataSource = self
     }
@@ -65,13 +63,15 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let currentUserCell = tableView.dequeueReusableCell(withIdentifier: currentMemebersCellIdentifier, for: indexPath as IndexPath) as? CurrentUserTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: currentMemebersCellIdentifier, for: indexPath as IndexPath) as? CurrentUserTableViewCell
         
         let row = indexPath.row
-        let user = currentMembers[row]
+        let currentUser = currentMembers[indexPath.row]
         
-        currentUserCell?.setUsername(name: user)
-        return currentUserCell!
+        cell?.usernameLabel.text = currentUser.member
+        cell?.userProfileImageView.image = currentUser.image
+        
+        return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -128,25 +128,32 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
 
     private func getMembers() {
-        
-        let db = Firestore.firestore().collection("groups")
-        
-        let ref = db.document(groupID).collection("usersInGroup")
-        
-        ref.getDocuments() { (querySnapshot, err) in
-            if let err = err {
-                print("Error getting documents: \(err)")
-                return
-            } else{
-                for document in querySnapshot!.documents {
-                    let uname = document.get("username")
-                    self.currentMembers.append(uname as! String)
+            let q = DispatchQueue(label:"GroupSettings")
+            q.sync {
+                let db = Firestore.firestore().collection("groups")
+                let ref = db.document(groupID).collection("usersInGroup")
+                ref.getDocuments() { (querySnapshot, err) in
+                    if let err = err {
+                        print("Error getting documents: \(err)")
+                        return
+                    } else {
+                        for document in querySnapshot!.documents {
+                            let name = document.get("username")
+                            let pic = document.get("profileURL")
+                            let id = document.documentID
+                            let url = URL(string: pic as! String)
+                            let data = try? Data(contentsOf: url!)
+                            if let imageData = data {
+                                let image = UIImage(data: imageData)
+                                self.currentMembers.append(Container(member: name as! String, image: image as! UIImage, profile: pic as! String, id: id as! String, inGroup: true))
+                            }
+                        }
+                    }
+                    self.currentMemebersTableView.reloadData()
                 }
-                self.currentMemebersTableView.reloadData()
             }
-        }
-        
     }
+    
     @IBAction func saveButton(_ sender: Any) {
         if (groupChatNameTextField.text != "") {
             let currentUser = Auth.auth().currentUser
@@ -191,12 +198,19 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             ref_user.document((currentUser?.uid)!).getDocument { (document, error) in
                 if let username = document?.get("username") {
                     self.currentMembers.removeAll()
-                    self.currentMembers.append(username as! String)
+                    let pic = document!.get("profilePicURL")
+                    let url = URL(string: pic as! String)
+                    let data = try? Data(contentsOf: url!)
+                    if let imageData = data {
+                        let image = UIImage(data: imageData)
+                        self.currentMembers.append(Container(member: username as! String, image: document?.get("profilePicURL") as! UIImage, profile: document?.get("profilePicURL") as! String, id: (currentUser?.uid)!, inGroup: true))
+                    }
                     self.currentMemebersTableView.reloadData()
-                }else{
+                } else {
                     print("error bitch")
                 }
             }
+            
             seguebutton.isHidden = false
             saveLabel.isEnabled = false
             saveLabel.tintColor = UIColor.clear
@@ -211,14 +225,16 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func addMember(name: String, container: Container) {
-        if (!currentMembers.contains(name)) {
-            currentMembers.append(name)
-            container.inGroup = true
+        print(container)
+        if (!currentMembers.contains {
+                $0.id == container.id
+            }) {
+            currentMembers.append(container)
             container.status = "Added!"
         }else{
-            container.inGroup = true
             container.status = "Already added!"
         }
+        container.inGroup = true
         currentMemebersTableView.reloadData()
     }
 }

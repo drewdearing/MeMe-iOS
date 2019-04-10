@@ -13,16 +13,27 @@ import SVProgressHUD
 class Container {
     let member: String
     let image: UIImage
+    let profile: String
     let id: String
     var status: String
     var inGroup: Bool
     
-    init (member: String, image: UIImage, id: String) {
+    init (member: String, image: UIImage, profile: String, id: String) {
         self.member = member
         self.image = image
+        self.profile = profile
         self.id = id
         self.status = ""
         self.inGroup = false
+    }
+    
+    init (member: String, image: UIImage, profile: String, id: String, inGroup: Bool) {
+        self.member = member
+        self.image = image
+        self.profile = profile
+        self.id = id
+        self.status = ""
+        self.inGroup = inGroup
     }
 }
 
@@ -82,7 +93,7 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
                             let data = try? Data(contentsOf: url!)
                             if let imageData = data {
                                 let image = UIImage(data: imageData)
-                                self.potentialMembers.append(Container(member: name as! String, image: image as! UIImage, id: id as! String))
+                                self.potentialMembers.append(Container(member: name as! String, image: image as! UIImage, profile: pic as! String, id: id as! String))
                             }
                         }
                     }
@@ -111,7 +122,6 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
         
         cell?.id = currentUser.id
         cell?.addlabel.text = currentUser.status
-        //cell?.userProfileImageView.image = UIImage.init(named: "checkmark")
         if(currentUser.inGroup) {
             cell?.addlabel.isHidden = false
         } else {
@@ -142,11 +152,10 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
             //group name you want to add user in
             print(groupname)
             let userid = currentCell.id
-            
             let name = currentCell.usernameLable.text
-
             let ref_group = Firestore.firestore().collection("groups").document(groupddocid).collection("usersInGroup").document(userid).setData([
-                "username": name
+                "username": name,
+                "profileURL": current.profile
             ]) { err in
                 if let err = err {
                     print("Error writing document: \(err)")
