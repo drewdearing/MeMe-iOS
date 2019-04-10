@@ -45,6 +45,10 @@ struct Timestamp: Codable {
 let appDelegate = UIApplication.shared.delegate as? AppDelegate
 let cache = Cache.get()
 
+protocol IndividualPostDelegate {
+    func navigateToPost(postVC:PostViewController)
+}
+
 class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDelegate {
 
     var postData:[String:FeedCell] = [:]
@@ -53,6 +57,7 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
     var currentPage = 1
     var urlPath = ""
     var loaded = false
+    var delegate:IndividualPostDelegate?
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
@@ -77,8 +82,15 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //deselect row when tapped
-        tableView.deselectRow(at: indexPath, animated: true)
+        let postStoryBoard: UIStoryboard = UIStoryboard(name: "Post", bundle: nil)
+        if let postVC = postStoryBoard.instantiateViewController(withIdentifier: "individualPost") as? PostViewController {
+            let feedCell = data[indexPath.row]
+            postVC.post = feedCell
+            postVC.delegate = self
+            if let delegate = delegate {
+                delegate.navigateToPost(postVC: postVC)
+            }
+        }
     }
     
     func loadPosts(){

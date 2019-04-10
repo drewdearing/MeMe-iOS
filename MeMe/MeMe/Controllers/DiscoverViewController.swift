@@ -8,13 +8,12 @@
 
 import UIKit
 
-class DiscoverViewController: TabViewController, NewMemeDelegate {
+class DiscoverViewController: TabViewController, NewMemeDelegate, IndividualPostDelegate {
     @IBOutlet weak var feedView: DiscoverView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        feedView.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -23,6 +22,11 @@ class DiscoverViewController: TabViewController, NewMemeDelegate {
     
     func addMeme(post: FeedCellData, feed:Bool) {
         feedView.addPost(post: post, feed:feed)
+    }
+    
+    func navigateToPost(postVC: PostViewController) {
+        print("navigate")
+        self.navigationController?.pushViewController(postVC, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

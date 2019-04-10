@@ -202,6 +202,7 @@ class FeedTableViewCell: UITableViewCell {
     func updateDelegate(){
         if let delegate = self.delegate {
             let data = FeedCellData(username: self.cellTitle.text!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
+            print("calling del")
             delegate.addPost(post: data, feed:self.feed)
         }
     }

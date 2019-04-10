@@ -7,39 +7,199 @@
 //
 
 import UIKit
+import Firebase
 
 class PostViewController: UIViewController {
     
-    @IBOutlet var postImageView: UIImageView!
-    @IBOutlet var userProfileImageView: UIImageView!
-    @IBOutlet var usernameLabel: UILabel!
-    @IBOutlet var upVoteLabel: UILabel!
-    @IBOutlet var downVoteLabel: UILabel!
+    @IBOutlet weak var postImageView: UIImageView!
+    @IBOutlet weak var userProfileImageView: UIImageView!
+    @IBOutlet weak var usernameLabel: UILabel!
+    @IBOutlet weak var upVoteButton: UIButton!
+    @IBOutlet weak var downVoteButton: UIButton!
+    @IBOutlet weak var upVoteCounter: UILabel!
+    @IBOutlet weak var downVoteCounter: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var followButton: UIButton!
+    @IBOutlet weak var shareButton: UIButton!
     
-    @IBOutlet var followingButton: UIButton!
-    
-    var post: Post!
-    var user: User!
+    var post: FeedCell!
+    var memeURL:String = ""
+    var profileURL:String = ""
+    var uid:String = ""
+    var postID:String = ""
+    var upvotes:Int = 0
+    var downvotes:Int = 0
+    var seconds:Int = 0
+    var downvoted:Bool = false
+    var upvoted: Bool = false
+    var feed:Bool = false
+    var delegate:FeedCellDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        userProfileImageView.layer.cornerRadius = userProfileImageView.frame.height/2
+        userProfileImageView.layer.borderWidth = 10
+        userProfileImageView.layer.borderColor = UIColor.white.cgColor
+        userProfileImageView.clipsToBounds = true
+        fill(feedCell: post)
+    }
+    
+    func fill(feedCell:FeedCell){
+        postImageView.image = nil
+        userProfileImageView.image = nil
+        feed = feedCell.feed
+        upvotes = Int(feedCell.upvotes)
+        downvotes = Int(feedCell.downvotes)
+        upvoted = feedCell.upvoted
+        downvoted = feedCell.downvoted
+        memeURL = feedCell.imageURL
+        seconds = Int(feedCell.seconds)
+        uid = feedCell.uid
+        postID = feedCell.post
+        profileURL = feedCell.profilePicURL
+        usernameLabel.text = feedCell.username
+        descriptionLabel.text = feedCell.desc
+        updateVoteCounter()
         
-        // Do any additional setup after loading the view.
+        DispatchQueue.global(qos: .background).async {
+            if let memePic = cache.getImage(id: feedCell.post) {
+                DispatchQueue.main.async {
+                    self.postImageView.image = memePic
+                }
+            }
+            else{
+                let url = URL(string: self.memeURL)
+                let data = try? Data(contentsOf: url!)
+                if let imgData = data {
+                    let image = UIImage(data:imgData)
+                    DispatchQueue.main.async {
+                        self.postImageView.image = image
+                    }
+                    cache.addImage(id: self.postID, image: image)
+                }
+            }
+            if let profilePic = cache.getProfilePic(uid: feedCell.uid) {
+                DispatchQueue.main.async {
+                    self.userProfileImageView.image = profilePic
+                }
+            }
+            else{
+                let url = URL(string: self.profileURL)
+                let data = try? Data(contentsOf: url!)
+                if let imgData = data {
+                    let image = UIImage(data:imgData)
+                    DispatchQueue.main.async {
+                        self.userProfileImageView.image = image
+                    }
+                    cache.addProfilePic(id: self.uid, image: image)
+                }
+            }
+        }
     }
     
-    private func setNavigationBar() {
-        //        self.navigationItem.title = user.username + " Meme"
+    func updateVoteCounter(){
+        if upvoted {
+            upVoteButton.imageView?.image = upVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
+            upVoteButton.imageView?.tintColor = .blue
+        }
+        else{
+            upVoteButton.imageView?.image = upVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
+            upVoteButton.imageView?.tintColor = .gray
+        }
+        if downvoted {
+            downVoteButton.imageView?.image = downVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
+            downVoteButton.imageView?.tintColor = .blue
+        }
+        else{
+            downVoteButton.imageView?.image = downVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
+            downVoteButton.imageView?.tintColor = .gray
+        }
+        upVoteCounter.text = String(upvotes)
+        downVoteCounter.text = String(downvotes)
+        print("up: "+String(upvoted))
+        print("down: "+String(downvoted))
     }
     
+    @IBAction func upVote(_ sender: Any) {
+        if !upvoted {
+            if downvoted {
+                downvoted = false
+                downvotes -= 1
+            }
+            upvoted = true
+            upvotes += 1
+        }
+        updateVoteCounter()
+        if let currentUser = Auth.auth().currentUser {
+            var urlPathBase = "https://us-central1-meme-d3805.cloudfunctions.net/upvote"
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            urlPathBase = urlPathBase.appending("&post=" + postID)
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "PUT"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in
+                guard let data = data else { return }
+                do {
+                    let voteData = try JSONDecoder().decode(VoteData.self, from: data)
+                    DispatchQueue.main.async {
+                        self.upvotes = voteData.upvotes
+                        self.downvotes = voteData.downvotes
+                        self.updateVoteCounter()
+                        self.updateDelegate()
+                    }
+                } catch let jsonErr {
+                    print("Error: \(jsonErr)")
+                }
+            }
+            task.resume()
+        }
+    }
     
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
+    @IBAction func downVote(_ sender: Any) {
+        if !downvoted {
+            if upvoted {
+                upvoted = false
+                upvotes -= 1
+            }
+            downvoted = true
+            downvotes += 1
+        }
+        updateVoteCounter()
+        if let currentUser = Auth.auth().currentUser {
+            var urlPathBase = "https://us-central1-meme-d3805.cloudfunctions.net/downvote"
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            urlPathBase = urlPathBase.appending("&post=" + postID)
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "PUT"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in
+                guard let data = data else { return }
+                do {
+                    let voteData = try JSONDecoder().decode(VoteData.self, from: data)
+                    DispatchQueue.main.async {
+                        self.upvotes = voteData.upvotes
+                        self.downvotes = voteData.downvotes
+                        self.updateVoteCounter()
+                        self.updateDelegate()
+                    }
+                } catch let jsonErr {
+                    print("Error: \(jsonErr)")
+                }
+            }
+            task.resume()
+        }
+    }
     
+    func updateDelegate(){
+        if let delegate = self.delegate {
+            print("hi")
+            let data = FeedCellData(username: self.usernameLabel.text!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
+            delegate.addPost(post: data, feed:self.feed)
+        }
+    }
+    
+    @IBAction func follow(_ sender: Any) {
+    }
+    @IBAction func share(_ sender: Any) {
+    }
 }

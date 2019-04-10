@@ -76,29 +76,8 @@ class Cache {
     }
     
     func addPost(data:FeedCellData, feed:Bool) -> FeedCell? {
-        if let post = postData[data.post] {
-            var dirty = false
-            if post.downvotes != data.downvotes {
-                post.downvotes = Int32(data.downvotes)
-                dirty = true
-            }
-            if post.upvotes != data.upvotes {
-                post.upvotes = Int32(data.upvotes)
-                dirty = true
-            }
-            if post.username != data.username {
-                post.username = data.username
-                dirty = true
-            }
-            if post.profilePicURL != data.profilePicURL {
-                post.profilePicURL = data.profilePicURL
-                profilePicData[post.post] = nil
-                dirty = true
-            }
-            if dirty {
-                updateCore()
-            }
-            return post
+        if postData[data.post] != nil {
+            return updatePost(data: data, feed: feed)
         }
         else if let cell = cellFromData(post: data, feed: feed) {
             postData[cell.post] = cell
@@ -106,6 +85,18 @@ class Cache {
             return cell
         }
         return nil
+    }
+    
+    func updatePost(data:FeedCellData, feed:Bool) -> FeedCell? {
+        let id = data.post
+        postData[id]?.downvoted = data.downvoted
+        postData[id]?.upvoted = data.upvoted
+        postData[id]?.downvotes = Int32(data.downvotes)
+        postData[id]?.upvotes = Int32(data.upvotes)
+        postData[id]?.profilePicURL = data.profilePicURL
+        postData[id]?.username = data.username
+        updateCore()
+        return postData[id]
     }
     
     func getPosts(feed:Bool) -> [FeedCell]{
