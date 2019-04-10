@@ -16,17 +16,17 @@ struct FeedContainer:Codable {
 }
 
 struct FeedCellData: Codable {
-    let username: String
-    let description: String
-    let uid: String
-    let post: String
-    let imageURL: String
-    let profilePicURL: String
-    let upvotes: Int
-    let downvotes: Int
-    let timestamp: Timestamp
-    let upvoted: Bool
-    let downvoted: Bool
+    var username: String
+    var description: String
+    var uid: String
+    var post: String
+    var imageURL: String
+    var profilePicURL: String
+    var upvotes: Int
+    var downvotes: Int
+    var timestamp: Timestamp
+    var upvoted: Bool
+    var downvoted: Bool
 }
 
 struct Timestamp: Codable {
