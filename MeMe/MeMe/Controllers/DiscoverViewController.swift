@@ -16,11 +16,6 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, PostNavigation
         feedView.delegate = self
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        print("hello")
-        feedView.reload()
-    }
-    
     func addMeme(post: FeedCellData, feed:Bool) {
         feedView.addPost(post: post, feed:feed, update: true)
     }

@@ -17,10 +17,6 @@ class HomeViewController: TabViewController, NewMemeDelegate, PostNavigationDele
         feedView.delegate = self
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        feedView.reload()
-    }
-    
     func addMeme(post: FeedCellData, feed:Bool) {
         feedView.addPost(post: post, feed:feed, update: true)
     }
