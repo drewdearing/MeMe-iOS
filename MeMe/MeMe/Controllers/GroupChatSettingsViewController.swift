@@ -56,7 +56,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             
             
         }
-        currentMemebersTableView.delegate = self
+        currentMemebersTableView.delegate = self	
         currentMemebersTableView.dataSource = self
     }
     
@@ -214,8 +214,8 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         if (!currentMembers.contains(name)) {
             currentMembers.append(name)
         }else{
-            cell.addlabel.adjustsFontSizeToFitWidth = true
-            cell.addlabel.text = "Already added!"
+           // cell.addlabel.adjustsFontSizeToFitWidth = true
+            //cell.addlabel.text = "Already added!"
         }
         currentMemebersTableView.reloadData()
     }

@@ -43,12 +43,24 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     class Container {
         let member: String
         let image: UIImage
-        
         let id: String
+        var status: String
+        var inGroup: Bool
+        
         init (member: String, image: UIImage, id: String) {
             self.member = member
             self.image = image
             self.id = id
+            self.status = ""
+            self.inGroup = false
+        }
+        
+        init (member: String, image: UIImage, id: String, inGroup: Bool) {
+            self.member = member
+            self.image = image
+            self.id = id
+            self.status = "Already added!"
+            self.inGroup = inGroup
         }
     }
     
@@ -101,11 +113,18 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "potentialMembersCellIdentifier", for: indexPath as IndexPath) as? PotentialUserTableViewCell
-        cell?.usernameLable.text = currentPotentialMembers[indexPath.row].member
-        cell?.userProfileImageView.image = currentPotentialMembers[indexPath.row].image
+        let currentUser = currentPotentialMembers[indexPath.row]
+        cell?.usernameLable.text = currentUser.member
+        cell?.userProfileImageView.image = currentUser.image
         
-        cell?.id = currentPotentialMembers[indexPath.row].id
+        cell?.id = currentUser.id
+        cell?.addlabel.text = currentUser.status
         //cell?.userProfileImageView.image = UIImage.init(named: "checkmark")
+        if(currentUser.inGroup) {
+            cell?.addlabel.isHidden = false
+        } else {
+            cell?.addlabel.isHidden = true
+        }
         return cell!
     }
     
@@ -123,10 +142,10 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let current = currentPotentialMembers[indexPath.row]
         let cellname = currentPotentialMembers[indexPath.row].member
-        
         let currentCell = potentialMembersTableView.cellForRow(at: indexPath) as! PotentialUserTableViewCell
-        
+    
         if (delegate != nil) {
             //group name you want to add user in
             print(groupname)
@@ -155,12 +174,18 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
                 }
             }
             
-            
+            if(!current.inGroup) {
+                current.inGroup = true
+                current.status = "Added!"
+            } else {
+                current.status = "Already added!"
+            }
             
             
             currentCell.addlabel.adjustsFontSizeToFitWidth = true
-            currentCell.addlabel.text = "Added!"
+            currentCell.addlabel.text = current.status
             currentCell.addlabel.isHidden = false
+            
             delegate?.addMember(name: cellname, cell: currentCell)
         }
     }
