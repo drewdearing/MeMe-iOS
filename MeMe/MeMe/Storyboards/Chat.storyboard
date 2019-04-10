@@ -21,15 +21,28 @@
                         <viewLayoutGuide key="safeArea" id="eMf-Lo-KfB"/>
                     </view>
                     <navigationItem key="navigationItem" title="Chat" id="Bm3-Jb-hqr">
-                        <barButtonItem key="rightBarButtonItem" title="Item" image="settings" id="OsB-S7-7wZ"/>
+                        <barButtonItem key="rightBarButtonItem" title="Item" image="settings" id="OsB-S7-7wZ">
+                            <connections>
+                                <action selector="settingsAction:" destination="heL-zW-por" id="lbO-lI-fGu"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="navItem" destination="Bm3-Jb-hqr" id="jgN-TR-5Ce"/>
+                        <segue destination="N36-Rm-GxQ" kind="show" identifier="settingsIdentifier" id="vLK-tc-hBj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WKe-cn-Q2i" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1112.8" y="185.75712143928038"/>
+        </scene>
+        <!--GroupChatSettings-->
+        <scene sceneID="pJK-53-p2A">
+            <objects>
+                <viewControllerPlaceholder storyboardName="GroupChatSettings" id="N36-Rm-GxQ" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2tn-sX-T5v" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1751" y="40"/>
         </scene>
     </scenes>
     <resources>

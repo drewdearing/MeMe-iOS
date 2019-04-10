@@ -29,6 +29,9 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     private var currentMembers: [String] = []
     private var isEdit = false
     var groupdocid = String ()
+    var identity = String ()
+    var groupName = String()
+    var groupID = String()
     
     @IBOutlet weak var searchMemberBar: UISearchBar!
     @IBOutlet weak var saveLabel: UIBarButtonItem!
@@ -40,6 +43,18 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         super.viewDidLoad()
         if (groupChatNameTextField.text == "" ){
             seguebutton.isHidden = true
+        }
+        
+        if (identity == "settingsIdentifier") {
+            seguebutton.isHidden = false
+            saveLabel.isEnabled = false
+            saveLabel.tintColor = UIColor.clear
+            vcTitle.title = groupName
+            groupChatNameLabel.text = groupName
+            getMembers()
+            
+            
+            
         }
         currentMemebersTableView.delegate = self
         currentMemebersTableView.dataSource = self
@@ -70,8 +85,13 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         if (segue.identifier == "addMembersSegue") {
             let vc: AddMembersViewController = segue.destination as! AddMembersViewController
             vc.delegate = self
-            vc.groupname = vcTitle.title!
-            vc.groupddocid = self.groupdocid
+            if (identity == "settingsIdentifier") {
+                vc.groupname = self.groupName
+                vc.groupddocid = self.groupID
+            } else {
+                vc.groupname = vcTitle.title!
+                vc.groupddocid = self.groupdocid
+            }
         }
     }
     
@@ -108,31 +128,24 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
 
     private func getMembers() {
-        let currentUser = Auth.auth().currentUser
         
-        let db = Firestore.firestore().collection("users")
+        let db = Firestore.firestore().collection("groups")
         
-        db.getDocuments() { (querySnapshot, err) in
+        let ref = db.document(groupID).collection("usersInGroup")
+        
+        ref.getDocuments() { (querySnapshot, err) in
             if let err = err {
                 print("Error getting documents: \(err)")
                 return
-            } else {
+            } else{
                 for document in querySnapshot!.documents {
-                    let temp = Firestore.firestore().collection("users").document(document.documentID).collection("groups").whereField("name", isEqualTo: "groupie")
-                    temp.getDocuments() { (nameSnapshot, err) in
-                        if let err2 = err {
-                            print("Error getting documents: \(err2)")
-                            return
-                        } else {
-                            for name in nameSnapshot!.documents {
-                                let uname = document.get("username")
-                            }
-                        }
-                    }
+                    let uname = document.get("username")
+                    self.currentMembers.append(uname as! String)
                 }
-                
+                self.currentMemebersTableView.reloadData()
             }
         }
+        
     }
     @IBAction func saveButton(_ sender: Any) {
         if (groupChatNameTextField.text != "") {

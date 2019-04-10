@@ -22,6 +22,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     private var ref: CollectionReference?
     
 
+
     override func viewDidLoad() {
         super.viewDidLoad()
         navItem.title = chat.groupChatName
@@ -45,6 +46,21 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         messagesCollectionView.messageCellDelegate = self
     }
     
+    
+    @IBAction func settingsAction(_ sender: Any) {
+        performSegue(withIdentifier: "settingsIdentifier", sender: self)
+        
+
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "settingsIdentifier") {
+            let dest: GroupChatSettingsViewController = segue.destination as! GroupChatSettingsViewController
+            dest.identity = "settingsIdentifier"
+            dest.groupName = chat.groupChatName
+            dest.groupID = chat.groupId
+        }
+    }
     private func save(_ message: Message) {
         ref?.document(message.messageId).setData([
             "id": message.messageId,

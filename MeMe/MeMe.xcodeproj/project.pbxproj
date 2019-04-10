@@ -159,8 +159,8 @@
 		17A35F99225418F500C2362D /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				17A35F9A2254192200C2362D /* GroupChat.swift */,
 				17A35F9C2254193500C2362D /* User.swift */,
+				17A35F9A2254192200C2362D /* GroupChat.swift */,
 				17A35F9E2254194100C2362D /* Post.swift */,
 				3BE25155225527B600B8FCAC /* Cache.swift */,
 				609987AD2255ED05002EFA2F /* Message.swift */,
