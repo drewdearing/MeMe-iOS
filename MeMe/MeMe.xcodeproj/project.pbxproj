@@ -43,6 +43,7 @@
 		17C6E8542239B31F004665F0 /* ProfileView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8532239B31F004665F0 /* ProfileView.xib */; };
 		23BD7A5C5DD54070A9759157 /* Pods_MeMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */; };
 		3B143719225572D100331A5B /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B143718225572D100331A5B /* TabViewController.swift */; };
+		3B1B71BC225E6CCE003B80E6 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */; };
 		3B3F47C32249ACBA00B2C5A0 /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F47C12249ACBA00B2C5A0 /* FeedTableViewCell.swift */; };
 		3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */; };
 		3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B76C13C22398191005CA53E /* GoogleService-Info.plist */; };
@@ -112,6 +113,7 @@
 		17C6E8532239B31F004665F0 /* ProfileView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProfileView.xib; sourceTree = "<group>"; };
 		1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MeMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B143718225572D100331A5B /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
+		3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		3B3F47C12249ACBA00B2C5A0 /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTableViewCell.swift; path = MeMe/Cells/FeedTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FeedTableViewCell.xib; path = MeMe/Cells/FeedTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		3B76C13C22398191005CA53E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				3BE25155225527B600B8FCAC /* Cache.swift */,
 				609987AD2255ED05002EFA2F /* Message.swift */,
 				3BD6291D225DA3AB007BECBB /* UIImage.swift */,
+				3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -481,6 +484,7 @@
 				17C6E8502239B2E9004665F0 /* ProfileView.swift in Sources */,
 				3BD6291E225DA3AB007BECBB /* UIImage.swift in Sources */,
 				3B860CE22252C9FA00831C41 /* FeedCell+CoreDataProperties.swift in Sources */,
+				3B1B71BC225E6CCE003B80E6 /* ImagePicker.swift in Sources */,
 				17A35F92225403B300C2362D /* GroupChatViewController.swift in Sources */,
 				17A35F9B2254192200C2362D /* GroupChat.swift in Sources */,
 				17C6E84E2239B2D8004665F0 /* MessageView.swift in Sources */,

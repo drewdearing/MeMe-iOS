@@ -35,15 +35,16 @@
                     <navigationItem key="navigationItem" title="Home" id="Nyk-OL-5pb">
                         <barButtonItem key="leftBarButtonItem" style="plain" systemItem="compose" id="AjC-Wx-fwD">
                             <connections>
-                                <segue destination="cZO-z4-yd4" kind="popoverPresentation" identifier="NewMemeSegue" popoverAnchorBarButtonItem="AjC-Wx-fwD" id="AoI-hw-0pu">
-                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                </segue>
+                                <action selector="selectImage:" destination="QdN-Rc-XwS" id="xvY-O7-Unq"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="feedView" destination="wGl-cJ-GBh" id="StH-dJ-mKs"/>
+                        <segue destination="cZO-z4-yd4" kind="popoverPresentation" identifier="NewMemeSegue" popoverAnchorBarButtonItem="AjC-Wx-fwD" id="5Lu-6F-Xhe">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                        </segue>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MTU-jI-zT6" userLabel="First Responder" sceneMemberID="firstResponder"/>

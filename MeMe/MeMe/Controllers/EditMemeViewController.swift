@@ -41,6 +41,10 @@ class EditMemeViewController: UIViewController {
         addToStorage()
     }
     
+    @IBAction func cancel(_ sender: Any) {
+        dismiss(animated: true)
+    }
+    
     func lockUI(){
         descriptionField.isUserInteractionEnabled = false
         doneButton.isEnabled = false

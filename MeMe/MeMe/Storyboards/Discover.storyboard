@@ -35,14 +35,15 @@
                     <navigationItem key="navigationItem" title="Discover" id="yHR-yj-yU0">
                         <barButtonItem key="leftBarButtonItem" style="plain" systemItem="compose" id="ckN-rx-dhX">
                             <connections>
-                                <segue destination="4ZZ-Lo-yCb" kind="popoverPresentation" identifier="NewMemeSegue" popoverAnchorBarButtonItem="ckN-rx-dhX" id="g9C-fD-MHW">
-                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                </segue>
+                                <action selector="selectImage:" destination="fvr-xC-uLU" id="Mmz-Bp-HP1"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="feedView" destination="mY6-SH-oQC" id="iBx-wz-Yje"/>
+                        <segue destination="4ZZ-Lo-yCb" kind="popoverPresentation" identifier="NewMemeSegue" popoverAnchorBarButtonItem="ckN-rx-dhX" id="rcd-st-7oz">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                        </segue>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G5d-kj-5Nm" userLabel="First Responder" sceneMemberID="firstResponder"/>

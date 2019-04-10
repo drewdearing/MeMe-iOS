@@ -8,101 +8,207 @@
 
 import UIKit
 import Firebase
+import SVProgressHUD
 
-class RegisterViewController: UIViewController {
+struct RegisterFields {
+    let name:String
+    let password:String
+    let email:String
+    let photoURL:String
+}
 
+class RegisterViewController: UIViewController, ImagePickerDelegate {
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var userNameField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var registerButton: UIButton!
+    @IBOutlet weak var imageButton: UIButton!
+    var imagePicker:ImagePicker!
+    var selectedImage:UIImage?
     
     func unlockUI(){
-        self.userNameField.isUserInteractionEnabled = true
-        self.emailField.isUserInteractionEnabled = true
-        self.passwordField.isUserInteractionEnabled = true
-        self.registerButton.isUserInteractionEnabled = true
+        self.userNameField.isEnabled = true
+        self.emailField.isEnabled = true
+        self.passwordField.isEnabled = true
+        self.registerButton.isEnabled = true
+        self.imageButton.isEnabled = true
     }
     
     func lockUI(){
-        userNameField.isUserInteractionEnabled = false
-        emailField.isUserInteractionEnabled = false
-        passwordField.isUserInteractionEnabled = false
-        registerButton.isUserInteractionEnabled = false
+        userNameField.isEnabled = false
+        emailField.isEnabled = false
+        passwordField.isEnabled = false
+        registerButton.isEnabled = false
+        imageButton.isEnabled = false
     }
     
-    @IBAction func register(_ sender: Any) {
-        if let email = emailField.text{
-            if let username = userNameField.text{
-                if let password = passwordField.text  {
-                    lockUI()
-                    let profilePic = "https://cdn.bulbagarden.net/upload/c/c6/094Gengar.png"
-                    statusLabel.text = "loading..."
-                    Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-                        if let user = authResult {
-                            print(user.user.uid)
-                            Firestore.firestore().collection("users").document(user.user.uid).setData([
-                                "username": username,
-                                "email": email,
-                                "followers": [String](),
-                                "following": [String](),
-                                "numFollowing": 0,
-                                "numFollowers": 0,
-                                "posts": [String](),
-                                "profilePicURL": profilePic
-                            ]) { err in
-                                if let err = err {
-                                    user.user.delete { error in
-                                        if let error = error {
-                                            print("data corrupted!")
-                                        } else {
-                                            self.statusLabel.text = "Could not create user!"
-                                        }
-                                    }
-                                } else {
-                                    self.statusLabel.text = "User created!"
-                                    let newUser = Profile(username: username, email: email, numFollowing: 0, numFollowers: 0, profilePicURL: profilePic)
-                                    UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
-                                    //go to home
-                                    self.performSegue(withIdentifier: "RegisterSegue", sender: self)
-                                }
+    func getEmail() -> String? {
+        if let email = emailField.text {
+            let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+            let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+            if emailTest.evaluate(with: email) {
+                return email
+            }
+        }
+        return nil
+    }
+    
+    func getName() -> String? {
+        if let name = userNameField.text {
+            if name.count > 0 {
+                return name
+            }
+        }
+        return nil
+    }
+    
+    func getPassword() -> String? {
+        if let password = passwordField.text {
+            if password.count >= 6 {
+                return password
+            }
+        }
+        return nil
+    }
+    
+    func getRequiredFields(complete: @escaping (RegisterFields?) -> Void){
+        print("enter")
+        if let email = getEmail(){
+            if let name = getName() {
+                if let password = getPassword() {
+                    if let image = selectedImage {
+                        SVProgressHUD.show(withStatus: "Loading...")
+                        uploadImage(image: image) { (url) in
+                            if let avatarURL = url {
+                                let requiredFields = RegisterFields(name: name, password: password, email: email, photoURL: avatarURL)
+                                complete(requiredFields)
+                                return
+                            }
+                            else{
+                                SVProgressHUD.dismiss()
                                 self.unlockUI()
+                                self.statusLabel.text = "Could not upload image!"
+                                complete(nil)
                             }
                         }
-                        else{
-                            self.statusLabel.text = error!.localizedDescription
-                            self.unlockUI()
-                        }
+                    }
+                    else{
+                        statusLabel.text = "Please select an avatar!"
+                        self.unlockUI()
+                        complete(nil)
                     }
                 }
                 else{
-                    statusLabel.text = "password is required!"
+                    statusLabel.text = "Your password should be 6 characters!"
+                    self.unlockUI()
+                    complete(nil)
                 }
             }
             else{
-                statusLabel.text = "username is required!"
+                statusLabel.text = "Please enter a display name!"
+                self.unlockUI()
+                complete(nil)
             }
         }
         else{
-            statusLabel.text = "email is required!"
+            statusLabel.text = "Please enter a valid email!"
+            self.unlockUI()
+            complete(nil)
         }
+    }
+    
+    private func uploadImage(image:UIImage, complete: @escaping (String?) -> Void){
+        let currentUser = Auth.auth().currentUser
+        let storage = Storage.storage()
+        let storageRef = storage.reference()
+        let data = image.pngData()
+        let imageName = "profile_" + currentUser!.uid
+        print(imageName)
+        let imageRef = storageRef.child("\(imageName).png")
+        
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/png"
+        
+        imageRef.putData(data!, metadata: metadata) { (metadata, error) in
+            imageRef.downloadURL { (url, error) in
+                guard url != nil else {
+                    complete(nil)
+                    return
+                }
+                //do things that u want to do after download is done
+                if let urlText = url?.absoluteString {
+                    complete(urlText)
+                }
+                else{
+                    complete(nil)
+                }
+            }
+        }
+    }
+    
+    @IBAction func register(_ sender: Any) {
+        lockUI()
+        self.statusLabel.text = "Loading..."
+        getRequiredFields { (requiredFields) in
+            if let fields = requiredFields {
+                Auth.auth().createUser(withEmail: fields.email, password: fields.password) { authResult, error in
+                    if let user = authResult {
+                        print(user.user.uid)
+                        Firestore.firestore().collection("users").document(user.user.uid).setData([
+                            "username": fields.name,
+                            "email": fields.email,
+                            "followers": [String](),
+                            "following": [String](),
+                            "numFollowing": 0,
+                            "numFollowers": 0,
+                            "posts": [String](),
+                            "profilePicURL": fields.photoURL
+                        ]) { err in
+                            if let err = err {
+                                SVProgressHUD.dismiss()
+                                user.user.delete { error in
+                                    if let error = error {
+                                        print("data corrupted!")
+                                    } else {
+                                        self.statusLabel.text = "Could not create user!"
+                                    }
+                                }
+                            } else {
+                                SVProgressHUD.dismiss()
+                                self.statusLabel.text = "User created!"
+                                let newUser = Profile(username: fields.name, email: fields.email, numFollowing: 0, numFollowers: 0, profilePicURL: fields.photoURL)
+                                UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
+                                //go to home
+                                self.performSegue(withIdentifier: "RegisterSegue", sender: self)
+                            }
+                            self.unlockUI()
+                        }
+                    }
+                    else{
+                        SVProgressHUD.dismiss()
+                        self.statusLabel.text = error!.localizedDescription
+                        self.unlockUI()
+                    }
+                }
+            }
+        }
+    }
+    
+    @IBAction func selectImage(_ sender: Any) {
+        self.imagePicker.present(from: sender as! UIView)
+    }
+    
+    func didSelect(image: UIImage?) {
+        imageButton.backgroundColor = UIColor(red: 32/255, green: 129/255, blue: 66/255, alpha: 1)
+        imageButton.setTitleColor(.lightGray, for: .normal)
+        selectedImage = image
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         statusLabel.text = ""
-        // Do any additional setup after loading the view.
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
