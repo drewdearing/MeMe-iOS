@@ -9,6 +9,11 @@
 import UIKit
 import Firebase
 
+protocol IndividualPostDelegate {
+    func addPost(post:FeedCellData, feed:Bool, update:Bool)
+    func refreshCell(index:IndexPath)
+}
+
 class PostViewController: UIViewController {
     
     @IBOutlet weak var postImageView: UIImageView!
@@ -23,6 +28,7 @@ class PostViewController: UIViewController {
     @IBOutlet weak var shareButton: UIButton!
     
     var post: FeedCell!
+    var index: IndexPath!
     var memeURL:String = ""
     var profileURL:String = ""
     var uid:String = ""
@@ -33,7 +39,7 @@ class PostViewController: UIViewController {
     var downvoted:Bool = false
     var upvoted: Bool = false
     var feed:Bool = false
-    var delegate:FeedCellDelegate?
+    var delegate:IndividualPostDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,25 +105,19 @@ class PostViewController: UIViewController {
     
     func updateVoteCounter(){
         if upvoted {
-            upVoteButton.imageView?.image = upVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
-            upVoteButton.imageView?.tintColor = .blue
+            upVoteButton.setImage(#imageLiteral(resourceName: "up-arrow-enabled"), for: .normal)
         }
         else{
-            upVoteButton.imageView?.image = upVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
-            upVoteButton.imageView?.tintColor = .gray
+            upVoteButton.setImage(#imageLiteral(resourceName: "up-arrow"), for: .normal)
         }
         if downvoted {
-            downVoteButton.imageView?.image = downVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
-            downVoteButton.imageView?.tintColor = .blue
+            downVoteButton.setImage(#imageLiteral(resourceName: "angle-arrow-down-enabled"), for: .normal)
         }
         else{
-            downVoteButton.imageView?.image = downVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
-            downVoteButton.imageView?.tintColor = .gray
+            downVoteButton.setImage(#imageLiteral(resourceName: "angle-arrow-down"), for: .normal)
         }
         upVoteCounter.text = String(upvotes)
         downVoteCounter.text = String(downvotes)
-        print("up: "+String(upvoted))
-        print("down: "+String(downvoted))
     }
     
     @IBAction func upVote(_ sender: Any) {
@@ -194,7 +194,8 @@ class PostViewController: UIViewController {
         if let delegate = self.delegate {
             print("hi")
             let data = FeedCellData(username: self.usernameLabel.text!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
-            delegate.addPost(post: data, feed:self.feed)
+            delegate.addPost(post: data, feed:self.feed, update: false)
+            delegate.refreshCell(index: self.index)
         }
     }
     

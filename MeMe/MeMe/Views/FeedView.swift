@@ -45,19 +45,18 @@ struct Timestamp: Codable {
 let appDelegate = UIApplication.shared.delegate as? AppDelegate
 let cache = Cache.get()
 
-protocol IndividualPostDelegate {
+protocol PostNavigationDelegate {
     func navigateToPost(postVC:PostViewController)
 }
 
-class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDelegate {
-
+class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDelegate, IndividualPostDelegate {
     var postData:[String:FeedCell] = [:]
     var data:[FeedCell] = []
     var feed = false
     var currentPage = 1
     var urlPath = ""
     var loaded = false
-    var delegate:IndividualPostDelegate?
+    var delegate:PostNavigationDelegate?
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
@@ -86,6 +85,7 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
         if let postVC = postStoryBoard.instantiateViewController(withIdentifier: "individualPost") as? PostViewController {
             let feedCell = data[indexPath.row]
             postVC.post = feedCell
+            postVC.index = indexPath
             postVC.delegate = self
             if let delegate = delegate {
                 delegate.navigateToPost(postVC: postVC)
@@ -144,13 +144,19 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
         }
     }
     
-    func addPost(post: FeedCellData, feed:Bool) {
+    func addPost(post: FeedCellData, feed:Bool, update:Bool) {
         if let cell = cache.addPost(data: post, feed: feed){
             if !self.feed || feed {
                 postData[cell.post] = cell
-                update()
+                if update {
+                    self.update()
+                }
             }
         }
+    }
+    
+    func refreshCell(index: IndexPath) {
+        //override
     }
     
     func update(){

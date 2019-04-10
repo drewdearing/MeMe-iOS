@@ -15,7 +15,7 @@ struct VoteData: Codable {
 }
 
 protocol FeedCellDelegate {
-    func addPost(post:FeedCellData, feed:Bool)
+    func addPost(post:FeedCellData, feed:Bool, update:Bool)
 }
 
 class FeedTableViewCell: UITableViewCell {
@@ -110,20 +110,16 @@ class FeedTableViewCell: UITableViewCell {
     
     func updateVoteCounter(){
         if upvoted {
-            upvoteButton.imageView?.image = upvoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
-            upvoteButton.imageView?.tintColor = .blue
+            upvoteButton.setImage(#imageLiteral(resourceName: "up-arrow-enabled"), for: .normal)
         }
         else{
-            upvoteButton.imageView?.image = upvoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
-            upvoteButton.imageView?.tintColor = .gray
+            upvoteButton.setImage(#imageLiteral(resourceName: "up-arrow"), for: .normal)
         }
         if downvoted {
-            downVoteButton.imageView?.image = downVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
-            downVoteButton.imageView?.tintColor = .blue
+            downVoteButton.setImage(#imageLiteral(resourceName: "angle-arrow-down-enabled"), for: .normal)
         }
         else{
-            downVoteButton.imageView?.image = downVoteButton.imageView!.image?.withRenderingMode(.alwaysTemplate)
-            downVoteButton.imageView?.tintColor = .gray
+            downVoteButton.setImage(#imageLiteral(resourceName: "angle-arrow-down"), for: .normal)
         }
         upVoteCounter.text = String(upvotes)
         downVoteCounter.text = String(downvotes)
@@ -203,7 +199,7 @@ class FeedTableViewCell: UITableViewCell {
         if let delegate = self.delegate {
             let data = FeedCellData(username: self.cellTitle.text!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
             print("calling del")
-            delegate.addPost(post: data, feed:self.feed)
+            delegate.addPost(post: data, feed:self.feed, update:false)
         }
     }
     

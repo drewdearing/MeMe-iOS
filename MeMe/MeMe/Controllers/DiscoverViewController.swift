@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DiscoverViewController: TabViewController, NewMemeDelegate, IndividualPostDelegate {
+class DiscoverViewController: TabViewController, NewMemeDelegate, PostNavigationDelegate {
     @IBOutlet weak var feedView: DiscoverView!
     
     override func viewDidLoad() {
@@ -17,11 +17,12 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, IndividualPost
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        print("hello")
         feedView.reload()
     }
     
     func addMeme(post: FeedCellData, feed:Bool) {
-        feedView.addPost(post: post, feed:feed)
+        feedView.addPost(post: post, feed:feed, update: true)
     }
     
     func navigateToPost(postVC: PostViewController) {

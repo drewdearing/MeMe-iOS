@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HomeViewController: TabViewController, NewMemeDelegate, IndividualPostDelegate {
+class HomeViewController: TabViewController, NewMemeDelegate, PostNavigationDelegate {
     
     @IBOutlet weak var feedView: HomeView!
     
@@ -22,7 +22,7 @@ class HomeViewController: TabViewController, NewMemeDelegate, IndividualPostDele
     }
     
     func addMeme(post: FeedCellData, feed:Bool) {
-        feedView.addPost(post: post, feed:feed)
+        feedView.addPost(post: post, feed:feed, update: true)
     }
     
     func navigateToPost(postVC: PostViewController) {
