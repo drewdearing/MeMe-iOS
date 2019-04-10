@@ -123,7 +123,14 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Item" id="cn9-nY-FrW"/>
                     <navigationItem key="navigationItem" title="Title" id="TE8-Fv-1Ri">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="iOx-Ay-WPr"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="iOx-Ay-WPr">
+                            <connections>
+                                <action selector="share:" destination="Arr-nR-hV9" id="FSP-JF-Dnv"/>
+                                <segue destination="gx0-sf-Teo" kind="popoverPresentation" identifier="ShareSegue" popoverAnchorBarButtonItem="iOx-Ay-WPr" id="hKc-Lf-KnD">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
@@ -140,8 +147,70 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="p8h-cm-1Uf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="Arr-nR-hV9" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="3960.8000000000002" y="132.68365817091455"/>
+        </scene>
+        <!--Share View Controller-->
+        <scene sceneID="pzL-gP-d1e">
+            <objects>
+                <viewController id="gx0-sf-Teo" customClass="ShareViewController" customModule="MeMe" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Cc2-8e-UOa">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3i2-0w-NvH">
+                                <rect key="frame" x="0.0" y="20" width="414" height="44"/>
+                                <items>
+                                    <navigationItem title="Share Meme" id="CoT-b2-O9x">
+                                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Kqw-kk-lQf">
+                                            <connections>
+                                                <action selector="cancel:" destination="gx0-sf-Teo" id="4Zl-dc-Uc6"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="hrY-xV-4e3">
+                                            <connections>
+                                                <action selector="done:" destination="gx0-sf-Teo" id="aVR-w6-2L9"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Nmh-ha-ZxS">
+                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="groupCell" rowHeight="51" id="Vik-F9-xbY">
+                                        <rect key="frame" x="0.0" y="28" width="414" height="51"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Vik-F9-xbY" id="CxS-qH-eEn">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="50.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Nmh-ha-ZxS" firstAttribute="top" secondItem="3i2-0w-NvH" secondAttribute="bottom" id="2gx-NK-aUl"/>
+                            <constraint firstItem="ogj-6f-L5S" firstAttribute="bottom" secondItem="Nmh-ha-ZxS" secondAttribute="bottom" id="2hF-YU-rmb"/>
+                            <constraint firstItem="3i2-0w-NvH" firstAttribute="leading" secondItem="ogj-6f-L5S" secondAttribute="leading" id="Oyx-wS-TYa"/>
+                            <constraint firstItem="3i2-0w-NvH" firstAttribute="trailing" secondItem="ogj-6f-L5S" secondAttribute="trailing" id="Ua3-QS-M6j"/>
+                            <constraint firstItem="Nmh-ha-ZxS" firstAttribute="leading" secondItem="ogj-6f-L5S" secondAttribute="leading" id="a5G-0D-01V"/>
+                            <constraint firstItem="ogj-6f-L5S" firstAttribute="trailing" secondItem="Nmh-ha-ZxS" secondAttribute="trailing" id="h07-jb-wMD"/>
+                            <constraint firstItem="3i2-0w-NvH" firstAttribute="top" secondItem="ogj-6f-L5S" secondAttribute="top" id="hRj-HH-pBp"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="ogj-6f-L5S"/>
+                    </view>
+                    <size key="freeformSize" width="414" height="736"/>
+                    <connections>
+                        <outlet property="tableView" destination="Nmh-ha-ZxS" id="WCH-vL-lo9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="m1U-dy-8iI" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4753.6231884057979" y="131.25"/>
         </scene>
     </scenes>
     <resources>
