@@ -12,7 +12,8 @@ import MessageInputBar
 import Firebase
 import Photos
 
-class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate, MessageCellDelegate {
+class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate, MessageCellDelegate, IndividualPostDelegate {
+    
     var chat:GroupChat!
     
     @IBOutlet weak var navItem: UINavigationItem!
@@ -222,6 +223,14 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         return 0
     }
     
+    func addPost(post: FeedCellData, feed: Bool, update: Bool) {
+        _ = cache.addPost(data: post, feed: feed)
+    }
+    
+    func refreshCell(index: IndexPath) {
+        //dont need
+    }
+    
     func messageTopLabelAttributedText(
         for message: MessageType,
         at indexPath: IndexPath) -> NSAttributedString? {
@@ -251,7 +260,63 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
             case .photo(let item):
                 let item = item as! MessageImage
                 print(item.postID)
-                //segue to individual post
+                let postStoryBoard: UIStoryboard = UIStoryboard(name: "Post", bundle: nil)
+                if let postVC = postStoryBoard.instantiateViewController(withIdentifier: "individualPost") as? PostViewController {
+                    if let feedCell = cache.getPost(id: item.postID){
+                        postVC.post = feedCell
+                        postVC.index = indexPath
+                        postVC.delegate = self
+                        navigationController?.pushViewController(postVC, animated: true)
+                    }
+                    else{
+                        print("not cached")
+                        Firestore.firestore().collection("post").document(item.postID).getDocument { (postDoc, err) in
+                            if let doc = postDoc {
+                                if doc.exists {
+                                    if let data = doc.data() {
+                                        let description = data["description"] as! String
+                                        let uid = data["uid"] as! String
+                                        let post = doc.documentID
+                                        let imageURL = data["photoURL"] as! String
+                                        let upvotes = data["upvotes"] as! Int
+                                        let downvotes = data["downvotes"] as! Int
+                                        let fbTimestamp = data["timestamp"] as! Firebase.Timestamp
+                                        let timestamp = Timestamp(s:Int(fbTimestamp.dateValue().timeIntervalSince1970))
+                                        var cellData = FeedCellData(username: "", description: description, uid: uid, post: post, imageURL: imageURL, profilePicURL: "", upvotes: upvotes, downvotes: downvotes, timestamp: timestamp, upvoted: false, downvoted: false)
+                                        Firestore.firestore().collection("users").document(uid).getDocument(completion: { (userDoc, err) in
+                                            if let user = userDoc {
+                                                if user.exists {
+                                                    if let userData = user.data() {
+                                                        let username = userData["username"] as! String
+                                                        let profileURL = userData["profilePicURL"] as! String
+                                                        cellData.username = username
+                                                        cellData.profilePicURL = profileURL
+                                                        Firestore.firestore().collection("post").document(item.postID).collection("votes").document(uid).getDocument(completion: { (voteDoc, err) in
+                                                            if let vote = voteDoc {
+                                                                if vote.exists {
+                                                                    if let voteData = vote.data() {
+                                                                        let up = voteData["up"] as! Bool
+                                                                        cellData.downvoted = !up
+                                                                        cellData.upvoted = up
+                                                                    }
+                                                                }
+                                                                let feedCell = cache.addPost(data: cellData, feed: false)
+                                                                postVC.post = feedCell
+                                                                postVC.index = indexPath
+                                                                postVC.delegate = self
+                                                                self.navigationController?.pushViewController(postVC, animated: true)
+                                                            }
+                                                        })
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             default:
                 break
             }
