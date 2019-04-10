@@ -210,12 +210,14 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         }
     }
     
-    func addMember(name: String, cell: PotentialUserTableViewCell) {
+    func addMember(name: String, container: Container) {
         if (!currentMembers.contains(name)) {
             currentMembers.append(name)
+            container.inGroup = true
+            container.status = "Added!"
         }else{
-           // cell.addlabel.adjustsFontSizeToFitWidth = true
-            //cell.addlabel.text = "Already added!"
+            container.inGroup = true
+            container.status = "Already added!"
         }
         currentMemebersTableView.reloadData()
     }
