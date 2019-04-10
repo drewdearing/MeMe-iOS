@@ -12,6 +12,13 @@ class ProfileSettingsViewController: UIViewController {
     
     var user: User!
     
+    @IBOutlet weak var username: UITextField!
+    
+    @IBOutlet weak var email: UITextField!
+    
+    @IBOutlet weak var password: UITextField!
+    
+    @IBOutlet weak var statusLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         

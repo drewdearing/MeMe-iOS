@@ -42,14 +42,36 @@ class PostViewController: UIViewController {
     var feed:Bool = false
     var delegate:IndividualPostDelegate?
     
+    var post2: Post!
+    var postImage: UIImage!
+    var user: User!
+    var fromProfile: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         userProfileImageView.layer.cornerRadius = userProfileImageView.frame.height/2
         userProfileImageView.layer.borderWidth = 10
         userProfileImageView.layer.borderColor = UIColor.white.cgColor
         userProfileImageView.clipsToBounds = true
-        fill(feedCell: post)
-        navItem.title = post.username+"'s meme"
+        if(!fromProfile) {
+            fill(feedCell: post)
+            navItem.title = post.username+"'s meme"
+        } else {
+            /// YAIR CODE ////////
+            if post2 != nil {
+                upVoteCounter.text = String(post2.upVotes)
+                downVoteCounter.text = String(post2.downVotes)
+            }
+            
+            if postImage != nil {
+                postImageView.image = postImage
+            }
+            
+            if user != nil {
+                usernameLabel.text = user.username
+                fetchProfileImage()
+            }
+        }
     }
     
     func fill(feedCell:FeedCell){
@@ -218,6 +240,30 @@ class PostViewController: UIViewController {
     @IBAction func follow(_ sender: Any) {
         
     }
+    
+    private func fetchProfileImage() {
+        if let userID = Auth.auth().currentUser?.uid {
+            DispatchQueue.global(qos: .userInteractive).async {
+                if let profilePic = cache.getProfilePic(uid: userID) {
+                    DispatchQueue.main.async {
+                        self.userProfileImageView.image = profilePic
+                    }
+                }
+                else{
+                    let url = URL(string: self.user.profilePicture)
+                    let data = try? Data(contentsOf: url!)
+                    if let imgData = data {
+                        let image = UIImage(data:imgData)
+                        DispatchQueue.main.async {
+                            self.userProfileImageView.image = image
+                        }
+                        cache.addProfilePic(id: userID, image: image)
+                    }
+                }
+            }
+        }
+    }
+
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShareSegue" {
