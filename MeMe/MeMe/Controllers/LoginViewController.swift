@@ -18,9 +18,12 @@ struct Profile: Codable {
 }
 
 func getCurrentProfile() -> Profile?{
-    let data = UserDefaults.standard.value(forKey: "currentProfile") as! Data
-    let profile:Profile? = try? PropertyListDecoder().decode(Profile.self, from: data)
-    return profile
+    let data = UserDefaults.standard.value(forKey: "currentProfile") as? Data
+    if let data = data {
+        let profile:Profile? = try? PropertyListDecoder().decode(Profile.self, from: data)
+        return profile
+    }
+    return nil
 }
 
 class LoginViewController: UIViewController {

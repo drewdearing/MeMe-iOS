@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Miu-Ay-PVb">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Discover-->
+        <scene sceneID="ueA-St-4Lf">
+            <objects>
+                <viewController id="fvr-xC-uLU" customClass="DiscoverViewController" customModule="MeMe" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="l2E-Gl-c3C">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mY6-SH-oQC" customClass="DiscoverView" customModule="MeMe" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="mY6-SH-oQC" firstAttribute="leading" secondItem="EXK-q2-Znm" secondAttribute="leading" id="bpo-kX-Ad7"/>
+                            <constraint firstItem="mY6-SH-oQC" firstAttribute="top" secondItem="EXK-q2-Znm" secondAttribute="top" id="cSW-Yj-N7q"/>
+                            <constraint firstItem="EXK-q2-Znm" firstAttribute="trailing" secondItem="mY6-SH-oQC" secondAttribute="trailing" id="nPa-bH-KTG"/>
+                            <constraint firstItem="EXK-q2-Znm" firstAttribute="bottom" secondItem="mY6-SH-oQC" secondAttribute="bottom" id="wUk-kI-uc1"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="EXK-q2-Znm"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Discover" id="yHR-yj-yU0">
+                        <barButtonItem key="leftBarButtonItem" style="plain" systemItem="compose" id="ckN-rx-dhX">
+                            <connections>
+                                <segue destination="4ZZ-Lo-yCb" kind="popoverPresentation" identifier="NewMemeSegue" popoverAnchorBarButtonItem="ckN-rx-dhX" id="g9C-fD-MHW">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="feedView" destination="mY6-SH-oQC" id="iBx-wz-Yje"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="G5d-kj-5Nm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1215.2" y="116.49175412293854"/>
+        </scene>
+        <!--NewMeme-->
+        <scene sceneID="mK3-hQ-ob2">
+            <objects>
+                <viewControllerPlaceholder storyboardName="NewMeme" id="4ZZ-Lo-yCb" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ouR-Kw-J1c" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1934" y="-67"/>
+        </scene>
+        <!--Discover-->
+        <scene sceneID="hVc-iV-05u">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Miu-Ay-PVb" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Discover" image="globe_earth" id="dKn-MM-gfZ"/>
+                    <toolbarItems/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="00X-Pk-2Zz">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="fvr-xC-uLU" kind="relationship" relationship="rootViewController" id="QAg-Xc-rUn"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VLE-0E-rFr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="276" y="116.49175412293854"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="globe_earth" width="30" height="30"/>
+    </resources>
+</document>

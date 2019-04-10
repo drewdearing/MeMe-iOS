@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 let HomeTableCellId = "FeedTableViewCell"
 class HomeView: FeedView {
@@ -32,14 +33,27 @@ class HomeView: FeedView {
         tableView.delegate = self
         tableView.dataSource = self
         self.urlPath = "https://us-central1-meme-d3805.cloudfunctions.net/getUserFeed"
-        loadPosts(predicate:NSPredicate(format: "feed == TRUE"))
+        feed = true
+        loadPosts()
     }
     
     override func update() {
         DispatchQueue.main.async {
-            self.postData = self.postData.sorted(by: {$0.seconds > $1.seconds})
-            self.tableView.reloadData()
+            let newData = Array(self.postData.values).sorted(by: {$0.seconds > $1.seconds})
+            if !self.data.elementsEqual(newData) {
+                self.data = newData
+                self.tableView.reloadData()
+            }
         }
+    }
+    
+    override func refreshCell(index: IndexPath) {
+        tableView.reloadRows(at: [index], with: .automatic)
+    }
+    
+    func scrollToTop() {
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.scrollToRow(at: indexPath, at: .top, animated: true)
     }
     
 }

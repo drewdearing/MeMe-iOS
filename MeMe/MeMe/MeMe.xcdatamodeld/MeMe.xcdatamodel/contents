@@ -2,7 +2,7 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="17G65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="FeedCell" representedClassName="FeedCell" syncable="YES">
         <attribute name="desc" attributeType="String" syncable="YES"/>
-        <attribute name="dirty" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="downvoted" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="downvotes" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="feed" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="imageURL" attributeType="String" syncable="YES"/>
@@ -10,10 +10,11 @@
         <attribute name="profilePicURL" attributeType="String" syncable="YES"/>
         <attribute name="seconds" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="uid" attributeType="String" syncable="YES"/>
+        <attribute name="upvoted" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="upvotes" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="username" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="FeedCell" positionX="-63" positionY="-18" width="128" height="210"/>
+        <element name="FeedCell" positionX="-63" positionY="-18" width="128" height="225"/>
     </elements>
 </model>

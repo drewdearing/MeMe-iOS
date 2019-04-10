@@ -13,11 +13,12 @@ private let reuseIdentifier = "GalleryCellIdentifier"
 
 private let editMemeStoryIdentifier = "EditMemeVCID"
 
-class GalleryViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class GalleryViewController: UIViewController, UICollectionViewDataSource,
+    UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     @IBOutlet weak var galleryCollectionView: UICollectionView!
     private var images: [UIImage] = []
-    
+    var delegate:NewMemeDelegate?
     private var selectedCellIndex: Int!
     
     override func viewDidLoad() {
@@ -93,27 +94,17 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource, UICol
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        let mainStoryBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let mainStoryBoard: UIStoryboard = UIStoryboard(name: "NewMeme", bundle: nil)
         if let editMemeVCDestination = mainStoryBoard.instantiateViewController(withIdentifier: editMemeStoryIdentifier) as? EditMemeViewController {
             editMemeVCDestination.selectedImage = images[indexPath.row]
+            editMemeVCDestination.delegate = delegate
             self.navigationController?.pushViewController(editMemeVCDestination, animated: true)
         }
 
     }
     
     @IBAction func cancelButton(_ sender: Any) {
-        self.navigationController?.popViewController(animated: true)
         self.dismiss(animated: true, completion: nil)
     }
-    //    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    //        if segue.identifier == editMemeSegueIdentifier,
-    //            let editMemeVCDestination = segue.destination as? EditMemeViewController {
-    //
-    //            print("Selected Cell, Segue:", selectedCellIndex)
-    //
-    //            editMemeVCDestination.selectedImage = images[galleryCollectionView.]
-    //        }
-    //    }
-    
     
 }

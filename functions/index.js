@@ -6,30 +6,37 @@ admin.initializeApp({
 });
 
 var db = admin.firestore();
+var FieldValue = admin.firestore.FieldValue;
 
 const calculateVotes = (postID) => {
     let postDB = db.collection('post').doc(postID);
     let votesDB = postDB.collection('votes');
-    return votesDB.get().then((votes) => {
-        var upvotes = 0;
-        var downvotes = 0;
-        votes.docs.forEach((vote) => {
-            let up = vote.get('up')
-            if(up){
-                upvotes++;
-            }
-            else{
-                downvotes++;
-            }
-        });
-        postDB.update({
-            upvotes: upvotes,
-            downvotes: downvotes
+    return new Promise((resolve, reject) => {
+        votesDB.get().then((votes) => {
+            var upvotes = 0;
+            var downvotes = 0;
+            votes.docs.forEach((vote) => {
+                let up = vote.get('up')
+                if(up){
+                    upvotes++;
+                }
+                else{
+                    downvotes++;
+                }
+            });
+            let data = {
+                upvotes: upvotes,
+                downvotes: downvotes
+            };
+            postDB.update(data);
+            resolve(data)
+        }).catch((data) => {
+            reject(data)
         });
     });
 }
 
-exports.onVoteCreate = functions.firestore
+/*exports.onVoteCreate = functions.firestore
 .document('post/{postID}/votes/{uid}')
 .onCreate((snap, context) => {
     return calculateVotes(context.params.postID)
@@ -45,7 +52,7 @@ exports.onVoteDelete = functions.firestore
 .document('post/{postID}/votes/{uid}')
 .onDelete((snap, context) => {
     return calculateVotes(context.params.postID)
-});
+});*/
 
 exports.onPostCreate = functions.firestore
 .document('post/{postID}')
@@ -81,6 +88,74 @@ exports.onPostDelete = functions.firestore
     });
 });
 
+exports.upvote = functions.https.onRequest((req, res) => {
+    let uid = req.query.uid;
+    let postID = req.query.post;
+    let postRef = db.collection('post').doc(postID)
+    let voteRef = postRef.collection('votes').doc(uid)
+    voteRef.get().then((voteDoc) => {
+        var deltaUp = 1
+        var deltaDown = 0
+        if(voteDoc.exists){
+            console.log("exists");
+            if(voteDoc.data().up){
+                deltaUp--
+            }
+            else{
+                deltaDown--
+            }
+        }
+        postRef.update({
+            upvotes: FieldValue.increment(deltaUp),
+            downvotes: FieldValue.increment(deltaDown)
+        }).then(() => {
+            postRef.get().then((postDoc) => {
+                voteRef.set({ up: true });
+                res.status(200).json({
+                    upvotes: postDoc.data().upvotes,
+                    downvotes: postDoc.data().downvotes
+                });
+            });
+        }).catch((data) => {
+            res.status(400).json(data);
+        });
+    });
+});
+
+exports.downvote = functions.https.onRequest((req, res) => {
+    let uid = req.query.uid;
+    let postID = req.query.post;
+    let postRef = db.collection('post').doc(postID)
+    let voteRef = postRef.collection('votes').doc(uid)
+    voteRef.get().then((voteDoc) => {
+        var deltaUp = 0
+        var deltaDown = 1
+        if(voteDoc.exists){
+            console.log("exists");
+            if(voteDoc.data().up){
+                deltaUp--
+            }
+            else{
+                deltaDown--
+            }
+        }
+        postRef.update({
+            upvotes: FieldValue.increment(deltaUp),
+            downvotes: FieldValue.increment(deltaDown)
+        }).then(() => {
+            postRef.get().then((postDoc) => {
+                voteRef.set({ up: false });
+                res.status(200).json({
+                    upvotes: postDoc.data().upvotes,
+                    downvotes: postDoc.data().downvotes
+                });
+            });
+        }).catch((data) => {
+            res.status(400).json(data);
+        });
+    });
+});
+
 exports.getUserFeed = functions.https.onRequest((req, res) => {
     let uid = req.query.uid;
     let page = parseInt(req.query.page);
@@ -112,7 +187,9 @@ exports.getUserFeed = functions.https.onRequest((req, res) => {
                                 upvotes: 0,
                                 downvotes: 0,
                                 timestamp: null,
-                                description: ''
+                                description: '',
+                                upvoted: false,
+                                downvoted: false
                             }
                         });
                     }
@@ -138,8 +215,22 @@ exports.getUserFeed = functions.https.onRequest((req, res) => {
                     postArray.sort(function(a, b) {
                         return b['timestamp'].seconds - a['timestamp'].seconds;
                     });
-                    res.status(200).json({
-                        posts: postArray.slice(0, page*itemsPerPage)
+                    postArray = postArray.slice(0, page*itemsPerPage);
+                    var votePromises = []
+                    postArray.forEach((p) => {
+                        let voteRef = db.collection('post').doc(p['post']).collection('votes').doc(uid);
+                        votePromises.push(voteRef.get())
+                    });
+                    Promise.all(votePromises).then((voteDocs) => {
+                        for(i in voteDocs) {
+                            if(voteDocs[i].exists){
+                                postArray[i]['upvoted'] = voteDocs[i].data().up
+                                postArray[i]['downvoted'] = !voteDocs[i].data().up
+                            }
+                        }
+                        res.status(200).json({
+                            posts: postArray
+                        });
                     });
                 });
             });
@@ -148,6 +239,7 @@ exports.getUserFeed = functions.https.onRequest((req, res) => {
 });
 
 exports.getDiscoverFeed = functions.https.onRequest((req, res) => {
+    let uid = req.query.uid;
     let page = parseInt(req.query.page);
     let itemsPerPage = 50;
     if (isNaN(page) || page <= 0){
@@ -169,7 +261,9 @@ exports.getDiscoverFeed = functions.https.onRequest((req, res) => {
                         upvotes: 0,
                         downvotes: 0,
                         timestamp: null,
-                        description: ''
+                        description: '',
+                        upvoted: false,
+                        downvoted: false
                     }
                 });
             }
@@ -195,8 +289,22 @@ exports.getDiscoverFeed = functions.https.onRequest((req, res) => {
             postArray.sort(function(a, b) {
                 return (b['upvotes'] - b['downvotes']) - (a['upvotes'] - a['downvotes']);
             });
-            res.status(200).json({
-                posts: postArray.slice(0, page*itemsPerPage)
+            postArray = postArray.slice(0, page*itemsPerPage);
+            var votePromises = []
+            postArray.forEach((p) => {
+                let voteRef = db.collection('post').doc(p['post']).collection('votes').doc(uid);
+                votePromises.push(voteRef.get())
+            });
+            Promise.all(votePromises).then((voteDocs) => {
+                for(i in voteDocs) {
+                    if(voteDocs[i].exists){
+                        postArray[i]['upvoted'] = voteDocs[i].data().up
+                        postArray[i]['downvoted'] = !voteDocs[i].data().up
+                    }
+                }
+                res.status(200).json({
+                    posts: postArray
+                });
             });
         });
     });

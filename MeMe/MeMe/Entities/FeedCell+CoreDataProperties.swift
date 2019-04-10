@@ -26,7 +26,7 @@ extension FeedCell {
     @NSManaged public var upvotes: Int32
     @NSManaged public var downvotes: Int32
     @NSManaged public var feed: Bool
-    @NSManaged public var dirty: Bool
     @NSManaged public var seconds: Int64
-    
+    @NSManaged public var upvoted: Bool
+    @NSManaged public var downvoted: Bool
 }

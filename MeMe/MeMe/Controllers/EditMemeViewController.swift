@@ -11,8 +11,8 @@ import Firebase
 import FirebaseStorage
 import SVProgressHUD
 
-protocol editMemeVCDelegate {
-    func addMeme(post: FeedCellData)
+protocol NewMemeDelegate {
+    func addMeme(post: FeedCellData, feed:Bool)
 }
 
 class EditMemeViewController: UIViewController {
@@ -22,19 +22,10 @@ class EditMemeViewController: UIViewController {
     @IBOutlet weak var doneButton: UIBarButtonItem!
     
     var selectedImage: UIImage!
-    var delegate: editMemeVCDelegate?
-    var returnVC: MainViewController?
+    var delegate:NewMemeDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
-        for controller in self.navigationController!.viewControllers as Array {
-            if controller.isKind(of: MainViewController.self) {
-                self.delegate = controller as? editMemeVCDelegate
-                self.returnVC = controller as? MainViewController
-            }
-        }
         
         if selectedImage != nil {
             memeImageView.image = selectedImage
@@ -93,10 +84,10 @@ class EditMemeViewController: UIViewController {
     func passPost(imageName:String, download:String){
         let currentUser = Auth.auth().currentUser
         if let profile = getCurrentProfile() {
-            let data = FeedCellData(username: profile.username, description: self.descriptionField.text!, uid: currentUser!.uid, post: imageName, imageURL: download, profilePicURL: profile.profilePicURL, upvotes: 0, downvotes: 0, timestamp: Timestamp())
+            let data = FeedCellData(username: profile.username, description: self.descriptionField.text!, uid: currentUser!.uid, post: imageName, imageURL: download, profilePicURL: profile.profilePicURL, upvotes: 0, downvotes: 0, timestamp: Timestamp(), upvoted:false, downvoted: false)
             SVProgressHUD.dismiss()
-            self.delegate?.addMeme(post: data)
-            self.navigationController!.popToViewController(self.returnVC!, animated: true)
+            delegate?.addMeme(post: data, feed:true)
+            dismiss(animated: true)
         }
     }
     
