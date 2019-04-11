@@ -41,6 +41,8 @@
 		17C6E8502239B2E9004665F0 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C6E84F2239B2E9004665F0 /* ProfileView.swift */; };
 		17C6E8522239B30D004665F0 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8512239B30D004665F0 /* MessageView.xib */; };
 		17C6E8542239B31F004665F0 /* ProfileView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17C6E8532239B31F004665F0 /* ProfileView.xib */; };
+		17FD8FCB225EE6C800DC855B /* ProfilePreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FD8FCA225EE6C800DC855B /* ProfilePreviewViewController.swift */; };
+		17FD8FCD225EE6E400DC855B /* ProfilePreviewStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17FD8FCC225EE6E400DC855B /* ProfilePreviewStoryboard.storyboard */; };
 		23BD7A5C5DD54070A9759157 /* Pods_MeMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */; };
 		3B143719225572D100331A5B /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B143718225572D100331A5B /* TabViewController.swift */; };
 		3B1B71BC225E6CCE003B80E6 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */; };
@@ -112,6 +114,8 @@
 		17C6E84F2239B2E9004665F0 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		17C6E8512239B30D004665F0 /* MessageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		17C6E8532239B31F004665F0 /* ProfileView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProfileView.xib; sourceTree = "<group>"; };
+		17FD8FCA225EE6C800DC855B /* ProfilePreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePreviewViewController.swift; sourceTree = "<group>"; };
+		17FD8FCC225EE6E400DC855B /* ProfilePreviewStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ProfilePreviewStoryboard.storyboard; sourceTree = "<group>"; };
 		1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MeMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B143718225572D100331A5B /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
@@ -195,6 +199,7 @@
 				17A35F8B2254022200C2362D /* GroupChatSettingsViewController.swift */,
 				1745B70122557E6800DDFB34 /* AddMembersViewController.swift */,
 				17A35F952254185600C2362D /* PostViewController.swift */,
+				17FD8FCA225EE6C800DC855B /* ProfilePreviewViewController.swift */,
 				609987A52255E15D002EFA2F /* ProfileViewController.swift */,
 				17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */,
 				3B143718225572D100331A5B /* TabViewController.swift */,
@@ -254,6 +259,7 @@
 		3BEC941E22547436003AE517 /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
+				17FD8FCC225EE6E400DC855B /* ProfilePreviewStoryboard.storyboard */,
 				3BEC941F2254745E003AE517 /* Home.storyboard */,
 				3BEC942122547470003AE517 /* Discover.storyboard */,
 				3BEC942322547489003AE517 /* Messages.storyboard */,
@@ -384,6 +390,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17A35FAA22541BD000C2362D /* ProfilePostCollectionViewCell.xib in Resources */,
+				17FD8FCD225EE6E400DC855B /* ProfilePreviewStoryboard.storyboard in Resources */,
 				17A35FAF22541FC300C2362D /* GroupChatSettings.storyboard in Resources */,
 				17A35FAD22541E7600C2362D /* GroupChat.storyboard in Resources */,
 				17A35FB72254292500C2362D /* GroupSettingsView.xib in Resources */,
@@ -507,6 +514,7 @@
 				3B860CD52252C3E800831C41 /* MeMe.xcdatamodeld in Sources */,
 				17A35FB922542FE000C2362D /* NavigationView.swift in Sources */,
 				1745B70222557E6800DDFB34 /* AddMembersViewController.swift in Sources */,
+				17FD8FCB225EE6C800DC855B /* ProfilePreviewViewController.swift in Sources */,
 				17A35F9F2254194100C2362D /* Post.swift in Sources */,
 				177FB7A822598576002B7588 /* ChatViewController.swift in Sources */,
 				60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */,

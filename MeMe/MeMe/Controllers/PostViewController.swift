@@ -5,7 +5,6 @@
 //  Created by Yair Sanchez Nieto on 4/1/19.
 //  Copyright © 2019 meme. All rights reserved.
 //
-
 import UIKit
 import Firebase
 
@@ -18,8 +17,7 @@ class PostViewController: UIViewController {
     
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var userProfileImageView: UIImageView!
-    
-    @IBOutlet weak var usernameLabel: UIButton!
+    @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var upVoteButton: UIButton!
     @IBOutlet weak var downVoteButton: UIButton!
     @IBOutlet weak var upVoteCounter: UILabel!
@@ -43,40 +41,14 @@ class PostViewController: UIViewController {
     var feed:Bool = false
     var delegate:IndividualPostDelegate?
     
-    var followed: Bool = false
-    var numFollowers:Int = 0
-    var numFollowing:Int = 0
-    
-    var post2: Post!
-    var postImage: UIImage!
-    var user: User!
-    var fromProfile: Bool = false
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         userProfileImageView.layer.cornerRadius = userProfileImageView.frame.height/2
         userProfileImageView.layer.borderWidth = 10
         userProfileImageView.layer.borderColor = UIColor.white.cgColor
         userProfileImageView.clipsToBounds = true
-        if(!fromProfile) {
-            fill(feedCell: post)
-            navItem.title = post.username+"'s meme"
-        } else {
-            /// YAIR CODE ////////
-            if post2 != nil {
-                upVoteCounter.text = String(post2.upVotes)
-                downVoteCounter.text = String(post2.downVotes)
-            }
-            
-            if postImage != nil {
-                postImageView.image = postImage
-            }
-            
-            if user != nil {
-                usernameLabel.setTitle(user.username, for: .normal)
-                fetchProfileImage()
-            }
-        }
+        fill(feedCell: post)
+        navItem.title = post.username+"'s meme"
     }
     
     func fill(feedCell:FeedCell){
@@ -92,7 +64,7 @@ class PostViewController: UIViewController {
         uid = feedCell.uid
         postID = feedCell.post
         profileURL = feedCell.profilePicURL
-        usernameLabel.setTitle(feedCell.username, for: .normal)
+        usernameLabel.text = feedCell.username
         descriptionLabel.text = feedCell.desc
         updateVoteCounter()
         
@@ -236,45 +208,14 @@ class PostViewController: UIViewController {
     func updateDelegate(){
         if let delegate = self.delegate {
             print("hi")
-            let data = FeedCellData(username: self.usernameLabel.currentTitle!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
+            let data = FeedCellData(username: self.usernameLabel.text!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
             delegate.addPost(post: data, feed:self.feed, update: false)
             delegate.refreshCell(index: self.index)
         }
     }
     
     @IBAction func follow(_ sender: Any) {
-    }
-    
-    private func fetchProfileImage() {
-        if let userID = Auth.auth().currentUser?.uid {
-            DispatchQueue.global(qos: .userInteractive).async {
-                if let profilePic = cache.getProfilePic(uid: userID) {
-                    DispatchQueue.main.async {
-                        self.userProfileImageView.image = profilePic
-                    }
-                }
-                else{
-                    let url = URL(string: self.user.profilePicture)
-                    let data = try? Data(contentsOf: url!)
-                    if let imgData = data {
-                        let image = UIImage(data:imgData)
-                        DispatchQueue.main.async {
-                            self.userProfileImageView.image = image
-                        }
-                        cache.addProfilePic(id: userID, image: image)
-                    }
-                }
-            }
-        }
-    }
-
-    @IBAction func usernameButton(_ sender: Any) {
-        let postStoryBoard: UIStoryboard = UIStoryboard(name: "Profile", bundle: nil)
-        if let postVCDestination = postStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
-            postVCDestination.userID = uid
-            postVCDestination.currentProfile = false
-            self.navigationController?.pushViewController(postVCDestination, animated: true)
-        }
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

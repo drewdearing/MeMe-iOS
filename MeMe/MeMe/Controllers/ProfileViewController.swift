@@ -118,16 +118,13 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // Add code here to
         
-        let postStoryBoard: UIStoryboard = UIStoryboard(name: "Post", bundle: nil)
-        if let postVCDestination = postStoryBoard.instantiateViewController(withIdentifier: PostVCStoryboardID) as? PostViewController {
-            
+        let postStoryBoard: UIStoryboard = UIStoryboard(name: "ProfilePreviewStoryboard", bundle: nil)
+        if let postVCDestination = postStoryBoard.instantiateViewController(withIdentifier: "previewVC") as? ProfilePreviewViewController {
             let row = indexPath.row
-            postVCDestination.post2 = postI[row].post
-            postVCDestination.postImage = postI[row].image
+            postVCDestination.selectedImage = postI[row].image
             if user != nil {
-                postVCDestination.user = user
+                postVCDestination.username = user?.username
             }
-            postVCDestination.fromProfile = true
             self.navigationController?.pushViewController(postVCDestination, animated: true)
         }
     }

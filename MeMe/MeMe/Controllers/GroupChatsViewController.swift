@@ -70,7 +70,7 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
                 let db = Firestore.firestore().collection("users").document(currentUser.uid).collection("groups")
                 db.getDocuments() { (querySnapshot, err) in
                     if let err = err {
-                        print("Error gettin	g documents: \(err)")
+                        print("Error getting documents: \(err)")
                         return
                     } else {
                         for document in querySnapshot!.documents {
