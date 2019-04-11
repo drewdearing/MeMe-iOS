@@ -23,12 +23,19 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     @IBOutlet weak var followersLabel: UILabel!
     @IBOutlet weak var followingLabel: UILabel!
     
+    @IBOutlet weak var followButton: UIButton!
     @IBOutlet var postsCollectionView: UICollectionView!
     
     var user: User? = nil
     var posts: [Post] = []
     var postImages: [UIImage] = []
     var postI: [PostImage] = []
+    
+    var followed: Bool = false
+    var numFollowers:Int = 0
+    var numFollowing:Int = 0
+    var userID: String = ""
+    var currentProfile: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,17 +46,39 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
         
         backgroundImageLoadingIndicator.startAnimating()
         postImagesLoadingIndicator.startAnimating()
-        DispatchQueue.global(qos: .userInteractive).async {
-            self.fetchPost()
-        }
+        if(currentProfile) {
+            DispatchQueue.global(qos: .userInteractive).async {
+                self.fetchPost()
+            }
         
-        if let currentUserProfile = getCurrentProfile() {
-            usernameLabel.text = currentUserProfile.username
-            followersLabel.text = String(currentUserProfile.numFollowers) + " followers"
-            followingLabel.text = "following " + String(currentUserProfile.numFollowing)
-            fetchProfileImage(currentUserProfile: currentUserProfile)
+            if let currentUserProfile = getCurrentProfile() {
+                usernameLabel.text = currentUserProfile.username
+                followersLabel.text = String(currentUserProfile.numFollowers) + " followers"
+                followingLabel.text = "following " + String(currentUserProfile.numFollowing)
+                fetchProfileImage(currentUserProfile: currentUserProfile)
+            }
+        } else {
+            DispatchQueue.global(qos: .userInteractive).async {
+                self.fetchUser(userID: self.userID)
+            }
+            let ref = Firestore.firestore().collection("users").document(userID)
+            ref.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    self.usernameLabel.text = (document.get("username") as! String)
+                    self.followersLabel.text = String(document.get("numFollowers") as! Int) + " followers"
+                    self.followingLabel.text = "following " + String(document.get("numFollowing") as! Int)
+                    let pic = document.get("profilePicURL")
+                    let url = URL(string: pic as! String)
+                    let data = try? Data(contentsOf: url!)
+                    if let imageData = data {
+                        let image = UIImage(data: imageData)
+                        self.profileImageView.image = image
+                    }
+                }else{
+                    print("Document does not exist")
+                }
+            }
         }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -236,5 +265,25 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
                 }
             }
         }
+    }
+    @IBAction func follow(_ sender: Any) {
+        /*
+        if(followed) {
+            followed = true
+            followButton.setTitle("Unfollow", for: .normal)
+            let userID = 
+            let ref = Firestore.firestore().collection("users")
+            ref.document(userID).getDocument { (document, error) in
+                self.numFollowers = document?.get("numFollowers") as! Int
+                self.numFollowers += 1
+                self.updateFollowers()
+            } else {
+                print("error")
+            }
+        } else {
+            followed = false
+            followButton.setTitle("Follow", for: .normal)
+        }
+    */
     }
 }

@@ -13,7 +13,7 @@
         <!--Profile-->
         <scene sceneID="iQ0-Yv-OxL">
             <objects>
-                <viewController id="KIc-hq-VUJ" customClass="ProfileViewController" customModule="MeMe" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="profileView" id="KIc-hq-VUJ" customClass="ProfileViewController" customModule="MeMe" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dJQ-Jp-dAT">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -37,6 +37,9 @@
                                                                     <constraint firstAttribute="width" constant="24" id="oea-eb-di9"/>
                                                                 </constraints>
                                                                 <state key="normal" image="heart"/>
+                                                                <connections>
+                                                                    <action selector="follow:" destination="KIc-hq-VUJ" eventType="touchUpInside" id="ahJ-yY-loG"/>
+                                                                </connections>
                                                             </button>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uO5-OQ-4xb">
                                                                 <rect key="frame" x="39.5" y="28" width="30.5" height="24"/>
@@ -171,6 +174,7 @@
                     <connections>
                         <outlet property="backgroundImageLoadingIndicator" destination="wzF-v7-1or" id="2F7-JI-IAF"/>
                         <outlet property="backgroundImageView" destination="CWB-wj-rxE" id="R0l-Sk-EXF"/>
+                        <outlet property="followButton" destination="NHU-qY-hqZ" id="gyG-Ih-dsk"/>
                         <outlet property="followersLabel" destination="uO5-OQ-4xb" id="WUz-aD-7lD"/>
                         <outlet property="followingLabel" destination="yW4-ru-mIT" id="Khv-gX-Swm"/>
                         <outlet property="postImagesLoadingIndicator" destination="5Kh-tD-P4P" id="NvC-y1-YTl"/>

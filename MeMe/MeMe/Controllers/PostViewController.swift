@@ -18,7 +18,8 @@ class PostViewController: UIViewController {
     
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var userProfileImageView: UIImageView!
-    @IBOutlet weak var usernameLabel: UILabel!
+    
+    @IBOutlet weak var usernameLabel: UIButton!
     @IBOutlet weak var upVoteButton: UIButton!
     @IBOutlet weak var downVoteButton: UIButton!
     @IBOutlet weak var upVoteCounter: UILabel!
@@ -41,6 +42,10 @@ class PostViewController: UIViewController {
     var upvoted: Bool = false
     var feed:Bool = false
     var delegate:IndividualPostDelegate?
+    
+    var followed: Bool = false
+    var numFollowers:Int = 0
+    var numFollowing:Int = 0
     
     var post2: Post!
     var postImage: UIImage!
@@ -68,7 +73,7 @@ class PostViewController: UIViewController {
             }
             
             if user != nil {
-                usernameLabel.text = user.username
+                usernameLabel.setTitle(user.username, for: .normal)
                 fetchProfileImage()
             }
         }
@@ -87,7 +92,7 @@ class PostViewController: UIViewController {
         uid = feedCell.uid
         postID = feedCell.post
         profileURL = feedCell.profilePicURL
-        usernameLabel.text = feedCell.username
+        usernameLabel.setTitle(feedCell.username, for: .normal)
         descriptionLabel.text = feedCell.desc
         updateVoteCounter()
         
@@ -231,14 +236,13 @@ class PostViewController: UIViewController {
     func updateDelegate(){
         if let delegate = self.delegate {
             print("hi")
-            let data = FeedCellData(username: self.usernameLabel.text!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
+            let data = FeedCellData(username: self.usernameLabel.currentTitle!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
             delegate.addPost(post: data, feed:self.feed, update: false)
             delegate.refreshCell(index: self.index)
         }
     }
     
     @IBAction func follow(_ sender: Any) {
-        
     }
     
     private func fetchProfileImage() {
@@ -264,6 +268,14 @@ class PostViewController: UIViewController {
         }
     }
 
+    @IBAction func usernameButton(_ sender: Any) {
+        let postStoryBoard: UIStoryboard = UIStoryboard(name: "Profile", bundle: nil)
+        if let postVCDestination = postStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
+            postVCDestination.userID = uid
+            postVCDestination.currentProfile = false
+            self.navigationController?.pushViewController(postVCDestination, animated: true)
+        }
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ShareSegue" {
