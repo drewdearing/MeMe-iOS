@@ -57,7 +57,3 @@ Deviations:
 • Occasionally, after logging in, a malloc error is thrown when loading the feed due to our cache: opening the app again fixes it
 • On some of the newer images, when clicking on it, the description does not appear in the screen
 • Profile settings is implemented, but the cache is not updated so the changes are not seen
-
-
-
-P.S: Not sure if it's going to happen or not, but Yair might drop the class
