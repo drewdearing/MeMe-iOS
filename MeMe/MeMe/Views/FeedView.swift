@@ -97,9 +97,9 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
         print("loading posts")
         DispatchQueue.global(qos: .background).async {
             let data = cache.getPosts(feed: self.feed)
-            for post in data {
+            /*for post in data {
                 self.postData[post.post] = post
-            }
+            }*/
             self.update()
             self.getPosts()
         }
