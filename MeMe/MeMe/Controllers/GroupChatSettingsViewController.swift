@@ -204,7 +204,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                     let data = try? Data(contentsOf: url!)
                     if let imageData = data {
                         let image = UIImage(data: imageData)
-                        self.currentMembers.append(Container(member: username as! String, image: document?.get("profilePicURL") as! UIImage, profile: document?.get("profilePicURL") as! String, id: (currentUser?.uid)!, inGroup: true))
+                        self.currentMembers.append(Container(member: username as! String, image: image!, profile: document?.get("profilePicURL") as! String, id: (currentUser?.uid)!, inGroup: true))
                     }
                     self.currentMemebersTableView.reloadData()
                 } else {
