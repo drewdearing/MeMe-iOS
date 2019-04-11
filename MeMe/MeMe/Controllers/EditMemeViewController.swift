@@ -16,6 +16,7 @@ protocol NewMemeDelegate {
 }
 
 class EditMemeViewController: UIViewController, EditToolsDelegate {
+    
     @IBOutlet weak var memeImageView: UIImageView!
     @IBOutlet weak var doneButton: UIBarButtonItem!
     var desc: String = ""
@@ -25,16 +26,22 @@ class EditMemeViewController: UIViewController, EditToolsDelegate {
     var green: CGFloat = 0.0
     var blue: CGFloat = 0.0
     var brushWidth: CGFloat = 10.0
+    var textSize:CGFloat = 24
+    var textHue:CGFloat = 0
+    var draw = true
+    var originalSize:CGSize!
+    var text:String = ""
     var swiped = false
-    
-    
     var selectedImage: UIImage!
+    var tempImage:UIImage!
     var delegate:NewMemeDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         if selectedImage != nil {
             memeImageView.image = selectedImage
+            tempImage = selectedImage
+            originalSize = selectedImage.size
         }
         let color = UIColor(hue: hue, saturation: 1, brightness: 1, alpha: 1)
         var alpha:CGFloat = 0
@@ -53,6 +60,7 @@ class EditMemeViewController: UIViewController, EditToolsDelegate {
     }
     
     func drawLineFrom(fromPoint: CGPoint, toPoint: CGPoint) {
+        tempImage = memeImageView.image!
         var width = memeImageView.frame.width
         var height = memeImageView.frame.height
         
@@ -84,28 +92,90 @@ class EditMemeViewController: UIViewController, EditToolsDelegate {
         UIGraphicsEndImageContext()
     }
     
+    func textToImage(drawText text: String, atPoint point: CGPoint){
+        tempImage = memeImageView.image!
+        let textFont = UIFont(name: "Helvetica Bold", size: textSize)!
+        UIGraphicsBeginImageContext(memeImageView.frame.size)
+        
+        var width = memeImageView.frame.width
+        var height = memeImageView.frame.height
+        
+        let mW = width / memeImageView.image!.size.width
+        let mH = height / memeImageView.image!.size.height
+        
+        if( mH < mW ) {
+            width = height / memeImageView.image!.size.height * memeImageView.image!.size.width
+        }
+        else if( mW < mH ) {
+            height = width / memeImageView.image!.size.width * memeImageView.image!.size.height
+        }
+        
+        let y = (memeImageView.frame.height - height) / 2
+        
+        memeImageView.image?.draw(in: CGRect(x: 0, y: y, width: width, height: height))
+        let context = UIGraphicsGetCurrentContext()
+        context?.move(to: point)
+        
+        let textColor = UIColor(hue: textHue, saturation: 1, brightness: 1, alpha: 1)
+        
+        let textFontAttributes = [
+            NSAttributedString.Key.font: textFont,
+            NSAttributedString.Key.foregroundColor: textColor,
+            ] as [NSAttributedString.Key : Any]
+        
+        
+        let rect = CGRect(origin: point, size: memeImageView.image!.size)
+        text.draw(in: rect, withAttributes: textFontAttributes)
+        context?.addRect(rect)
+        
+        memeImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+    }
+    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         swiped = true
-        if let touch = touches.first {
-            let currentPoint = touch.location(in: memeImageView)
-            drawLineFrom(fromPoint: lastPoint, toPoint: currentPoint)
-            lastPoint = currentPoint
+        if draw {
+            if let touch = touches.first {
+                let currentPoint = touch.location(in: memeImageView)
+                drawLineFrom(fromPoint: lastPoint, toPoint: currentPoint)
+                lastPoint = currentPoint
+            }
+        }
+        else{
+            if let touch = touches.first {
+                memeImageView.image = tempImage
+                let currentPoint = touch.location(in: memeImageView)
+                textToImage(drawText: text, atPoint: currentPoint)
+                lastPoint = currentPoint
+            }
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if !swiped {
-            drawLineFrom(fromPoint: lastPoint, toPoint: lastPoint)
+        if draw {
+            if !swiped {
+                drawLineFrom(fromPoint: lastPoint, toPoint: lastPoint)
+            }
+        }
+        else{
+            if let touch = touches.first {
+                let currentPoint = touch.location(in: memeImageView)
+                textToImage(drawText: text, atPoint: currentPoint)
+            }
         }
     }
     
-    func updateTools(size: Float, hue: Float, red: CGFloat, green: CGFloat, blue: CGFloat, desc: String) {
+    func updateTools(size: Float, hue: Float, red: CGFloat, green: CGFloat, blue: CGFloat, desc: String, text: String, textSize: Float, textHue: Float, draw: Bool) {
         self.brushWidth = CGFloat(size)
         self.hue = CGFloat(hue)
         self.red = red
         self.green = green
         self.blue = blue
         self.desc = desc
+        self.textHue = CGFloat(textHue)
+        self.textSize = CGFloat(textSize)
+        self.text = text
+        self.draw = draw
     }
     
     func addMeme(post: FeedCellData, feed: Bool) {
@@ -123,6 +193,11 @@ class EditMemeViewController: UIViewController, EditToolsDelegate {
             dest.desc = desc
             dest.hue = Float(hue)
             dest.selectedImage = memeImageView.image
+            dest.text = text
+            dest.textHue = Float(textHue)
+            dest.textSize = Float(textSize)
+            dest.draw = draw
+            dest.originalSize = originalSize
         }
     }
     

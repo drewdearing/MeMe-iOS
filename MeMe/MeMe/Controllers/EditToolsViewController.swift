@@ -11,7 +11,7 @@ import Firebase
 import SVProgressHUD
 
 protocol EditToolsDelegate {
-    func updateTools(size:Float, hue:Float, red:CGFloat, green:CGFloat, blue:CGFloat, desc:String)
+    func updateTools(size:Float, hue:Float, red:CGFloat, green:CGFloat, blue:CGFloat, desc:String, text:String, textSize:Float, textHue:Float, draw:Bool)
     func addMeme(post:FeedCellData, feed:Bool)
 }
 
@@ -20,6 +20,11 @@ class EditToolsViewController: UIViewController {
     @IBOutlet weak var descriptionField: UITextField!
     @IBOutlet weak var brushSlider: UISlider!
     @IBOutlet weak var colorSlider: UISlider!
+    @IBOutlet weak var textSizeSlider: UISlider!
+    @IBOutlet weak var textColorSlider: UISlider!
+    @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var segmentControl: UISegmentedControl!
+    
     var delegate:EditToolsDelegate!
     var desc:String!
     var red:Float!
@@ -29,6 +34,12 @@ class EditToolsViewController: UIViewController {
     var hue:Float!
     var color:UIColor!
     var selectedImage:UIImage!
+    var textColor:UIColor!
+    var textSize:Float!
+    var text:String!
+    var textHue:Float!
+    var draw:Bool!
+    var originalSize:CGSize!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,11 +50,47 @@ class EditToolsViewController: UIViewController {
         colorSlider.setValue(hue, animated: false)
         color = UIColor(hue: CGFloat(colorSlider!.value), saturation: 1, brightness: 1, alpha: 1)
         colorSlider.thumbTintColor = color
+        textField.text = text
+        textSizeSlider.maximumValue = 70.0
+        textSizeSlider.minimumValue = 10.0
+        textSizeSlider.setValue(textSize, animated: false)
+        textColorSlider.setValue(textHue, animated: false)
+        textColor = UIColor(hue: CGFloat(textColorSlider!.value), saturation: 1, brightness: 1, alpha: 1)
+        textColorSlider.thumbTintColor = textColor
+        segmentControl.selectedSegmentIndex = draw ? 0:1
+        updateEnabledFields()
+    }
+    
+    func updateEnabledFields() {
+        if draw {
+            brushSlider.isEnabled = true
+            colorSlider.isEnabled = true
+            textColorSlider.isEnabled = false
+            textSizeSlider.isEnabled = false
+            textField.isEnabled = false
+        }
+        else{
+            brushSlider.isEnabled = false
+            colorSlider.isEnabled = false
+            textColorSlider.isEnabled = true
+            textSizeSlider.isEnabled = true
+            textField.isEnabled = true
+        }
+    }
+    
+    @IBAction func segmentChange(_ sender: Any) {
+        draw = segmentControl.selectedSegmentIndex == 0
+        updateEnabledFields()
     }
     
     @IBAction func colorSliderChanged(_ sender: Any) {
         colorSlider.thumbTintColor = UIColor(hue: CGFloat(colorSlider!.value), saturation: 1, brightness: 1, alpha: 1)
         color = colorSlider.thumbTintColor
+    }
+    
+    @IBAction func textColorSliderChanged(_ sender: Any) {
+        textColorSlider.thumbTintColor = UIColor(hue: CGFloat(textColorSlider!.value), saturation: 1, brightness: 1, alpha: 1)
+        textColor = colorSlider.thumbTintColor
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -52,7 +99,7 @@ class EditToolsViewController: UIViewController {
         var b:CGFloat = 0
         var a:CGFloat = 0
         color.getRed(&r, green: &g, blue: &b, alpha: &a)
-        delegate.updateTools(size: brushSlider.value, hue: colorSlider.value, red: r, green: g, blue: b, desc: descriptionField.text!)
+        delegate.updateTools(size: brushSlider.value, hue: colorSlider.value, red: r, green: g, blue: b, desc: descriptionField.text!, text: textField.text!, textSize: textSizeSlider.value, textHue: textColorSlider.value, draw:draw)
     }
     
     func lockUI(){
@@ -69,12 +116,25 @@ class EditToolsViewController: UIViewController {
         addToStorage()
     }
     
+    func cropImage() -> UIImage
+    {
+        UIGraphicsBeginImageContext(originalSize)
+        let width = originalSize.width
+        let height = selectedImage.size.height * width / selectedImage.size.width
+        let y = (height - originalSize.height) / 2
+        selectedImage.draw(in: CGRect(x: 0, y: -y, width: width, height: height))
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image!
+    }
+    
     func addToStorage(){
         lockUI()
         SVProgressHUD.show(withStatus: "Posting...")
         let storage = Storage.storage()
         let storageRef = storage.reference()
-        let data = selectedImage.pngData()
+        
+        let data = cropImage().pngData()
         let ref = Firestore.firestore().collection("post").document()
         let imageName = ref.documentID
         print(imageName)
