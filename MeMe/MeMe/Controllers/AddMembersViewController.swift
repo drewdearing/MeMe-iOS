@@ -155,7 +155,7 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
             let name = currentCell.usernameLable.text
             let ref_group = Firestore.firestore().collection("groups").document(groupddocid).collection("usersInGroup").document(userid).setData([
                 "username": name,
-                "profileURL": current.profile
+                "profilePicURL": current.profile
             ]) { err in
                 if let err = err {
                     print("Error writing document: \(err)")
