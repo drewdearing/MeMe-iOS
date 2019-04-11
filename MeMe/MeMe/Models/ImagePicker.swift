@@ -10,7 +10,7 @@ open class ImagePicker: NSObject {
     private weak var presentationController: UIViewController?
     private weak var delegate: ImagePickerDelegate?
     
-    public init(presentationController: UIViewController, delegate: ImagePickerDelegate) {
+    public init(presentationController: UIViewController, delegate: ImagePickerDelegate, editAllowed:Bool) {
         self.pickerController = UIImagePickerController()
         
         super.init()
@@ -19,7 +19,7 @@ open class ImagePicker: NSObject {
         self.delegate = delegate
         
         self.pickerController.delegate = self
-        self.pickerController.allowsEditing = true
+        self.pickerController.allowsEditing = editAllowed
         self.pickerController.mediaTypes = ["public.image"]
     }
     
@@ -61,7 +61,6 @@ open class ImagePicker: NSObject {
     
     private func pickerController(_ controller: UIImagePickerController, didSelect image: UIImage?) {
         controller.dismiss(animated: true, completion: nil)
-        
         self.delegate?.didSelect(image: image)
     }
 }
@@ -75,7 +74,7 @@ extension ImagePicker: UIImagePickerControllerDelegate {
     public func imagePickerController(_ picker: UIImagePickerController,
                                       didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         guard let image = info[.editedImage] as? UIImage else {
-            return self.pickerController(picker, didSelect: nil)
+            return self.pickerController(picker, didSelect: info[.originalImage] as? UIImage)
         }
         self.pickerController(picker, didSelect: image)
     }

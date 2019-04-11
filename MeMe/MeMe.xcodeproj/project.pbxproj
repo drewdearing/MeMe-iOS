@@ -44,6 +44,7 @@
 		23BD7A5C5DD54070A9759157 /* Pods_MeMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */; };
 		3B143719225572D100331A5B /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B143718225572D100331A5B /* TabViewController.swift */; };
 		3B1B71BC225E6CCE003B80E6 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */; };
+		3B37D73F225EAA2F00790005 /* EditToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B37D73E225EAA2F00790005 /* EditToolsViewController.swift */; };
 		3B3F47C32249ACBA00B2C5A0 /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F47C12249ACBA00B2C5A0 /* FeedTableViewCell.swift */; };
 		3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */; };
 		3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B76C13C22398191005CA53E /* GoogleService-Info.plist */; };
@@ -114,6 +115,7 @@
 		1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MeMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B143718225572D100331A5B /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		3B37D73E225EAA2F00790005 /* EditToolsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditToolsViewController.swift; sourceTree = "<group>"; };
 		3B3F47C12249ACBA00B2C5A0 /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTableViewCell.swift; path = MeMe/Cells/FeedTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FeedTableViewCell.xib; path = MeMe/Cells/FeedTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		3B76C13C22398191005CA53E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 				17C6E83F2239A88A004665F0 /* MainViewController.swift */,
 				6037F703224AD13F000D0E57 /* GalleryViewController.swift */,
 				6037F705224AD165000D0E57 /* EditMemeViewController.swift */,
+				3B37D73E225EAA2F00790005 /* EditToolsViewController.swift */,
 				609987A92255E480002EFA2F /* GroupChatsViewController.swift */,
 				17A35F91225403B300C2362D /* GroupChatViewController.swift */,
 				17A35F8B2254022200C2362D /* GroupChatSettingsViewController.swift */,
@@ -508,6 +511,7 @@
 				177FB7A822598576002B7588 /* ChatViewController.swift in Sources */,
 				60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */,
 				17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */,
+				3B37D73F225EAA2F00790005 /* EditToolsViewController.swift in Sources */,
 				3BB8349522532FB600DE1D01 /* FeedView.swift in Sources */,
 				17A35FAB22541BD000C2362D /* ProfilePostCollectionViewCell.swift in Sources */,
 				17A35F962254185600C2362D /* PostViewController.swift in Sources */,
