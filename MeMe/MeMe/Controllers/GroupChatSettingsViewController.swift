@@ -139,7 +139,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                     } else {
                         for document in querySnapshot!.documents {
                             let name = document.get("username")
-                            let pic = document.get("profileURL")
+                            let pic = document.get("profilePicURL")
                             let id = document.documentID
                             let url = URL(string: pic as! String)
                             let data = try? Data(contentsOf: url!)
