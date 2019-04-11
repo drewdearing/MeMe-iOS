@@ -82,7 +82,7 @@
                                     <action selector="downVote:" destination="LWo-Zr-AxH" eventType="touchUpInside" id="Zss-kc-9rz"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dar-AF-QCo">
+                            <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dar-AF-QCo">
                                 <rect key="frame" x="124" y="626" width="44" height="30"/>
                                 <state key="normal" title="Follow"/>
                                 <connections>

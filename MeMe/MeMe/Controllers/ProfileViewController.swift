@@ -34,7 +34,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     var followed: Bool = false
     var numFollowers:Int = 0
     var numFollowing:Int = 0
-    var userID: String = ""
+    var userID: String = Auth.auth().currentUser!.uid
     var currentProfile: Bool = true
     
     override func viewDidLoad() {
@@ -46,6 +46,25 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
         
         backgroundImageLoadingIndicator.startAnimating()
         postImagesLoadingIndicator.startAnimating()
+        followButton.isEnabled = false
+        followersLabel.text = "Followed"
+        
+        if let currentUser = Auth.auth().currentUser{
+            if userID != currentUser.uid {
+                Firestore.firestore().collection("users").document(userID).collection("followers").document(currentUser.uid).getDocument { (followDoc, err) in
+                    if let doc = followDoc {
+                        if doc.exists {
+                            self.followButton.isEnabled = true
+                            self.followButton.setImage(#imageLiteral(resourceName: "heartFilled"), for: .normal)
+                            self.followed = true
+                        }
+                        else{
+                            self.followButton.isEnabled = true
+                        }
+                    }
+                }
+            }
+        }
 
         if(currentProfile) {
             DispatchQueue.global(qos: .userInteractive).async {
@@ -54,8 +73,8 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
         
             if let currentUserProfile = getCurrentProfile() {
                 usernameLabel.text = currentUserProfile.username
-                followersLabel.text = String(currentUserProfile.numFollowers) + " followers"
-                followingLabel.text = "following " + String(currentUserProfile.numFollowing)
+                //followersLabel.text = String(currentUserProfile.numFollowers) + " followers"
+                //followingLabel.text = "following " + String(currentUserProfile.numFollowing)
                 fetchProfileImage(currentUserProfile: currentUserProfile)
             }
         } else {
@@ -66,8 +85,8 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
             ref.getDocument { (document, error) in
                 if let document = document, document.exists {
                     self.usernameLabel.text = (document.get("username") as! String)
-                    self.followersLabel.text = String(document.get("numFollowers") as! Int) + " followers"
-                    self.followingLabel.text = "following " + String(document.get("numFollowing") as! Int)
+                    //self.followersLabel.text = String(document.get("numFollowers") as! Int) + " followers"
+                    //self.followingLabel.text = "following " + String(document.get("numFollowing") as! Int)
                     let pic = document.get("profilePicURL")
                     let url = URL(string: pic as! String)
                     let data = try? Data(contentsOf: url!)
@@ -238,8 +257,8 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
                     self.backgroundImageLoadingIndicator.alpha = 0
                     self.backgroundImageView.image = UIImage(data:imgData)!
                     
-                    self.followersLabel.text = String(self.user!.numFollowers) + " followers"
-                    self.followingLabel.text = "following " + String(self.user!.numFollowing)
+                    //self.followersLabel.text = String(self.user!.numFollowers) + " followers"
+                    //self.followingLabel.text = "following " + String(self.user!.numFollowing)
                 }
             }
         }
@@ -268,26 +287,21 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
         }
     }
     @IBAction func follow(_ sender: Any) {
-        print(followed)
-        if(!followed) {
-            print(numFollowers)
-            followed = true
-            followButton.setImage(#imageLiteral(resourceName: "heartFilled"), for: .normal)
-            numFollowers += 1
-            followersLabel.text = String(numFollowers) + " followers"
-            //updateFollowers()
-        } else {
-            followed = false
-            followButton.setImage(#imageLiteral(resourceName: "heart"), for: .normal)
-            numFollowers -= 1
-            followersLabel.text = String(numFollowers) + " followers"
+        if let currentUser = Auth.auth().currentUser {
+            if !followed {
+                Firestore.firestore().collection("users").document(userID).collection("followers").document(currentUser.uid).setData([
+                    "following":true
+                    ])
+                followButton.setImage(#imageLiteral(resourceName: "heartFilled"), for: .normal)
+                followersLabel.text = "Followed"
+                followed = true
+            }
+            else{
+                Firestore.firestore().collection("users").document(userID).collection("followers").document(currentUser.uid).delete()
+                followButton.setImage(#imageLiteral(resourceName: "heart"), for: .normal)
+                followersLabel.text = "Follow"
+                followed = false
+            }
         }
-    }
-    
-    private func updateFollowers() {
-        let followerID = Auth.auth().currentUser?.uid
-        let userID = self.userID
-        let ref = Firestore.firestore().collection("users").document(userID)
-        ref.collection("followers").document(followerID as! String)
     }
 }

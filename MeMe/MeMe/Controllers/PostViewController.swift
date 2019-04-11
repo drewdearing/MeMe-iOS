@@ -39,6 +39,7 @@ class PostViewController: UIViewController {
     var downvoted:Bool = false
     var upvoted: Bool = false
     var feed:Bool = false
+    var following:Bool = false
     var delegate:IndividualPostDelegate?
     
     override func viewDidLoad() {
@@ -67,6 +68,23 @@ class PostViewController: UIViewController {
         usernameLabel.text = feedCell.username
         descriptionLabel.text = feedCell.desc
         updateVoteCounter()
+        
+        if let currentUser = Auth.auth().currentUser{
+            if uid != currentUser.uid {
+                Firestore.firestore().collection("users").document(uid).collection("followers").document(currentUser.uid).getDocument { (followDoc, err) in
+                    if let doc = followDoc {
+                        if doc.exists {
+                            self.followButton.isEnabled = true
+                            self.following = true
+                            self.followButton.setTitle("Unfollow", for: .normal)
+                        }
+                        else{
+                            self.followButton.isEnabled = true
+                        }
+                    }
+                }
+            }
+        }
         
         DispatchQueue.global(qos: .background).async {
             if let memePic = cache.getImage(id: feedCell.post) {
@@ -215,7 +233,21 @@ class PostViewController: UIViewController {
     }
     
     @IBAction func follow(_ sender: Any) {
-        
+        if let currentUser = Auth.auth().currentUser {
+            if !following {
+                Firestore.firestore().collection("users").document(uid).collection("followers").document(currentUser.uid).setData([
+                    "following":true
+                    ])
+                followButton.setTitle("Unfollow", for: .normal)
+                following = true
+            }
+            else{
+                Firestore.firestore().collection("users").document(uid).collection("followers").document(currentUser.uid).delete()
+                followButton.setTitle("Follow", for: .normal)
+                following = false
+            }
+            
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
