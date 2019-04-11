@@ -50,6 +50,7 @@ class PostViewController: UIViewController {
         userProfileImageView.clipsToBounds = true
         fill(feedCell: post)
         navItem.title = post.username+"'s meme"
+        followButton.isEnabled = false
     }
     
     func fill(feedCell:FeedCell){
@@ -131,6 +132,27 @@ class PostViewController: UIViewController {
                         self.userProfileImageView.image = image
                     }
                     cache.addProfilePic(id: self.uid, image: image)
+                }
+            }
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        followButton.isEnabled = false
+        followButton.setTitle("Follow", for: .normal)
+        if let currentUser = Auth.auth().currentUser{
+            if uid != currentUser.uid {
+                Firestore.firestore().collection("users").document(uid).collection("followers").document(currentUser.uid).getDocument { (followDoc, err) in
+                    if let doc = followDoc {
+                        if doc.exists {
+                            self.followButton.isEnabled = true
+                            self.following = true
+                            self.followButton.setTitle("Unfollow", for: .normal)
+                        }
+                        else{
+                            self.followButton.isEnabled = true
+                        }
+                    }
                 }
             }
         }
