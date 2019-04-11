@@ -171,7 +171,8 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             }
             
             ref.collection("usersInGroup").document((currentUser?.uid)!).setData([
-                "username": getCurrentProfile()?.username
+                "username": getCurrentProfile()?.username,
+                "profilePicURL": getCurrentProfile()?.profilePicURL
             ]) { err in
                 if let err = err {
                     print("Error writing document: \(err)")
