@@ -46,9 +46,10 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
         
         backgroundImageLoadingIndicator.startAnimating()
         postImagesLoadingIndicator.startAnimating()
+
         if(currentProfile) {
             DispatchQueue.global(qos: .userInteractive).async {
-                self.fetchPost()
+                self.fetchPosts()
             }
         
             if let currentUserProfile = getCurrentProfile() {
@@ -132,7 +133,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     }
  
     
-    func fetchPost() {
+    func fetchPosts() {
         if let userID = Auth.auth().currentUser?.uid {
             fetchUser(userID: userID)
         }
@@ -239,6 +240,9 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
                     self.backgroundImageLoadingIndicator.stopAnimating()
                     self.backgroundImageLoadingIndicator.alpha = 0
                     self.backgroundImageView.image = UIImage(data:imgData)!
+                    
+                    self.followersLabel.text = String(self.user!.numFollowers) + " followers"
+                    self.followingLabel.text = "following " + String(self.user!.numFollowing)
                 }
             }
         }

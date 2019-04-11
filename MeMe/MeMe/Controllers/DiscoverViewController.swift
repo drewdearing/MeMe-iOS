@@ -17,7 +17,7 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, PostNavigation
     override func viewDidLoad() {
         super.viewDidLoad()
         feedView.delegate = self
-        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self, editAllowed: false)
     }
     
     func addMeme(post: FeedCellData, feed:Bool) {
@@ -39,7 +39,8 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, PostNavigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "NewMemeSegue" {
-            let dest = segue.destination as! EditMemeViewController
+            let destinationNavigationController = segue.destination as! UINavigationController
+            let dest = destinationNavigationController.topViewController as! EditMemeViewController
             dest.selectedImage = selectedImage
             dest.delegate = self
         }

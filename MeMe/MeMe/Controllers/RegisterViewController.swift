@@ -208,7 +208,7 @@ class RegisterViewController: UIViewController, ImagePickerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         statusLabel.text = ""
-        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self, editAllowed: true)
     }
 
 }
