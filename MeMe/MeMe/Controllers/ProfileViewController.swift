@@ -271,23 +271,26 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
         }
     }
     @IBAction func follow(_ sender: Any) {
-        /*
-        if(followed) {
+        print(followed)
+        if(!followed) {
+            print(numFollowers)
             followed = true
-            followButton.setTitle("Unfollow", for: .normal)
-            let userID = 
-            let ref = Firestore.firestore().collection("users")
-            ref.document(userID).getDocument { (document, error) in
-                self.numFollowers = document?.get("numFollowers") as! Int
-                self.numFollowers += 1
-                self.updateFollowers()
-            } else {
-                print("error")
-            }
+            followButton.setImage(#imageLiteral(resourceName: "heartFilled"), for: .normal)
+            numFollowers += 1
+            followersLabel.text = String(numFollowers) + " followers"
+            //updateFollowers()
         } else {
             followed = false
-            followButton.setTitle("Follow", for: .normal)
+            followButton.setImage(#imageLiteral(resourceName: "heart"), for: .normal)
+            numFollowers -= 1
+            followersLabel.text = String(numFollowers) + " followers"
         }
-    */
+    }
+    
+    private func updateFollowers() {
+        let followerID = Auth.auth().currentUser?.uid
+        let userID = self.userID
+        let ref = Firestore.firestore().collection("users").document(userID)
+        ref.collection("followers").document(followerID as! String)
     }
 }
