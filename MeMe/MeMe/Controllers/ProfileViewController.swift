@@ -321,5 +321,6 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
     
     func updateUsername(newUsername: String) {
         usernameLabel.text = newUsername
+        // Update to cache here...
     }
 }
