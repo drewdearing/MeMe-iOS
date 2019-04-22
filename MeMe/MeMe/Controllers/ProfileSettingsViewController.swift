@@ -19,6 +19,8 @@ class ProfileSettingsViewController: UIViewController {
     
     var user: User!
     
+    var delegate: UsernameUpdatedDelegate!
+    
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var email: UITextField!
     @IBOutlet weak var password: UITextField!
@@ -41,7 +43,6 @@ class ProfileSettingsViewController: UIViewController {
         DispatchQueue.global(qos: .userInteractive).async {
             self.fetchCurrentUser()
         }
-        
     }
     
     private func setNavigationBarItems() {
@@ -77,10 +78,13 @@ class ProfileSettingsViewController: UIViewController {
                                 self!.statusLabel.text = "Username Updated"
                                 self?.username.isUserInteractionEnabled = true
                                 self?.password.isUserInteractionEnabled = true
+                                
+                                if self!.delegate != nil {
+                                    self!.delegate.updateUsername(newUsername: (self?.username.text)!)
+                                }
                             }
                         }
                     }
-                    
                 }
             } else {
                 self!.statusLabel.text = "Password not valid to Update Username"
@@ -129,7 +133,6 @@ class ProfileSettingsViewController: UIViewController {
                 print("Document successfully updated for new username")
             }
         }
-        
     }
     
     private func deleteUser(currentUserID: String) {
@@ -142,8 +145,12 @@ class ProfileSettingsViewController: UIViewController {
                 userDocumentSnapshot.exists,
                 let userData = userDocumentSnapshot.data(),
                 let fetchedUser = User(dictionary: userData) {
-                print("About to delete Posts for user", currentUserID)
-                self.deleteUserPosts(currentUser: fetchedUser)
+                    print("About to unfollow for user", currentUserID)
+                    self.unfollowUsers(currentUser: fetchedUser)
+                    print("About to delete Posts for user", currentUserID)
+                    self.deleteUserPosts(currentUser: fetchedUser)
+                    print("Setting username and profile Pic to default", currentUserID)
+                    self.setUserToDefaultDeletedUser(currentUserID: currentUserID)
             }
         }
     }
@@ -151,6 +158,25 @@ class ProfileSettingsViewController: UIViewController {
     private func unfollowUsers(currentUser: User) {
         unfollowAllFollowing(currentUser: currentUser)
         removeFromAllFollowingUsers(currentUser: currentUser)
+    }
+    
+    private func setUserToDefaultDeletedUser(currentUserID: String) {
+        let defaultUsername = "Unknown"
+        let defaultProfilePicURL = "https://firebasestorage.googleapis.com/v0/b/meme-d3805.appspot.com/o/profile_gDIlgji3zEYJIfVj2DBpncr9NN53.png?alt=media&token=f1b19b30-0d90-4e48-9fb8-05fa51dccd5d"
+        
+        DispatchQueue.global(qos: .background).async {
+
+            let userDocumentReference = self.database.collection("users").document(currentUserID)
+            
+            userDocumentReference.updateData(["username" : defaultUsername,
+                                              "profilePicURL" : defaultProfilePicURL]) { err in
+                if let err = err {
+                    print("Error updating username & profilePic in user document: \(err)")
+                } else {
+                    print("Document successfully updated for new username")
+                }
+            }
+        }
     }
     
     private func unfollowAllFollowing(currentUser: User) {
@@ -176,12 +202,12 @@ class ProfileSettingsViewController: UIViewController {
                                     
                                     followingUserRef.updateData(["followers" : uFollowingUser.followers,
                                                                  "numFollowers": uFollowingUser.followers.count]) {
-                                                                    error in
-                                                                    if let error = error {
-                                                                        print("Error updating document: \(error)")
-                                                                    } else {
-                                                                        print("Unfollowed all following users successfully updated")
-                                                                    }
+                                        error in
+                                        if let error = error {
+                                            print("Error updating document: \(error)")
+                                        } else {
+                                            print("Unfollowed all following users successfully updated")
+                                        }
                                     }
                                     return
                                 }
@@ -218,11 +244,11 @@ class ProfileSettingsViewController: UIViewController {
                                     followerUserRef.updateData(["following" : uFollowerUser.following,
                                                                 "numFollowing": uFollowerUser.following.count]) {
                                                                     error in
-                                                                    if let error = error {
-                                                                        print("Error updating document: \(error)")
-                                                                    } else {
-                                                                        print("Unfollowed all following users successfully updated")
-                                                                    }
+                                        if let error = error {
+                                            print("Error updating document: \(error)")
+                                        } else {
+                                            print("Unfollowed all following users successfully updated")
+                                        }
                                     }
                                     return
                                 }

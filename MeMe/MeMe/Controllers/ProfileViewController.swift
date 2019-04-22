@@ -9,11 +9,16 @@
 import UIKit
 import Firebase
 
+private let ProfileSettingsSegueID = "profileSettingsIdentifier"
 private let reuseIdentifier = "ProfileCellIdentifier"
 private let PostVCStoryboardID = "individualPost"
 
+protocol UsernameUpdatedDelegate {
+    func updateUsername(newUsername: String)
+}
+
 class ProfileViewController: UIViewController, UICollectionViewDataSource,
-UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDelegate {
     @IBOutlet weak var backgroundImageLoadingIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var postImagesLoadingIndicator: UIActivityIndicatorView!
@@ -286,6 +291,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
             }
         }
     }
+    
     @IBAction func follow(_ sender: Any) {
         if let currentUser = Auth.auth().currentUser {
             if !followed {
@@ -303,5 +309,17 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
                 followed = false
             }
         }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == ProfileSettingsSegueID {
+            let destination = segue.destination
+            
+            (destination as? ProfileSettingsViewController)?.delegate = self
+        }
+    }
+    
+    func updateUsername(newUsername: String) {
+        usernameLabel.text = newUsername
     }
 }
