@@ -117,6 +117,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         if let name = groupChatNameTextField.text {
             isEdit = false
             editButton.setImage(#imageLiteral(resourceName: "edit"), for: .normal)
+            vcTitle.title = name
             groupChatNameLabel.text = name
             groupChatNameLabel.isHidden = false
             groupChatNameTextField.clearsOnBeginEditing = true
@@ -124,6 +125,17 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             groupChatNameTextField.isHidden = true
             groupChatNameTextField.textInputView.isUserInteractionEnabled = false
             groupChatNameTextField.resignFirstResponder()
+            
+            let ref = Firestore.firestore().collection("groups").document(groupID)
+            ref.setData([
+                "name": name
+            ]) { err in
+                if let err = err {
+                    print("Error adding document: \(err)")
+                } else {
+                    print("Name changed successful with ID: \(ref.documentID)")
+                }
+            }
         }
     }
 
@@ -237,5 +249,9 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         }
         container.inGroup = true
         currentMemebersTableView.reloadData()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
     }
 }
