@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HomeViewController: TabViewController, NewMemeDelegate, PostNavigationDelegate, ImagePickerDelegate {
+class HomeViewController: TabViewController, NewMemeDelegate, PostNavigationDelegate, ImagePickerDelegate, ProfileNavigationDelegate {
     
     @IBOutlet weak var feedView: HomeView!
     var imagePicker:ImagePicker!
@@ -17,6 +17,7 @@ class HomeViewController: TabViewController, NewMemeDelegate, PostNavigationDele
     override func viewDidLoad() {
         super.viewDidLoad()
         feedView.delegate = self
+        feedView.delegate2 = self
         self.imagePicker = ImagePicker(presentationController: self, delegate: self, editAllowed: false)
     }
     
@@ -35,6 +36,10 @@ class HomeViewController: TabViewController, NewMemeDelegate, PostNavigationDele
     
     func navigateToPost(postVC: PostViewController) {
         navigationController?.pushViewController(postVC, animated: true)
+    }
+    
+    func navigateToProfile(profileVC: ProfileViewController) {
+        navigationController?.pushViewController(profileVC, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

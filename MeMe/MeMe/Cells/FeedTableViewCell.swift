@@ -16,6 +16,7 @@ struct VoteData: Codable {
 
 protocol FeedCellDelegate {
     func addPost(post:FeedCellData, feed:Bool, update:Bool)
+    func tappedAction(uid: String)
 }
 
 class FeedTableViewCell: UITableViewCell {
@@ -69,6 +70,7 @@ class FeedTableViewCell: UITableViewCell {
         profileURL = feedCell.profilePicURL
         cellTitle.text = feedCell.username
         descriptionLabel.text = feedCell.desc
+        setUpGesture()
         updateVoteCounter()
         selectionStyle = .none
         
@@ -108,6 +110,15 @@ class FeedTableViewCell: UITableViewCell {
         }
     }
     
+    func setUpGesture() {
+        let tapTitle = UITapGestureRecognizer(target: self, action: #selector(tappedAction(recognizer:)))
+        let tapImage = UITapGestureRecognizer(target: self, action: #selector(tappedAction(recognizer:)))
+        cellTitle.addGestureRecognizer(tapTitle)
+        cellTitle.isUserInteractionEnabled = true
+        profilePic.addGestureRecognizer(tapImage)
+        profilePic.isUserInteractionEnabled = true
+    }
+    
     func updateVoteCounter(){
         if upvoted {
             upvoteButton.setImage(#imageLiteral(resourceName: "up-arrow-enabled"), for: .normal)
@@ -123,6 +134,10 @@ class FeedTableViewCell: UITableViewCell {
         }
         upVoteCounter.text = String(upvotes)
         downVoteCounter.text = String(downvotes)
+    }
+    
+    @IBAction func tappedAction(recognizer: AnyObject) {
+        delegate?.tappedAction(uid: uid)
     }
     
     @IBAction func upVote(_ sender: Any) {

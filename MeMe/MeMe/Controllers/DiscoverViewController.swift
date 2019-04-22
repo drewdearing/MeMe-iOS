@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DiscoverViewController: TabViewController, NewMemeDelegate, PostNavigationDelegate, ImagePickerDelegate {
+class DiscoverViewController: TabViewController, NewMemeDelegate, PostNavigationDelegate, ImagePickerDelegate, ProfileNavigationDelegate {
     
     @IBOutlet weak var feedView: DiscoverView!
     var imagePicker:ImagePicker!
@@ -17,6 +17,7 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, PostNavigation
     override func viewDidLoad() {
         super.viewDidLoad()
         feedView.delegate = self
+        feedView.delegate2 = self
         self.imagePicker = ImagePicker(presentationController: self, delegate: self, editAllowed: false)
     }
     
@@ -26,6 +27,10 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, PostNavigation
     
     func navigateToPost(postVC: PostViewController) {
         navigationController?.pushViewController(postVC, animated: true)
+    }
+    
+    func navigateToProfile(profileVC: ProfileViewController) {
+        navigationController?.pushViewController(profileVC, animated: true)
     }
     
     @IBAction func selectImage(_ sender: Any) {

@@ -48,6 +48,11 @@ class PostViewController: UIViewController {
         userProfileImageView.layer.borderWidth = 10
         userProfileImageView.layer.borderColor = UIColor.white.cgColor
         userProfileImageView.clipsToBounds = true
+
+        var tapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedImage(recognizer:)))
+        userProfileImageView.addGestureRecognizer(tapGesture)
+        userProfileImageView.isUserInteractionEnabled = true
+        
         fill(feedCell: post)
         navItem.title = post.username+"'s meme"
         followButton.isEnabled = false
@@ -273,6 +278,15 @@ class PostViewController: UIViewController {
     }
     
     @IBAction func usernameButton(_ sender: Any) {
+        let postStoryBoard: UIStoryboard = UIStoryboard(name: "Profile", bundle: nil)
+        if let postVCDestination = postStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
+            postVCDestination.userID = uid
+            postVCDestination.currentProfile = false
+            self.navigationController?.pushViewController(postVCDestination, animated: true)
+        }
+    }
+    
+    @IBAction func tappedImage(recognizer: AnyObject) {
         let postStoryBoard: UIStoryboard = UIStoryboard(name: "Profile", bundle: nil)
         if let postVCDestination = postStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
             postVCDestination.userID = uid

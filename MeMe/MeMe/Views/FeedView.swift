@@ -49,6 +49,10 @@ protocol PostNavigationDelegate {
     func navigateToPost(postVC:PostViewController)
 }
 
+protocol ProfileNavigationDelegate {
+    func navigateToProfile(profileVC: ProfileViewController)
+}
+
 class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDelegate, IndividualPostDelegate {
     var postData:[String:FeedCell] = [:]
     var data:[FeedCell] = []
@@ -57,6 +61,7 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
     var urlPath = ""
     var loaded = false
     var delegate:PostNavigationDelegate?
+    var delegate2:ProfileNavigationDelegate?
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
@@ -151,6 +156,17 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
                 if update {
                     self.update()
                 }
+            }
+        }
+    }
+    
+    func tappedAction(uid: String) {
+        let postStoryBoard: UIStoryboard = UIStoryboard(name: "Profile", bundle: nil)
+        if let profileVC = postStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
+            profileVC.userID = uid
+            profileVC.currentProfile = false
+            if let delegate = delegate2 {
+                delegate.navigateToProfile(profileVC: profileVC)
             }
         }
     }
