@@ -127,6 +127,9 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             groupChatNameTextField.resignFirstResponder()
             
             let ref = Firestore.firestore().collection("groups").document(groupID)
+            let refUsersInGroup = ref.collection("usersInGroup")
+            let ref_user = Firestore.firestore().collection("users")
+            
             ref.setData([
                 "name": name
             ]) { err in
@@ -134,6 +137,20 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                     print("Error adding document: \(err)")
                 } else {
                     print("Name changed successful with ID: \(ref.documentID)")
+                }
+            }
+    
+            refUsersInGroup.getDocuments{ (querySnapshot, err) in
+                for document in querySnapshot!.documents {
+                    ref_user.document(document.documentID).collection("groups").document(ref.documentID).setData([
+                        "name": name
+                    ]) { err in
+                        if let err = err {
+                            print("Error writing document: \(err)")
+                        } else {
+                            print("Document successfully written!")
+                        }
+                    }
                 }
             }
         }
@@ -196,7 +213,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             
             let ref_user = Firestore.firestore().collection("users")
             
-        ref_user.document((currentUser?.uid)!).collection("groups").document(refid).setData([
+            ref_user.document((currentUser?.uid)!).collection("groups").document(refid).setData([
                 "name": groupChatNameTextField.text
             ]) { err in
                 if let err = err {

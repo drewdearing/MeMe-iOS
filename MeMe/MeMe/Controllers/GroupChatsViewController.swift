@@ -17,12 +17,39 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
     private var groupChats: [GroupChat] = []
     var selectedChat:GroupChat?
     
+    private var listener: ListenerRegistration?
+    private let db = Firestore.firestore()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         groupChatsTableView.delegate = self
         groupChatsTableView.dataSource = self
         
         setUpGroups()
+        
+        let user = Auth.auth().currentUser
+        let ref = Firestore.firestore().collection("users").document((user?.uid)!).collection("groups")
+        listener = ref.addSnapshotListener{ query,error in
+            guard let snapshot = query else {
+                print("ERROR")
+                return
+            }
+            print("SOMETHING WAS CHANGED")
+            snapshot.documentChanges.forEach{ change in
+                self.updateGroups(change)
+            }
+        }
+    }
+    
+    private func updateGroups(_ change: DocumentChange) {
+        if change.document.exists {
+            for group in groupChats {
+                if group.groupId == change.document.documentID {
+                    group.groupChatName = change.document.get("name") as? String
+                }
+            }
+            groupChatsTableView.reloadData()
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

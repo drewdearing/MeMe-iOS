@@ -19,6 +19,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     @IBOutlet weak var navItem: UINavigationItem!
     private var messages: [Message] = []
     private var listener: ListenerRegistration?
+    private var groupListener: ListenerRegistration?
     private let db = Firestore.firestore()
     private var ref: CollectionReference?
     
@@ -28,6 +29,16 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         super.viewDidLoad()
         navItem.title = chat.groupChatName
         print("id is: " + (chat?.groupId)!)
+        checkListerner()
+        
+        messageInputBar.delegate = self
+        messagesCollectionView.messagesDataSource = self
+        messagesCollectionView.messagesLayoutDelegate = self
+        messagesCollectionView.messagesDisplayDelegate = self
+        messagesCollectionView.messageCellDelegate = self
+    }
+    
+    private func checkListerner() {
         ref = db.collection("groups").document((chat?.groupId)!).collection("messages")
         listener = ref?.addSnapshotListener{ query,error in
             guard let snapshot = query else {
@@ -40,11 +51,16 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
             }
         }
         
-        messageInputBar.delegate = self
-        messagesCollectionView.messagesDataSource = self
-        messagesCollectionView.messagesLayoutDelegate = self
-        messagesCollectionView.messagesDisplayDelegate = self
-        messagesCollectionView.messageCellDelegate = self
+        let groupRef = db.collection("groups")
+        groupListener = groupRef.addSnapshotListener{ query,error in
+            guard let snapshot = query else {
+                print("ERROR")
+                return
+            }
+            snapshot.documentChanges.forEach{ change in
+                self.handleGroupChange(change)
+            }
+        }
     }
     
     
@@ -146,6 +162,13 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                     insertMessage(message)
                 }
             }
+        }
+    }
+    
+    private func handleGroupChange(_ change: DocumentChange) {
+        if change.document.exists {
+            chat.groupChatName = change.document.get("name") as! String
+            navItem.title = chat.groupChatName
         }
     }
     
