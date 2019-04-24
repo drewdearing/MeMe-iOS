@@ -247,6 +247,24 @@ class Cache {
         }
     }
     
+    func updatePost(id: String, data:[String:Any], complete: @escaping (Post?) -> Void){
+        let upvotes = data["upvotes"] as! Int32
+        let downvotes = data["downvotes"] as! Int32
+        let upvoted = data["upvoted"] as! Bool
+        let downvoted = data["downvoted"] as! Bool
+        if let post = postData[id] {
+            post.upvotes = upvotes
+            post.downvotes = downvotes
+            post.upvoted = upvoted
+            post.downvoted = downvoted
+            updateCore()
+            complete(post)
+        }
+        else{
+            getPost(id: id, complete: complete)
+        }
+    }
+    
     private func updateCore() {
         if let context = getContext() {
             do{

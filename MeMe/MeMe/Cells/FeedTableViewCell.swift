@@ -10,12 +10,11 @@ import UIKit
 import Firebase
 
 struct VoteData: Codable {
-    let upvotes:Int
-    let downvotes:Int
+    let upvotes:Int32
+    let downvotes:Int32
 }
 
 protocol FeedCellDelegate {
-    func addPost(post:PostData)
     func tappedAction(uid: String)
 }
 
@@ -35,8 +34,8 @@ class FeedTableViewCell: UITableViewCell {
     var uid:String = ""
     var postID:String = ""
     var color:String = ""
-    var upvotes:Int = 0
-    var downvotes:Int = 0
+    var upvotes:Int32 = 0
+    var downvotes:Int32 = 0
     var timestamp:Timestamp = Timestamp(s: 0)
     
     var downvoted:Bool = false
@@ -63,9 +62,9 @@ class FeedTableViewCell: UITableViewCell {
         profilePic.image = nil
         color = postData.color
         memePic.backgroundColor = UIColor(hex: postData.color)
-        upvotes = postData.upvotes
+        upvotes = Int32(postData.upvotes)
         timestamp = postData.timestamp
-        downvotes = postData.downvotes
+        downvotes = Int32(postData.downvotes)
         uid = postData.uid
         postID = postData.id
         cellTitle.text = ""
@@ -77,8 +76,8 @@ class FeedTableViewCell: UITableViewCell {
             if let post = post {
                 let imageURL = post.photoURL
                 self.descriptionLabel.text = post.desc
-                self.downvotes = Int(post.downvotes)
-                self.upvotes = Int(post.upvotes)
+                self.downvotes = post.downvotes
+                self.upvotes = post.upvotes
                 self.upvoted = post.upvoted
                 self.downvoted = post.downvoted
                 self.updateVoteCounter()
@@ -139,6 +138,7 @@ class FeedTableViewCell: UITableViewCell {
             upvotes += 1
         }
         updateVoteCounter()
+        updateCache()
         if let currentUser = Auth.auth().currentUser {
             var urlPathBase = "https://us-central1-meme-d3805.cloudfunctions.net/upvote"
             urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
@@ -154,7 +154,7 @@ class FeedTableViewCell: UITableViewCell {
                         self.upvotes = voteData.upvotes
                         self.downvotes = voteData.downvotes
                         self.updateVoteCounter()
-                        self.updateDelegate()
+                        self.updateCache()
                     }
                 } catch let jsonErr {
                     print("Error: \(jsonErr)")
@@ -174,6 +174,7 @@ class FeedTableViewCell: UITableViewCell {
             downvotes += 1
         }
         updateVoteCounter()
+        updateCache()
         if let currentUser = Auth.auth().currentUser {
             var urlPathBase = "https://us-central1-meme-d3805.cloudfunctions.net/downvote"
             urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
@@ -189,7 +190,7 @@ class FeedTableViewCell: UITableViewCell {
                         self.upvotes = voteData.upvotes
                         self.downvotes = voteData.downvotes
                         self.updateVoteCounter()
-                        self.updateDelegate()
+                        self.updateCache()
                     }
                 } catch let jsonErr {
                     print("Error: \(jsonErr)")
@@ -199,10 +200,21 @@ class FeedTableViewCell: UITableViewCell {
         }
     }
     
-    func updateDelegate(){
-        if let delegate = self.delegate {
-            let data = PostData(id: postID, uid: uid, color: color, timestamp: timestamp, upvotes: upvotes, downvotes: downvotes)
-            delegate.addPost(post: data)
+    func updateCache(){
+        let data:[String:Any] = [
+            "upvotes": upvotes,
+            "downvotes": downvotes,
+            "upvoted": upvoted,
+            "downvoted":downvoted
+            ]
+        cache.updatePost(id: postID, data: data) { (post) in
+            if let post = post {
+                self.downvotes = post.downvotes
+                self.upvotes = post.upvotes
+                self.upvoted = post.upvoted
+                self.downvoted = post.downvoted
+                self.updateVoteCounter()
+            }
         }
     }
     
@@ -213,12 +225,6 @@ class FeedTableViewCell: UITableViewCell {
         profilePic.layer.borderWidth = 10
         profilePic.layer.borderColor = UIColor.white.cgColor
         profilePic.clipsToBounds = true
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
     
 }

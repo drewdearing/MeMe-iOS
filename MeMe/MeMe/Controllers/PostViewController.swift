@@ -9,7 +9,6 @@ import UIKit
 import Firebase
 
 protocol IndividualPostDelegate {
-    func addPost(post:PostData)
     func refreshCell(index:IndexPath)
 }
 
@@ -33,8 +32,8 @@ class PostViewController: UIViewController {
     var profileURL:String = ""
     var uid:String = ""
     var postID:String = ""
-    var upvotes:Int = 0
-    var downvotes:Int = 0
+    var upvotes:Int32 = 0
+    var downvotes:Int32 = 0
     var seconds:Int = 0
     var color:String = ""
     var timestamp:Timestamp = Timestamp(s: 0)
@@ -51,7 +50,7 @@ class PostViewController: UIViewController {
         userProfileImageView.layer.borderColor = UIColor.white.cgColor
         userProfileImageView.clipsToBounds = true
 
-        var tapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedImage(recognizer:)))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedImage(recognizer:)))
         userProfileImageView.addGestureRecognizer(tapGesture)
         userProfileImageView.isUserInteractionEnabled = true
         navItem.title = "Meme"
@@ -67,8 +66,8 @@ class PostViewController: UIViewController {
         postImageView.image = nil
         userProfileImageView.image = nil
         postImageView.backgroundColor = UIColor(hex: post.color)
-        upvotes = Int(post.upvotes)
-        downvotes = Int(post.downvotes)
+        upvotes = post.upvotes
+        downvotes = post.downvotes
         upvoted = post.upvoted
         color = post.color
         timestamp = Timestamp(s: post.seconds, n: post.nanoseconds)
@@ -153,6 +152,7 @@ class PostViewController: UIViewController {
             upvotes += 1
         }
         updateVoteCounter()
+        updateCache()
         if let currentUser = Auth.auth().currentUser {
             var urlPathBase = "https://us-central1-meme-d3805.cloudfunctions.net/upvote"
             urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
@@ -168,7 +168,7 @@ class PostViewController: UIViewController {
                         self.upvotes = voteData.upvotes
                         self.downvotes = voteData.downvotes
                         self.updateVoteCounter()
-                        self.updateDelegate()
+                        self.updateCache()
                     }
                 } catch let jsonErr {
                     print("Error: \(jsonErr)")
@@ -188,6 +188,7 @@ class PostViewController: UIViewController {
             downvotes += 1
         }
         updateVoteCounter()
+        updateCache()
         if let currentUser = Auth.auth().currentUser {
             var urlPathBase = "https://us-central1-meme-d3805.cloudfunctions.net/downvote"
             urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
@@ -203,7 +204,7 @@ class PostViewController: UIViewController {
                         self.upvotes = voteData.upvotes
                         self.downvotes = voteData.downvotes
                         self.updateVoteCounter()
-                        self.updateDelegate()
+                        self.updateCache()
                     }
                 } catch let jsonErr {
                     print("Error: \(jsonErr)")
@@ -213,12 +214,24 @@ class PostViewController: UIViewController {
         }
     }
     
-    func updateDelegate(){
-        if let delegate = self.delegate {
-            print("hi")
-            let data = PostData.init(id: postID, uid: uid, color: color, timestamp: timestamp, upvotes: upvotes, downvotes: downvotes)
-            delegate.addPost(post: data)
-            delegate.refreshCell(index: self.index)
+    func updateCache(){
+        let data:[String:Any] = [
+            "upvotes": upvotes,
+            "downvotes": downvotes,
+            "upvoted": upvoted,
+            "downvoted":downvoted
+        ]
+        cache.updatePost(id: postID, data: data) { (post) in
+            if let post = post {
+                self.downvotes = post.downvotes
+                self.upvotes = post.upvotes
+                self.upvoted = post.upvoted
+                self.downvoted = post.downvoted
+                self.updateVoteCounter()
+                if let delegate = self.delegate {
+                    delegate.refreshCell(index: self.index)
+                }
+            }
         }
     }
     

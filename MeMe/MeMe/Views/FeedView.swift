@@ -20,10 +20,10 @@ class PostData: Codable {
     var uid:String
     var color:String
     var timestamp:Timestamp
-    var upvotes:Int
-    var downvotes:Int
+    var upvotes:Int32
+    var downvotes:Int32
     
-    init(id:String, uid:String, color:String, timestamp:Timestamp, upvotes:Int, downvotes:Int){
+    init(id:String, uid:String, color:String, timestamp:Timestamp, upvotes:Int32, downvotes:Int32){
         self.id = id
         self.uid = uid
         self.color = color
@@ -39,13 +39,13 @@ class PostData: Codable {
         color = try container.decode(String.self, forKey: .color)
         timestamp = try container.decode(Timestamp.self, forKey: .timestamp)
         
-        if let upvotes = try container.decodeIfPresent(Int.self, forKey: .upvotes) {
+        if let upvotes = try container.decodeIfPresent(Int32.self, forKey: .upvotes) {
             self.upvotes = upvotes
         } else {
             self.upvotes = 0
         }
         
-        if let downvotes = try container.decodeIfPresent(Int.self, forKey: .downvotes) {
+        if let downvotes = try container.decodeIfPresent(Int32.self, forKey: .downvotes) {
             self.downvotes = downvotes
         } else {
             self.downvotes = 0

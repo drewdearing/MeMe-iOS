@@ -57,6 +57,16 @@ class HomeView: FeedView {
         }
     }
     
+    override func addPost(post: PostData) {
+        let currentUID = Auth.auth().currentUser?.uid
+        cache.getProfile(uid: post.uid) { (profile) in
+            if let profile = profile, profile.following || post.uid == currentUID {
+                self.postData[post.id] = post
+                self.update()
+            }
+        }
+    }
+    
     override func update() {
         DispatchQueue.main.async {
             let newData = Array(self.postData.values).sorted(by: {$0.timestamp > $1.timestamp})

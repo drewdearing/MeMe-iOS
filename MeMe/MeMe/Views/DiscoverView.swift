@@ -42,6 +42,18 @@ class DiscoverView: FeedView {
         }
     }
     
+    override func addPost(post: PostData) {
+        let score = post.upvotes - post.downvotes
+        let newData = Array(self.postData.values).sorted(by: {($0.upvotes - $0.downvotes) > ($1.upvotes - $1.downvotes)})
+        if newData.count > 0 {
+            let topPost = newData[0]
+            if score > (topPost.upvotes - topPost.downvotes) {
+                self.postData[post.id] = post
+                self.update()
+            }
+        }
+    }
+    
     override func getPosts(complete: @escaping (FeedContainer) -> Void) {
         let urlPathBase = urlPath
         let request = NSMutableURLRequest()

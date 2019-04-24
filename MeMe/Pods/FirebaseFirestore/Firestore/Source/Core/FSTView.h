@@ -34,9 +34,7 @@ class TargetChange;
 }  // namespace firestore
 }  // namespace firebase
 
-@class FSTDocumentSet;
 @class FSTQuery;
-@class FSTViewSnapshot;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -50,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (const firebase::firestore::model::DocumentKeySet &)mutatedKeys;
 
 /** The new set of docs that should be in the view. */
-@property(nonatomic, strong, readonly) FSTDocumentSet *documentSet;
+- (const firebase::firestore::model::DocumentSet &)documentSet;
 
 /** The diff of this these docs with the previous set of docs. */
 - (const firebase::firestore::core::DocumentViewChangeSet &)changeSet;
@@ -90,7 +88,7 @@ typedef NS_ENUM(NSInteger, FSTLimboDocumentChangeType) {
 
 - (id)init __attribute__((unavailable("Use a static constructor method.")));
 
-@property(nonatomic, strong, readonly, nullable) FSTViewSnapshot *snapshot;
+- (absl::optional<firebase::firestore::core::ViewSnapshot> &)snapshot;
 @property(nonatomic, strong, readonly) NSArray<FSTLimboDocumentChange *> *limboChanges;
 @end
 
