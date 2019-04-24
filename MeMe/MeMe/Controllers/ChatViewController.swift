@@ -13,7 +13,6 @@ import Firebase
 import Photos
 
 class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate, MessageCellDelegate, IndividualPostDelegate {
-    
     var chat:GroupChat!
     
     @IBOutlet weak var navItem: UINavigationItem!
@@ -96,6 +95,10 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         }
     }
     
+    func addPost(post: PostData) {
+        //add post?
+    }
+    
     private func insertMessage(_ message: Message) {
         guard !messages.contains(where: { (m) -> Bool in
             return m.messageId == message.messageId
@@ -137,23 +140,16 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                 let date = data["sent"] as! Firebase.Timestamp
                 let sender = Sender(id: uid, displayName: name)
                 if isImage {
-                    if let cachedImage = cache.getImage(id: postID){
-                        let image = MessageImage(image: cachedImage, post: postID)
-                        let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
-                        insertMessage(message)
-                    }
-                    else{
-                        db.collection("post").document(postID).getDocument { (postDoc, err) in
-                            if let doc = postDoc {
-                                if doc.exists {
-                                    if let data = doc.data() {
-                                        let url = data["photoURL"] as! String
-                                        let image = MessageImage(url: url, post: postID)
-                                        let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
-                                        self.insertMessage(message)
-                                    }
+                    cache.getPost(id: postID) { (post) in
+                        if let post = post {
+                            let postImageURL = post.photoURL
+                            cache.getImage(imageURL: postImageURL, complete: { (cachedImage) in
+                                if let cachedImage = cachedImage {
+                                    let image = MessageImage(image: cachedImage, post: postID)
+                                    let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
+                                    self.insertMessage(message)
                                 }
-                            }
+                            })
                         }
                     }
                 }
@@ -208,25 +204,14 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        /* check if avatar is in local cache*/
-        if let avatar = cache.getProfilePic(uid: message.sender.id) {
-            avatarView.image = avatar
-        } else {
-            db.collection("users").document(message.sender.id).getDocument { (userDoc, err) in
-                if let doc = userDoc{
-                    if doc.exists {
-                        let profileURL = doc.data()!["profilePicURL"] as! String
-                        let url = URL(string: profileURL)
-                        let data = try? Data(contentsOf: url!)
-                        if let imgData = data {
-                            let image = UIImage(data:imgData)
-                            DispatchQueue.main.async {
-                                avatarView.image = image
-                            }
-                            cache.addProfilePic(id: message.sender.id, image: image)
-                        }
+        cache.getProfile(uid: message.sender.id) { (profile) in
+            if let profile = profile {
+                let profilePicURL = profile.profilePicURL
+                cache.getImage(imageURL: profilePicURL, complete: { (avatar) in
+                    if let avatar = avatar {
+                        avatarView.image = avatar
                     }
-                }
+                })
             }
         }
     }
@@ -244,10 +229,6 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     func heightForLocation(message: MessageType, at indexPath: IndexPath,
                            with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 0
-    }
-    
-    func addPost(post: FeedCellData, feed: Bool, update: Bool) {
-        _ = cache.addPost(data: post, feed: feed)
     }
     
     func refreshCell(index: IndexPath) {
@@ -285,58 +266,12 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                 print(item.postID)
                 let postStoryBoard: UIStoryboard = UIStoryboard(name: "Post", bundle: nil)
                 if let postVC = postStoryBoard.instantiateViewController(withIdentifier: "individualPost") as? PostViewController {
-                    if let feedCell = cache.getPost(id: item.postID){
-                        postVC.post = feedCell
-                        postVC.index = indexPath
-                        postVC.delegate = self
-                        navigationController?.pushViewController(postVC, animated: true)
-                    }
-                    else{
-                        print("not cached")
-                        Firestore.firestore().collection("post").document(item.postID).getDocument { (postDoc, err) in
-                            if let doc = postDoc {
-                                if doc.exists {
-                                    if let data = doc.data() {
-                                        let description = data["description"] as! String
-                                        let uid = data["uid"] as! String
-                                        let post = doc.documentID
-                                        let imageURL = data["photoURL"] as! String
-                                        let upvotes = data["upvotes"] as! Int
-                                        let downvotes = data["downvotes"] as! Int
-                                        let fbTimestamp = data["timestamp"] as! Firebase.Timestamp
-                                        let timestamp = Timestamp(s:Int(fbTimestamp.dateValue().timeIntervalSince1970))
-                                        var cellData = FeedCellData(username: "", description: description, uid: uid, post: post, imageURL: imageURL, profilePicURL: "", upvotes: upvotes, downvotes: downvotes, timestamp: timestamp, upvoted: false, downvoted: false)
-                                        Firestore.firestore().collection("users").document(uid).getDocument(completion: { (userDoc, err) in
-                                            if let user = userDoc {
-                                                if user.exists {
-                                                    if let userData = user.data() {
-                                                        let username = userData["username"] as! String
-                                                        let profileURL = userData["profilePicURL"] as! String
-                                                        cellData.username = username
-                                                        cellData.profilePicURL = profileURL
-                                                        Firestore.firestore().collection("post").document(item.postID).collection("votes").document(uid).getDocument(completion: { (voteDoc, err) in
-                                                            if let vote = voteDoc {
-                                                                if vote.exists {
-                                                                    if let voteData = vote.data() {
-                                                                        let up = voteData["up"] as! Bool
-                                                                        cellData.downvoted = !up
-                                                                        cellData.upvoted = up
-                                                                    }
-                                                                }
-                                                                let feedCell = cache.addPost(data: cellData, feed: false)
-                                                                postVC.post = feedCell
-                                                                postVC.index = indexPath
-                                                                postVC.delegate = self
-                                                                self.navigationController?.pushViewController(postVC, animated: true)
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }
-                                        })
-                                    }
-                                }
-                            }
+                    cache.getPost(id: item.postID) { (post) in
+                        if let post = post {
+                            postVC.post = post.id
+                            postVC.index = indexPath
+                            postVC.delegate = self
+                            self.navigationController?.pushViewController(postVC, animated: true)
                         }
                     }
                 }

@@ -8,52 +8,6 @@ admin.initializeApp({
 var db = admin.firestore();
 var FieldValue = admin.firestore.FieldValue;
 
-const calculateVotes = (postID) => {
-    let postDB = db.collection('post').doc(postID);
-    let votesDB = postDB.collection('votes');
-    return new Promise((resolve, reject) => {
-        votesDB.get().then((votes) => {
-            var upvotes = 0;
-            var downvotes = 0;
-            votes.docs.forEach((vote) => {
-                let up = vote.get('up')
-                if(up){
-                    upvotes++;
-                }
-                else{
-                    downvotes++;
-                }
-            });
-            let data = {
-                upvotes: upvotes,
-                downvotes: downvotes
-            };
-            postDB.update(data);
-            resolve(data)
-        }).catch((data) => {
-            reject(data)
-        });
-    });
-}
-
-/*exports.onVoteCreate = functions.firestore
-.document('post/{postID}/votes/{uid}')
-.onCreate((snap, context) => {
-    return calculateVotes(context.params.postID)
-});
-
-exports.onVoteUpdate = functions.firestore
-.document('post/{postID}/votes/{uid}')
-.onUpdate((change, context) => {
-    return calculateVotes(context.params.postID)
-});
-
-exports.onVoteDelete = functions.firestore
-.document('post/{postID}/votes/{uid}')
-.onDelete((snap, context) => {
-    return calculateVotes(context.params.postID)
-});*/
-
 exports.onPostCreate = functions.firestore
 .document('post/{postID}')
 .onCreate((snap, context) => {
@@ -74,19 +28,20 @@ exports.onPostCreate = functions.firestore
 exports.onPostDelete = functions.firestore
 .document('post/{postID}')
 .onDelete((snap, context) => {
-    let postID = context.params.postID;
-    let post = snap.data();
+    let postID = context.params.postID
+    let post = snap.data()
     let userDB = db.collection('users').doc(post.uid)
-    return userDB.get().then((userDoc) => {
-        if(userDoc.exists){
-            var posts = userDoc.data().posts;
-            posts = posts.filter(p => p !== postID);
-            userDB.update({
-                posts:posts
-            });
-        }
-    });
-});
+    let postDB = userDB.collection('posts').doc(postID)
+    return postDB.delete()
+})
+
+exports.onUserPostDelete = functions.firestore
+.document('users/{uid}/posts/{postID}')
+.onDelete((snap, context) => {
+    let postID = context.params.postID
+    let postDB = db.collection('post').doc(postID)
+    return postDB.delete()
+})
 
 exports.upvote = functions.https.onRequest((req, res) => {
     let uid = req.query.uid;
@@ -110,10 +65,12 @@ exports.upvote = functions.https.onRequest((req, res) => {
             downvotes: FieldValue.increment(deltaDown)
         }).then(() => {
             postRef.get().then((postDoc) => {
+                let postData = postDoc.data();
                 voteRef.set({ up: true });
+                postRef.update({score: postData.upvotes - postData.downvotes});
                 res.status(200).json({
-                    upvotes: postDoc.data().upvotes,
-                    downvotes: postDoc.data().downvotes
+                    upvotes: postData.upvotes,
+                    downvotes: postData.downvotes
                 });
             });
         }).catch((data) => {
@@ -144,10 +101,12 @@ exports.downvote = functions.https.onRequest((req, res) => {
             downvotes: FieldValue.increment(deltaDown)
         }).then(() => {
             postRef.get().then((postDoc) => {
+                let postData = postDoc.data();
                 voteRef.set({ up: false });
+                postRef.update({score: postData.upvotes - postData.downvotes});
                 res.status(200).json({
-                    upvotes: postDoc.data().upvotes,
-                    downvotes: postDoc.data().downvotes
+                    upvotes: postData.upvotes,
+                    downvotes: postData.downvotes
                 });
             });
         }).catch((data) => {
@@ -156,7 +115,7 @@ exports.downvote = functions.https.onRequest((req, res) => {
     });
 });
 
-exports.getUserFeed = functions.https.onRequest((req, res) => {
+/*exports.getUserFeed2 = functions.https.onRequest((req, res) => {
     let uid = req.query.uid;
     let page = parseInt(req.query.page);
     let itemsPerPage = 50;
@@ -238,7 +197,7 @@ exports.getUserFeed = functions.https.onRequest((req, res) => {
     });
 });
 
-exports.getDiscoverFeed = functions.https.onRequest((req, res) => {
+exports.getDiscoverFeed2 = functions.https.onRequest((req, res) => {
     let uid = req.query.uid;
     let page = parseInt(req.query.page);
     let itemsPerPage = 50;
@@ -308,4 +267,97 @@ exports.getDiscoverFeed = functions.https.onRequest((req, res) => {
             });
         });
     });
-});
+});*/
+
+exports.getDiscoverFeed = functions.https.onRequest((req, res) => {
+    let expireTime = (new Date().getTime() * 0.001) - 86400
+    let expireSeconds = parseInt(expireTime)
+    let expireNano = parseInt((expireTime - expireSeconds) * 1000000000)
+    let expireTimestamp = new admin.firestore.Timestamp(expireSeconds, expireNano)
+    let numPosts = 50
+    let maxScore = parseInt(req.query.maxScore)
+    let postIDs = []
+    var postRef = db.collection('post')
+    if(!isNaN(maxScore)){
+        postRef = postRef.where('score', '<=', maxScore)
+    }
+    return postRef.get().then((posts) => {
+        posts.docs.forEach((post) => {
+            if(post.exists){
+                let postData = post.data()
+                let postTimestamp = postData.timestamp.toDate()
+                if(postTimestamp <= expireTimestamp.toDate()){
+                    post.ref.delete()
+                }
+                else{
+                    postIDs.push({
+                        id: post.id,
+                        uid: postData.uid,
+                        color: postData.color,
+                        timestamp: postData.timestamp,
+                        upvotes: postData.upvotes,
+                        downvotes: postData.downvotes
+                    })
+                }
+            }
+        })
+        postIDs.slice(0, numPosts)
+        res.status(200).json({posts: postIDs})
+    })
+})
+
+exports.getUserFeed = functions.https.onRequest((req, res) => {
+    let uid = req.query.uid;
+    let time = parseFloat(req.query.timestamp)
+    let numPosts = 50;
+    if (isNaN(time) || time < 0){
+        time = new Date().getTime() * 0.001
+    }
+    var seconds = parseInt(time)
+    var nano = parseInt((time - seconds) * 1000000000)
+    let expireTime = (new Date().getTime() * 0.001) - 86400
+    let expireSeconds = parseInt(expireTime)
+    let expireNano = parseInt((expireTime - expireSeconds) * 1000000000)
+
+    let timestamp = new admin.firestore.Timestamp(seconds, nano)
+    let expireTimestamp = new admin.firestore.Timestamp(expireSeconds, expireNano)
+    let followedUsers = [uid]
+    let followingDB = db.collection('users').doc(uid).collection('following')
+    followingDB.get().then((following) => {
+        let followedPostsDBs = []
+        let postIDs = []
+        following.docs.forEach((followedUser) => {
+            if(followedUser.exists){
+                if(followedUser.data().following){
+                    followedUsers.push(followedUser.id)
+                }
+            }
+        })
+        followedUsers.forEach((user) => {
+            followedPostsDBs.push(db.collection('users').doc(user).collection('posts').where('timestamp', '<=', timestamp).get())
+        })
+        Promise.all(followedPostsDBs).then((postCollections) => {
+            postCollections.forEach((postCollection) => {
+                postCollection.docs.forEach((post) => {
+                    if(post.exists){
+                        let postData = post.data()
+                        let postTimestamp = postData.timestamp.toDate()
+                        if(postTimestamp <= expireTimestamp.toDate()){
+                            post.ref.delete()
+                        }
+                        else{
+                            postIDs.push({
+                                id: post.id,
+                                uid: postData.uid,
+                                color: postData.color,
+                                timestamp: postData.timestamp
+                            })
+                        }
+                    }
+                })
+            })
+            postIDs.slice(0, numPosts)
+            res.status(200).json({posts: postIDs})
+        })
+    })
+})

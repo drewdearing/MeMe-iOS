@@ -32,7 +32,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
     @IBOutlet var postsCollectionView: UICollectionView!
     
     var user: User? = nil
-    var posts: [Post] = []
+    var posts: [MyPost] = []
     var postImages: [UIImage] = []
     var postI: [PostImage] = []
     
@@ -200,7 +200,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
                         let upVotes = docData["upvotes"] as? Int,
                         let downVotes = docData["downvotes"] as? Int {
                         
-                        let post = Post(userID: userID,
+                        let post = MyPost(userID: userID,
                                         photoURL: photoURL,
                                         topText: topText,
                                         bottomText: bottomText,
@@ -229,7 +229,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
         }
     }
     
-    private func fetchPostImage(post: Post, photoURL: String) {
+    private func fetchPostImage(post: MyPost, photoURL: String) {
         DispatchQueue.global(qos: .userInteractive).async {
             let url = URL(string: photoURL)
             let data = try? Data(contentsOf: url!)
@@ -269,25 +269,10 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
         }
     }
 
-    private func fetchProfileImage(currentUserProfile: Profile) {
-        if let userID = Auth.auth().currentUser?.uid {
-            DispatchQueue.global(qos: .userInteractive).async {
-                if let profilePic = cache.getProfilePic(uid: userID) {
-                    DispatchQueue.main.async {
-                        self.profileImageView.image = profilePic
-                    }
-                }
-                else{
-                    let url = URL(string: currentUserProfile.profilePicURL)
-                    let data = try? Data(contentsOf: url!)
-                    if let imgData = data {
-                        let image = UIImage(data:imgData)
-                        DispatchQueue.main.async {
-                            self.profileImageView.image = image
-                        }
-                        cache.addProfilePic(id: userID, image: image)
-                    }
-                }
+    private func fetchProfileImage(currentUserProfile: CurrentProfile) {
+        cache.getImage(imageURL: currentUserProfile.profilePicURL) { (image) in
+            if let image = image {
+                self.profileImageView.image = image
             }
         }
     }

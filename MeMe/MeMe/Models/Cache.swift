@@ -9,21 +9,27 @@
 import Foundation
 import UIKit
 import CoreData
+import Firebase
 
 class Cache {
-    private var postData:[String:FeedCell] = [:]
+    private var postData:[String:Post] = [:]
+    private var profileData:[String:Profile] = [:]
     private var imageData:[String:UIImage] = [:]
-    private var profilePicData:[String:UIImage] = [:]
     private static var cache:Cache? = nil
     
     private init(){
         print("starting cache")
         if let context = getContext() {
-            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "FeedCell")
+            let postRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
+            let profileRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
             do{
-                let posts = try context.fetch(request) as! [FeedCell]
+                let posts = try context.fetch(postRequest) as! [Post]
+                let profiles = try context.fetch(profileRequest) as! [Profile]
                 for post in posts {
-                    postData[post.post] = post
+                    postData[post.id] = post
+                }
+                for profile in profiles {
+                    profileData[profile.id] = profile
                 }
             }
             catch{
@@ -44,77 +50,137 @@ class Cache {
         }
     }
     
-    func getPost(id:String) -> FeedCell? {
+    func getPost(id:String, complete: @escaping (Post?) -> Void) {
         if let post = postData[id] {
-            return post
+            complete(post)
         }
-        return nil
-    }
-    
-    func getImage(id:String) -> UIImage? {
-        if let image = imageData[id] {
-            return image
-        }
-        return nil
-    }
-    
-    func getProfilePic(uid:String) -> UIImage? {
-        if let profilePic = profilePicData[uid] {
-            return profilePic
-        }
-        return nil
-    }
-    
-    func addPosts(data:[FeedCellData], feed:Bool) -> [FeedCell] {
-        var cells:[FeedCell] = []
-        for post in data{
-            if let cell = addPost(data: post, feed: feed){
-                cells.append(cell)
+        else{
+            let currentUser = Auth.auth().currentUser
+            let postRef = Firestore.firestore().collection("post").document(id)
+            let voteRef = Firestore.firestore().collection("post").document(id).collection("votes").document(currentUser!.uid)
+            postRef.getDocument { (postDoc, postDocErr) in
+                if let postDoc = postDoc {
+                    if postDoc.exists {
+                        let data = postDoc.data()!
+                        let color = data["color"] as! String
+                        let description = data["description"] as! String
+                        let downvotes = data["downvotes"] as! Int
+                        let upvotes = data["upvotes"] as! Int
+                        let photoURL = data["photoURL"] as! String
+                        let timestamp = data["timestamp"] as! Firebase.Timestamp
+                        let uid = data["uid"] as! String
+                        voteRef.getDocument(completion: { (voteDoc, voteDocErr) in
+                            var upvoted = false
+                            var downvoted = false
+                            if let voteDoc = voteDoc {
+                                if voteDoc.exists{
+                                    let up = voteDoc.data()!["up"] as! Bool
+                                    upvoted = up
+                                    downvoted = !up
+                                }
+                            }
+                            if let context = self.getContext(){
+                                let post = Post(context: context)
+                                post.color = color
+                                post.desc = description
+                                post.downvoted = downvoted
+                                post.downvotes = Int32(downvotes)
+                                post.id = id
+                                post.nanoseconds = timestamp.nanoseconds
+                                post.photoURL = photoURL
+                                post.seconds = timestamp.seconds
+                                post.uid = uid
+                                post.upvoted = upvoted
+                                post.upvotes = Int32(upvotes)
+                                self.postData[id] = post
+                                self.updateCore()
+                                complete(post)
+                            }
+                            else{
+                                complete(nil)
+                            }
+                        })
+                    }
+                    else{
+                        complete(nil)
+                    }
+                }
+                else{
+                    complete(nil)
+                }
             }
         }
-        return cells
     }
     
-    func addPost(data:FeedCellData, feed:Bool) -> FeedCell? {
-        if postData[data.post] != nil {
-            return updatePost(data: data, feed: feed)
+    func getImage(imageURL:String, complete: @escaping (UIImage?) -> Void){
+        if let image = imageData[imageURL] {
+            complete(image)
         }
-        else if let cell = cellFromData(post: data, feed: feed) {
-            postData[cell.post] = cell
-            updateCore()
-            return cell
-        }
-        return nil
-    }
-    
-    func updatePost(data:FeedCellData, feed:Bool) -> FeedCell? {
-        let id = data.post
-        postData[id]?.downvoted = data.downvoted
-        postData[id]?.upvoted = data.upvoted
-        postData[id]?.downvotes = Int32(data.downvotes)
-        postData[id]?.upvotes = Int32(data.upvotes)
-        postData[id]?.profilePicURL = data.profilePicURL
-        postData[id]?.username = data.username
-        updateCore()
-        return postData[id]
-    }
-    
-    func getPosts(feed:Bool) -> [FeedCell]{
-        if feed {
-            return Array(postData.filter{ $0.value.feed }.values)
-        }
-        return Array(postData.values)
-    }
-    
-    func addImage(id:String, image:UIImage?){
-        if let i = image {
-            imageData[id] = i
+        else{
+            DispatchQueue.global(qos: .background).async {
+                let url = URL(string: imageURL)
+                let data = try? Data(contentsOf: url!)
+                if let imgData = data {
+                    let image = UIImage(data:imgData)
+                    self.imageData[imageURL] = image
+                    DispatchQueue.main.async {
+                        complete(image)
+                    }
+                }
+                else{
+                    DispatchQueue.main.async {
+                        complete(nil)
+                    }
+                }
+            }
         }
     }
     
-    func addProfilePic(id:String, image:UIImage?){
-        if let i = image {
-            profilePicData[id] = i
+    func getProfile(uid:String, complete: @escaping (Profile?) -> Void){
+        if let profile = profileData[uid]{
+            complete(profile)
+        }
+        else{
+            let currentUser = Auth.auth().currentUser!
+            let profileRef = Firestore.firestore().collection("users").document(uid)
+            let followRef = profileRef.collection("followers").document(currentUser.uid)
+            profileRef.getDocument { (profileDoc, profileErr) in
+                if let profileDoc = profileDoc, let data = profileDoc.data() {
+                    let numFollowers = data["numFollowers"] as! Int
+                    let numFollowing = data["numFollowing"] as! Int
+                    let profilePicURL = data["profilePicURL"] as! String
+                    let username = data["username"] as! String
+                    followRef.getDocument { (followDoc, followErr) in
+                        if let followDoc = followDoc {
+                            var following = false
+                            if followDoc.exists {
+                                following = true
+                            }
+                            if let context = self.getContext(){
+                                let profile = Profile(context: context)
+                                profile.following = following
+                                profile.id = uid
+                                profile.numFollowers = Int32(numFollowers)
+                                profile.numFollowing = Int32(numFollowing)
+                                profile.profilePicURL = profilePicURL
+                                profile.username = username
+                                self.profileData[uid] = profile
+                                self.updateCore()
+                                complete(profile)
+                            }
+                            else{
+                                complete(nil)
+                            }
+                        }
+                        else{
+                            complete(nil)
+                        }
+                    }
+                }
+                else{
+                    complete(nil)
+                }
+            }
         }
     }
     
@@ -138,26 +204,6 @@ class Cache {
                 return appDelegate?.persistentContainer.viewContext
             }
         }
-    }
-    
-    private func cellFromData(post: FeedCellData, feed:Bool) -> FeedCell? {
-        if let context = getContext() {
-            let newCell = FeedCell(context: context)
-            newCell.desc = post.description
-            newCell.downvotes = Int32(post.downvotes)
-            newCell.imageURL = post.imageURL
-            newCell.post = post.post
-            newCell.profilePicURL = post.profilePicURL
-            newCell.uid = post.uid
-            newCell.upvotes = Int32(post.upvotes)
-            newCell.username = post.username
-            newCell.feed = feed
-            newCell.seconds = Int64(post.timestamp._seconds)
-            newCell.upvoted = post.upvoted
-            newCell.downvoted = post.downvoted
-            return newCell
-        }
-        return nil
     }
     
 }

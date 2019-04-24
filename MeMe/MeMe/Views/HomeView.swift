@@ -8,12 +8,14 @@
 
 import UIKit
 import CoreData
+import Firebase
 
 let HomeTableCellId = "FeedTableViewCell"
 class HomeView: FeedView {
 
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var tableView: UITableView!
+    let urlPath = "https://us-central1-meme-d3805.cloudfunctions.net/getUserFeed"
     
     override init(frame: CGRect){
         super.init(frame: frame)
@@ -32,18 +34,34 @@ class HomeView: FeedView {
         tableView.register(UINib.init(nibName: HomeTableCellId, bundle: nil), forCellReuseIdentifier: HomeTableCellId)
         tableView.delegate = self
         tableView.dataSource = self
-        self.urlPath = "https://us-central1-meme-d3805.cloudfunctions.net/getUserFeed"
-        feed = true
-        loadPosts()
+        reloadPosts()
+    }
+    
+    override func getPosts(complete: @escaping (FeedContainer) -> Void) {
+        if let currentUser = Auth.auth().currentUser {
+            var urlPathBase = urlPath
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "GET"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in
+                guard let data = data else { return }
+                do {
+                    let postContainer = try JSONDecoder().decode(FeedContainer.self, from: data)
+                    complete(postContainer)
+                } catch let jsonErr {
+                    print("Error: \(jsonErr)")
+                }
+            }
+            task.resume()
+        }
     }
     
     override func update() {
         DispatchQueue.main.async {
-            let newData = Array(self.postData.values).sorted(by: {$0.seconds > $1.seconds})
-            if !self.data.elementsEqual(newData) {
-                self.data = newData
-                self.tableView.reloadData()
-            }
+            let newData = Array(self.postData.values).sorted(by: {$0.timestamp > $1.timestamp})
+            self.data = newData
+            self.tableView.reloadData()
         }
     }
     

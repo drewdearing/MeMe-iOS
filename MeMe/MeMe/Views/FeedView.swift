@@ -12,56 +12,59 @@ import SVProgressHUD
 import Firebase
 
 struct FeedContainer:Codable {
-    var posts: [FeedCellData]
+    var posts: [PostData]
 }
 
-struct FeedCellData: Codable {
-    var username: String
-    var description: String
-    var uid: String
-    var post: String
-    var imageURL: String
-    var profilePicURL: String
-    var upvotes: Int
-    var downvotes: Int
-    var timestamp: Timestamp
-    var upvoted: Bool
-    var downvoted: Bool
-}
-
-struct Timestamp: Codable {
-    let _seconds:Int
+class PostData: Codable {
+    var id:String
+    var uid:String
+    var color:String
+    var timestamp:Timestamp
+    var upvotes:Int
+    var downvotes:Int
     
-    init(){
-        let currentTime = NSDate()
-        self._seconds = Int(currentTime.timeIntervalSince1970)
+    init(id:String, uid:String, color:String, timestamp:Timestamp, upvotes:Int, downvotes:Int){
+        self.id = id
+        self.uid = uid
+        self.color = color
+        self.timestamp = timestamp
+        self.upvotes = upvotes
+        self.downvotes = downvotes
     }
     
-    init(s:Int){
-        self._seconds = s
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        uid = try container.decode(String.self, forKey: .uid)
+        color = try container.decode(String.self, forKey: .color)
+        timestamp = try container.decode(Timestamp.self, forKey: .timestamp)
+        
+        if let upvotes = try container.decodeIfPresent(Int.self, forKey: .upvotes) {
+            self.upvotes = upvotes
+        } else {
+            self.upvotes = 0
+        }
+        
+        if let downvotes = try container.decodeIfPresent(Int.self, forKey: .downvotes) {
+            self.downvotes = downvotes
+        } else {
+            self.downvotes = 0
+        }
     }
 }
 
 let appDelegate = UIApplication.shared.delegate as? AppDelegate
 let cache = Cache.get()
 
-protocol PostNavigationDelegate {
+protocol FeedViewDelegate {
+    func navigateToProfile(profileVC: ProfileViewController)
     func navigateToPost(postVC:PostViewController)
 }
 
-protocol ProfileNavigationDelegate {
-    func navigateToProfile(profileVC: ProfileViewController)
-}
-
 class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDelegate, IndividualPostDelegate {
-    var postData:[String:FeedCell] = [:]
-    var data:[FeedCell] = []
-    var feed = false
-    var currentPage = 1
-    var urlPath = ""
-    var loaded = false
-    var delegate:PostNavigationDelegate?
-    var delegate2:ProfileNavigationDelegate?
+    var postData:[String:PostData] = [:]
+    var data:[PostData] = []
+    var delegate:FeedViewDelegate?
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
@@ -69,16 +72,10 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableCellId, for: indexPath as IndexPath) as! FeedTableViewCell
-        let feedCell = data[indexPath.row]
-        cell.fill(feedCell: feedCell)
+        let feedCellData = data[indexPath.row]
+        cell.fill(postData: feedCellData)
         cell.delegate = self
         return cell
-    }
-    
-    func reload() {
-        if loaded {
-            loadPosts()
-        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -88,8 +85,8 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let postStoryBoard: UIStoryboard = UIStoryboard(name: "Post", bundle: nil)
         if let postVC = postStoryBoard.instantiateViewController(withIdentifier: "individualPost") as? PostViewController {
-            let feedCell = data[indexPath.row]
-            postVC.post = feedCell
+            let postData = data[indexPath.row]
+            postVC.post = postData.id
             postVC.index = indexPath
             postVC.delegate = self
             if let delegate = delegate {
@@ -98,65 +95,16 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
         }
     }
     
-    func loadPosts(){
-        print("loading posts")
-        DispatchQueue.global(qos: .background).async {
-            let data = cache.getPosts(feed: self.feed)
-            /*for post in data {
-                self.postData[post.post] = post
-            }*/
+    func reloadPosts(){
+        postData = [:]
+        data = []
+        SVProgressHUD.show(withStatus: "loading...")
+        getPosts { (feedContainer) in
+            for post in feedContainer.posts {
+                self.postData[post.id] = post
+            }
             self.update()
-            self.getPosts()
-        }
-    }
-    
-    private func getPosts() {
-        if let currentUser = Auth.auth().currentUser {
-            let useHUD = self.postData.count <= 0
-            if useHUD {
-                DispatchQueue.main.async {
-                    SVProgressHUD.show(withStatus: "loading...")
-                }
-            }
-            var urlPathBase = self.urlPath
-            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
-            urlPathBase = urlPathBase.appending("&page="+String(self.currentPage))
-            let request = NSMutableURLRequest()
-            request.url = URL(string: urlPathBase)
-            request.httpMethod = "GET"
-            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in
-                guard let data = data else { return }
-                do {
-                    let postContainer = try JSONDecoder().decode(FeedContainer.self, from: data)
-                    DispatchQueue.main.async {
-                        let cells = cache.addPosts(data: postContainer.posts, feed: self.feed)
-                        for cell in cells {
-                            self.postData[cell.post] = cell
-                        }
-                        if useHUD {
-                            DispatchQueue.main.async {
-                                SVProgressHUD.dismiss()
-                            }
-                        }
-                        self.loaded = true
-                        self.update()
-                    }
-                } catch let jsonErr {
-                    print("Error: \(jsonErr)")
-                }
-            }
-            task.resume()
-        }
-    }
-    
-    func addPost(post: FeedCellData, feed:Bool, update:Bool) {
-        if let cell = cache.addPost(data: post, feed: feed){
-            if !self.feed || feed {
-                postData[cell.post] = cell
-                if update {
-                    self.update()
-                }
-            }
+            SVProgressHUD.dismiss()
         }
     }
     
@@ -165,10 +113,14 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
         if let profileVC = postStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
             profileVC.userID = uid
             profileVC.currentProfile = false
-            if let delegate = delegate2 {
+            if let delegate = delegate {
                 delegate.navigateToProfile(profileVC: profileVC)
             }
         }
+    }
+    
+    func addPost(post: PostData) {
+        //add post to feed
     }
     
     func refreshCell(index: IndexPath) {
@@ -176,6 +128,10 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
     }
     
     func update(){
+        //override me
+    }
+    
+    func getPosts(complete: @escaping (FeedContainer) -> Void) {
         //override me
     }
 

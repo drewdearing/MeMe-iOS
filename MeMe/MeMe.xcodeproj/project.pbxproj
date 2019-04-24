@@ -18,7 +18,6 @@
 		17A35F982254187E00C2362D /* ProfileSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */; };
 		17A35F9B2254192200C2362D /* GroupChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F9A2254192200C2362D /* GroupChat.swift */; };
 		17A35F9D2254193500C2362D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F9C2254193500C2362D /* User.swift */; };
-		17A35F9F2254194100C2362D /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35F9E2254194100C2362D /* Post.swift */; };
 		17A35FA222541A9F00C2362D /* CurrentUserTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17A35FA022541A9F00C2362D /* CurrentUserTableViewCell.xib */; };
 		17A35FA322541A9F00C2362D /* CurrentUserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A35FA122541A9F00C2362D /* CurrentUserTableViewCell.swift */; };
 		17A35FA622541B6500C2362D /* PotentialUserTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17A35FA422541B6500C2362D /* PotentialUserTableViewCell.xib */; };
@@ -51,10 +50,15 @@
 		3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */; };
 		3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B76C13C22398191005CA53E /* GoogleService-Info.plist */; };
 		3B860CD52252C3E800831C41 /* MeMe.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3B860CD32252C3E800831C41 /* MeMe.xcdatamodeld */; };
-		3B860CE12252C9FA00831C41 /* FeedCell+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B860CDF2252C9FA00831C41 /* FeedCell+CoreDataClass.swift */; };
-		3B860CE22252C9FA00831C41 /* FeedCell+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B860CE02252C9FA00831C41 /* FeedCell+CoreDataProperties.swift */; };
 		3B9B6F43225455FD005A52B4 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9B6F42225455FD005A52B4 /* TabView.swift */; };
+		3BA760C1226FB7F500FBB835 /* Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA760C0226FB7F500FBB835 /* Timestamp.swift */; };
+		3BA760C3226FBEE300FBB835 /* MyPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA760C2226FBEE300FBB835 /* MyPost.swift */; };
+		3BA760C8226FC2D100FBB835 /* Post+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA760C4226FC2D100FBB835 /* Post+CoreDataClass.swift */; };
+		3BA760C9226FC2D100FBB835 /* Post+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA760C5226FC2D100FBB835 /* Post+CoreDataProperties.swift */; };
+		3BA760D2226FC4FA00FBB835 /* Profile+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA760D0226FC4FA00FBB835 /* Profile+CoreDataClass.swift */; };
+		3BA760D3226FC4FA00FBB835 /* Profile+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA760D1226FC4FA00FBB835 /* Profile+CoreDataProperties.swift */; };
 		3BB8349522532FB600DE1D01 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB8349422532FB600DE1D01 /* FeedView.swift */; };
+		3BBC46FF226EC7C700C261B1 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBC46FE226EC7C700C261B1 /* UIColor.swift */; };
 		3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */; };
 		3BD6291E225DA3AB007BECBB /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD6291D225DA3AB007BECBB /* UIImage.swift */; };
 		3BDA3462225DBCE1009EA280 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BDA3461225DBCE1009EA280 /* ShareViewController.swift */; };
@@ -91,7 +95,6 @@
 		17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsViewController.swift; sourceTree = "<group>"; };
 		17A35F9A2254192200C2362D /* GroupChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChat.swift; sourceTree = "<group>"; };
 		17A35F9C2254193500C2362D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		17A35F9E2254194100C2362D /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		17A35FA022541A9F00C2362D /* CurrentUserTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = CurrentUserTableViewCell.xib; path = MeMe/Models/CurrentUserTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		17A35FA122541A9F00C2362D /* CurrentUserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CurrentUserTableViewCell.swift; path = MeMe/Models/CurrentUserTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		17A35FA422541B6500C2362D /* PotentialUserTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PotentialUserTableViewCell.xib; path = MeMe/Models/PotentialUserTableViewCell.xib; sourceTree = SOURCE_ROOT; };
@@ -124,10 +127,15 @@
 		3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FeedTableViewCell.xib; path = MeMe/Cells/FeedTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		3B76C13C22398191005CA53E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B860CD42252C3E800831C41 /* MeMe.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeMe.xcdatamodel; sourceTree = "<group>"; };
-		3B860CDF2252C9FA00831C41 /* FeedCell+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedCell+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3B860CE02252C9FA00831C41 /* FeedCell+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedCell+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3B9B6F42225455FD005A52B4 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
+		3BA760C0226FB7F500FBB835 /* Timestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timestamp.swift; sourceTree = "<group>"; };
+		3BA760C2226FBEE300FBB835 /* MyPost.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyPost.swift; sourceTree = "<group>"; };
+		3BA760C4226FC2D100FBB835 /* Post+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Post+CoreDataClass.swift"; sourceTree = "<group>"; };
+		3BA760C5226FC2D100FBB835 /* Post+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Post+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3BA760D0226FC4FA00FBB835 /* Profile+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+CoreDataClass.swift"; sourceTree = "<group>"; };
+		3BA760D1226FC4FA00FBB835 /* Profile+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Profile+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3BB8349422532FB600DE1D01 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
+		3BBC46FE226EC7C700C261B1 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		3BD6291D225DA3AB007BECBB /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		3BDA3461225DBCE1009EA280 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
@@ -173,11 +181,13 @@
 			children = (
 				17A35F9C2254193500C2362D /* User.swift */,
 				17A35F9A2254192200C2362D /* GroupChat.swift */,
-				17A35F9E2254194100C2362D /* Post.swift */,
+				3BA760C2226FBEE300FBB835 /* MyPost.swift */,
 				3BE25155225527B600B8FCAC /* Cache.swift */,
 				609987AD2255ED05002EFA2F /* Message.swift */,
 				3BD6291D225DA3AB007BECBB /* UIImage.swift */,
+				3BBC46FE226EC7C700C261B1 /* UIColor.swift */,
 				3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */,
+				3BA760C0226FB7F500FBB835 /* Timestamp.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -250,8 +260,10 @@
 		3B860CDE2252C9E600831C41 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
-				3B860CDF2252C9FA00831C41 /* FeedCell+CoreDataClass.swift */,
-				3B860CE02252C9FA00831C41 /* FeedCell+CoreDataProperties.swift */,
+				3BA760D0226FC4FA00FBB835 /* Profile+CoreDataClass.swift */,
+				3BA760D1226FC4FA00FBB835 /* Profile+CoreDataProperties.swift */,
+				3BA760C4226FC2D100FBB835 /* Post+CoreDataClass.swift */,
+				3BA760C5226FC2D100FBB835 /* Post+CoreDataProperties.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -493,8 +505,8 @@
 			files = (
 				17C6E8502239B2E9004665F0 /* ProfileView.swift in Sources */,
 				3BD6291E225DA3AB007BECBB /* UIImage.swift in Sources */,
-				3B860CE22252C9FA00831C41 /* FeedCell+CoreDataProperties.swift in Sources */,
 				3B1B71BC225E6CCE003B80E6 /* ImagePicker.swift in Sources */,
+				3BBC46FF226EC7C700C261B1 /* UIColor.swift in Sources */,
 				17A35F92225403B300C2362D /* GroupChatViewController.swift in Sources */,
 				17A35F9B2254192200C2362D /* GroupChat.swift in Sources */,
 				17C6E84E2239B2D8004665F0 /* MessageView.swift in Sources */,
@@ -504,36 +516,40 @@
 				3BEC942A22547F90003AE517 /* HomeViewController.swift in Sources */,
 				3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */,
 				17A35FA322541A9F00C2362D /* CurrentUserTableViewCell.swift in Sources */,
+				3BA760C1226FB7F500FBB835 /* Timestamp.swift in Sources */,
 				60430CCE2231CC630033C92F /* LoginViewController.swift in Sources */,
 				6037F706224AD165000D0E57 /* EditMemeViewController.swift in Sources */,
 				609987AA2255E480002EFA2F /* GroupChatsViewController.swift in Sources */,
 				17A35F982254187E00C2362D /* ProfileSettingsViewController.swift in Sources */,
 				17A35FA722541B6500C2362D /* PotentialUserTableViewCell.swift in Sources */,
-				3B860CE12252C9FA00831C41 /* FeedCell+CoreDataClass.swift in Sources */,
 				17A35F9D2254193500C2362D /* User.swift in Sources */,
 				3B860CD52252C3E800831C41 /* MeMe.xcdatamodeld in Sources */,
 				17A35FB922542FE000C2362D /* NavigationView.swift in Sources */,
+				3BA760C8226FC2D100FBB835 /* Post+CoreDataClass.swift in Sources */,
 				1745B70222557E6800DDFB34 /* AddMembersViewController.swift in Sources */,
 				17FD8FCB225EE6C800DC855B /* ProfilePreviewViewController.swift in Sources */,
-				17A35F9F2254194100C2362D /* Post.swift in Sources */,
 				177FB7A822598576002B7588 /* ChatViewController.swift in Sources */,
 				60430CCC2231CC630033C92F /* AppDelegate.swift in Sources */,
 				17C6E8482239ABF9004665F0 /* HomeView.swift in Sources */,
 				3B37D73F225EAA2F00790005 /* EditToolsViewController.swift in Sources */,
 				3BB8349522532FB600DE1D01 /* FeedView.swift in Sources */,
 				17A35FAB22541BD000C2362D /* ProfilePostCollectionViewCell.swift in Sources */,
+				3BA760C9226FC2D100FBB835 /* Post+CoreDataProperties.swift in Sources */,
 				17A35F962254185600C2362D /* PostViewController.swift in Sources */,
 				3B9B6F43225455FD005A52B4 /* TabView.swift in Sources */,
 				17C6E8402239A88A004665F0 /* MainViewController.swift in Sources */,
+				3BA760C3226FBEE300FBB835 /* MyPost.swift in Sources */,
 				17A35F90225402A900C2362D /* GroupChatTableViewCell.swift in Sources */,
 				609987AC2255EC10002EFA2F /* MessageTableViewCell.swift in Sources */,
 				6037F704224AD13F000D0E57 /* GalleryViewController.swift in Sources */,
 				3BEC942C22548302003AE517 /* DiscoverViewController.swift in Sources */,
 				17A35F8C2254022200C2362D /* GroupChatSettingsViewController.swift in Sources */,
 				17C6E84A2239AE5B004665F0 /* DiscoverView.swift in Sources */,
+				3BA760D2226FC4FA00FBB835 /* Profile+CoreDataClass.swift in Sources */,
 				609987A62255E15D002EFA2F /* ProfileViewController.swift in Sources */,
 				17A35FB52254291200C2362D /* GroupSettingsView.swift in Sources */,
 				3B3F47C32249ACBA00B2C5A0 /* FeedTableViewCell.swift in Sources */,
+				3BA760D3226FC4FA00FBB835 /* Profile+CoreDataProperties.swift in Sources */,
 				3BDA3462225DBCE1009EA280 /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

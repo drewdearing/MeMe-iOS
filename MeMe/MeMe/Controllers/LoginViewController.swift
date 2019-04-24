@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-struct Profile: Codable {
+struct CurrentProfile: Codable {
     let username:String
     let email:String
     let numFollowing:Int
@@ -17,10 +17,10 @@ struct Profile: Codable {
     let profilePicURL:String
 }
 
-func getCurrentProfile() -> Profile?{
+func getCurrentProfile() -> CurrentProfile?{
     let data = UserDefaults.standard.value(forKey: "currentProfile") as? Data
     if let data = data {
-        let profile:Profile? = try? PropertyListDecoder().decode(Profile.self, from: data)
+        let profile:CurrentProfile? = try? PropertyListDecoder().decode(CurrentProfile.self, from: data)
         return profile
     }
     return nil
@@ -63,7 +63,7 @@ class LoginViewController: UIViewController {
                                     let numFollowing = Int(data!["numFollowing"] as! NSNumber)
                                     let numFollowers = Int(data!["numFollowers"] as! NSNumber)
                                     
-                                    let newUser = Profile(username: username, email: email, numFollowing: numFollowing, numFollowers: numFollowers, profilePicURL: profilePicURL)
+                                    let newUser = CurrentProfile(username: username, email: email, numFollowing: numFollowing, numFollowers: numFollowers, profilePicURL: profilePicURL)
                                     UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
                                     print("LOGIN SEGUE")
                                     self?.performSegue(withIdentifier: "LoginSegue", sender: self)

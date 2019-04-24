@@ -15,7 +15,7 @@ struct VoteData: Codable {
 }
 
 protocol FeedCellDelegate {
-    func addPost(post:FeedCellData, feed:Bool, update:Bool)
+    func addPost(post:PostData)
     func tappedAction(uid: String)
 }
 
@@ -31,14 +31,17 @@ class FeedTableViewCell: UITableViewCell {
     
     var memeURL:String = ""
     var profileURL:String = ""
+    
     var uid:String = ""
     var postID:String = ""
+    var color:String = ""
     var upvotes:Int = 0
     var downvotes:Int = 0
-    var seconds:Int = 0
+    var timestamp:Timestamp = Timestamp(s: 0)
+    
     var downvoted:Bool = false
     var upvoted: Bool = false
-    var feed:Bool = false
+    
     var delegate:FeedCellDelegate?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -55,57 +58,43 @@ class FeedTableViewCell: UITableViewCell {
         
     }
     
-    func fill(feedCell:FeedCell){
+    func fill(postData:PostData){
         memePic.image = nil
         profilePic.image = nil
-        feed = feedCell.feed
-        upvotes = Int(feedCell.upvotes)
-        downvotes = Int(feedCell.downvotes)
-        upvoted = feedCell.upvoted
-        downvoted = feedCell.downvoted
-        memeURL = feedCell.imageURL
-        seconds = Int(feedCell.seconds)
-        uid = feedCell.uid
-        postID = feedCell.post
-        profileURL = feedCell.profilePicURL
-        cellTitle.text = feedCell.username
-        descriptionLabel.text = feedCell.desc
+        color = postData.color
+        memePic.backgroundColor = UIColor(hex: postData.color)
+        upvotes = postData.upvotes
+        timestamp = postData.timestamp
+        downvotes = postData.downvotes
+        uid = postData.uid
+        postID = postData.id
+        cellTitle.text = ""
+        descriptionLabel.text = ""
         setUpGesture()
         updateVoteCounter()
-        selectionStyle = .none
         
-        DispatchQueue.global(qos: .background).async {
-            if let memePic = cache.getImage(id: feedCell.post) {
-                DispatchQueue.main.async {
-                    self.memePic.image = memePic
-                }
+        cache.getPost(id: postID) { (post) in
+            if let post = post {
+                let imageURL = post.photoURL
+                self.descriptionLabel.text = post.desc
+                self.downvotes = Int(post.downvotes)
+                self.upvotes = Int(post.upvotes)
+                self.upvoted = post.upvoted
+                self.downvoted = post.downvoted
+                self.updateVoteCounter()
+                cache.getImage(imageURL: imageURL, complete: { (postImage) in
+                    self.memePic.image = postImage
+                })
             }
-            else{
-                let url = URL(string: self.memeURL)
-                let data = try? Data(contentsOf: url!)
-                if let imgData = data {
-                    let image = UIImage(data:imgData)
-                    DispatchQueue.main.async {
-                        self.memePic.image = image
-                    }
-                    cache.addImage(id: self.postID, image: image)
-                }
-            }
-            if let profilePic = cache.getProfilePic(uid: feedCell.uid) {
-                DispatchQueue.main.async {
+        }
+        
+        cache.getProfile(uid: uid) { (profile) in
+            if let profile = profile {
+                self.cellTitle.text = profile.username
+                let profilePicURL = profile.profilePicURL
+                cache.getImage(imageURL: profilePicURL, complete: { (profilePic) in
                     self.profilePic.image = profilePic
-                }
-            }
-            else{
-                let url = URL(string: self.profileURL)
-                let data = try? Data(contentsOf: url!)
-                if let imgData = data {
-                    let image = UIImage(data:imgData)
-                    DispatchQueue.main.async {
-                        self.profilePic.image = image
-                    }
-                    cache.addProfilePic(id: self.uid, image: image)
-                }
+                })
             }
         }
     }
@@ -212,9 +201,8 @@ class FeedTableViewCell: UITableViewCell {
     
     func updateDelegate(){
         if let delegate = self.delegate {
-            let data = FeedCellData(username: self.cellTitle.text!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
-            print("calling del")
-            delegate.addPost(post: data, feed:self.feed, update:false)
+            let data = PostData(id: postID, uid: uid, color: color, timestamp: timestamp, upvotes: upvotes, downvotes: downvotes)
+            delegate.addPost(post: data)
         }
     }
     

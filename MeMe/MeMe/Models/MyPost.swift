@@ -11,7 +11,7 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 
-struct Post {
+struct MyPost {
     var userID: String
     var photoURL: String
     var topText: String
@@ -34,7 +34,7 @@ struct Post {
     }
 }
 
-extension Post : DocumentSerializable {
+extension MyPost : DocumentSerializable {
     init?(dictionary:[String: Any]) {
         guard
             let userID = dictionary["uid"] as? String,
@@ -55,8 +55,8 @@ extension Post : DocumentSerializable {
     }
 }
 
-extension Post: Equatable {
-    static func == (lhs: Post, rhs: Post) -> Bool {
+extension MyPost: Equatable {
+    static func == (lhs: MyPost, rhs: MyPost) -> Bool {
         return lhs.userID == rhs.userID &&
             lhs.photoURL == rhs.photoURL &&
             lhs.topText == rhs.topText &&
@@ -68,21 +68,21 @@ extension Post: Equatable {
     }
 }
 
-extension Post: Hashable {
+extension MyPost: Hashable {
     var hashValue: Int {
         return userID.hashValue ^ photoURL.hashValue ^ timeStamp.hashValue
     }
 }
 
 struct PostImage {
-    var post: Post
+    var post: MyPost
     var image: UIImage
 }
 
 extension PostImage : DocumentSerializable {
     init?(dictionary:[String: Any]) {
         guard
-            let post = dictionary["post"] as? Post,
+            let post = dictionary["post"] as? MyPost,
             let image = dictionary["image"] as? UIImage
             else {
                 return nil

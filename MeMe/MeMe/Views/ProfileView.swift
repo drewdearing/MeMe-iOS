@@ -22,7 +22,7 @@ class ProfileView: TabView, UICollectionViewDataSource, UICollectionViewDelegate
     @IBOutlet weak var postsCollectionView: UICollectionView!
     
     var user: User? = nil
-    var posts: [Post] = []
+    var posts: [MyPost] = []
     
     override init(frame: CGRect){
         super.init(frame: frame)

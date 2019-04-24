@@ -9,7 +9,7 @@ import UIKit
 import Firebase
 
 protocol IndividualPostDelegate {
-    func addPost(post:FeedCellData, feed:Bool, update:Bool)
+    func addPost(post:PostData)
     func refreshCell(index:IndexPath)
 }
 
@@ -27,7 +27,7 @@ class PostViewController: UIViewController {
     @IBOutlet weak var navItem: UINavigationItem!
     
     @IBOutlet weak var userButton: UIButton!
-    var post: FeedCell!
+    var post: String!
     var index: IndexPath!
     var memeURL:String = ""
     var profileURL:String = ""
@@ -36,6 +36,8 @@ class PostViewController: UIViewController {
     var upvotes:Int = 0
     var downvotes:Int = 0
     var seconds:Int = 0
+    var color:String = ""
+    var timestamp:Timestamp = Timestamp(s: 0)
     var downvoted:Bool = false
     var upvoted: Bool = false
     var feed:Bool = false
@@ -52,93 +54,54 @@ class PostViewController: UIViewController {
         var tapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedImage(recognizer:)))
         userProfileImageView.addGestureRecognizer(tapGesture)
         userProfileImageView.isUserInteractionEnabled = true
-        
-        fill(feedCell: post)
-        navItem.title = post.username+"'s meme"
+        navItem.title = "Meme"
         followButton.isEnabled = false
+        cache.getPost(id: post) { (post) in
+            if let post = post {
+                self.fill(post: post)
+            }
+        }
     }
     
-    func fill(feedCell:FeedCell){
+    func fill(post:Post){
         postImageView.image = nil
         userProfileImageView.image = nil
-        feed = feedCell.feed
-        upvotes = Int(feedCell.upvotes)
-        downvotes = Int(feedCell.downvotes)
-        upvoted = feedCell.upvoted
-        downvoted = feedCell.downvoted
-        memeURL = feedCell.imageURL
-        seconds = Int(feedCell.seconds)
-        uid = feedCell.uid
-        postID = feedCell.post
-        profileURL = feedCell.profilePicURL
-        userButton.setTitle(feedCell.username, for: .normal)
-        descriptionLabel.text = feedCell.desc
+        postImageView.backgroundColor = UIColor(hex: post.color)
+        upvotes = Int(post.upvotes)
+        downvotes = Int(post.downvotes)
+        upvoted = post.upvoted
+        color = post.color
+        timestamp = Timestamp(s: post.seconds, n: post.nanoseconds)
+        downvoted = post.downvoted
+        memeURL = post.photoURL
+        seconds = Int(post.seconds)
+        descriptionLabel.text = post.desc
+        uid = post.uid
+        postID = post.id
         updateVoteCounter()
         
-        if let currentUser = Auth.auth().currentUser{
-            if uid != currentUser.uid {
-                Firestore.firestore().collection("users").document(uid).collection("followers").document(currentUser.uid).getDocument { (followDoc, err) in
-                    if let doc = followDoc {
-                        if doc.exists {
-                            self.followButton.isEnabled = true
-                            self.following = true
+        cache.getProfile(uid: uid) { (profile) in
+            if let profile = profile {
+                let username = profile.username
+                let profilePicURL = profile.profilePicURL
+                self.userButton.setTitle(username, for: .normal)
+                self.following = profile.following
+                if let currentUser = Auth.auth().currentUser {
+                    if self.uid != currentUser.uid {
+                        self.followButton.isEnabled = true
+                        if profile.following {
                             self.followButton.setTitle("Unfollow", for: .normal)
-                        }
-                        else{
-                            self.followButton.isEnabled = true
                         }
                     }
                 }
+                cache.getImage(imageURL: profilePicURL, complete: { (profilePic) in
+                    self.userProfileImageView.image = profilePic
+                })
             }
         }
         
-        DispatchQueue.global(qos: .background).async {
-            if let memePic = cache.getImage(id: feedCell.post) {
-                DispatchQueue.global(qos: .background).async {
-                    let color = memePic.averageColor
-                    DispatchQueue.main.async {
-                        self.postImageView.backgroundColor = color
-                    }
-                }
-                DispatchQueue.main.async {
-                    self.postImageView.image = memePic
-                }
-            }
-            else{
-                let url = URL(string: self.memeURL)
-                let data = try? Data(contentsOf: url!)
-                if let imgData = data {
-                    let image = UIImage(data:imgData)
-                    DispatchQueue.global(qos: .background).async {
-                        let color = image!.averageColor
-                        DispatchQueue.main.async {
-                            self.postImageView.backgroundColor = color
-                        }
-                    }
-                    DispatchQueue.main.async {
-                        self.postImageView.image = image
-                    }
-                    cache.addImage(id: self.postID, image: image)
-                }
-            }
-        }
-        DispatchQueue.global(qos: .background).async {
-            if let profilePic = cache.getProfilePic(uid: feedCell.uid) {
-                DispatchQueue.main.async {
-                    self.userProfileImageView.image = profilePic
-                }
-            }
-            else{
-                let url = URL(string: self.profileURL)
-                let data = try? Data(contentsOf: url!)
-                if let imgData = data {
-                    let image = UIImage(data:imgData)
-                    DispatchQueue.main.async {
-                        self.userProfileImageView.image = image
-                    }
-                    cache.addProfilePic(id: self.uid, image: image)
-                }
-            }
+        cache.getImage(imageURL: memeURL) { (postImage) in
+            self.postImageView.image = postImage
         }
     }
     
@@ -253,8 +216,8 @@ class PostViewController: UIViewController {
     func updateDelegate(){
         if let delegate = self.delegate {
             print("hi")
-            let data = FeedCellData(username: self.userButton.currentTitle!, description: self.description, uid: self.uid, post: self.postID, imageURL: self.memeURL, profilePicURL: self.profileURL, upvotes: self.upvotes, downvotes: self.downvotes, timestamp: Timestamp(s:self.seconds), upvoted:self.upvoted, downvoted: self.downvoted)
-            delegate.addPost(post: data, feed:self.feed, update: false)
+            let data = PostData.init(id: postID, uid: uid, color: color, timestamp: timestamp, upvotes: upvotes, downvotes: downvotes)
+            delegate.addPost(post: data)
             delegate.refreshCell(index: self.index)
         }
     }

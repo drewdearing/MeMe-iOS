@@ -12,7 +12,7 @@ import FirebaseStorage
 import SVProgressHUD
 
 protocol NewMemeDelegate {
-    func addMeme(post: FeedCellData, feed:Bool)
+    func addMeme(post: PostData)
 }
 
 class EditMemeViewController: UIViewController, EditToolsDelegate {
@@ -178,8 +178,8 @@ class EditMemeViewController: UIViewController, EditToolsDelegate {
         self.draw = draw
     }
     
-    func addMeme(post: FeedCellData, feed: Bool) {
-        delegate?.addMeme(post: post, feed: feed)
+    func addMeme(post: PostData) {
+        delegate?.addMeme(post: post)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

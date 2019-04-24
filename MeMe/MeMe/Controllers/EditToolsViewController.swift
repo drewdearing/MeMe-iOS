@@ -12,7 +12,7 @@ import SVProgressHUD
 
 protocol EditToolsDelegate {
     func updateTools(size:Float, hue:Float, red:CGFloat, green:CGFloat, blue:CGFloat, desc:String, text:String, textSize:Float, textHue:Float, draw:Bool)
-    func addMeme(post:FeedCellData, feed:Bool)
+    func addMeme(post:PostData)
 }
 
 class EditToolsViewController: UIViewController {
@@ -133,8 +133,9 @@ class EditToolsViewController: UIViewController {
         SVProgressHUD.show(withStatus: "Posting...")
         let storage = Storage.storage()
         let storageRef = storage.reference()
-        
-        let data = cropImage().pngData()
+        let image = cropImage()
+        let data = image.pngData()
+        let color = image.averageColor!.toHexString()
         let ref = Firestore.firestore().collection("post").document()
         let imageName = ref.documentID
         print(imageName)
@@ -152,34 +153,46 @@ class EditToolsViewController: UIViewController {
                 }
                 //do things that u want to do after download is done
                 if let urlText = url?.absoluteString {
-                    self.addToFirestore(download: urlText, ref: ref)
-                    self.passPost(imageName: imageName, download: urlText)
+                    self.addToFirestore(download: urlText, color: color, ref: ref)
+                    self.passPost(imageName: imageName, download: urlText, color: color)
                 }
             }
         }
     }
     
-    func passPost(imageName:String, download:String){
+    func passPost(imageName:String, download:String, color:String){
         let currentUser = Auth.auth().currentUser
-        if let profile = getCurrentProfile() {
-            let data = FeedCellData(username: profile.username, description:  self.descriptionField.text!, uid: currentUser!.uid, post: imageName, imageURL: download, profilePicURL: profile.profilePicURL, upvotes: 0, downvotes: 0, timestamp: Timestamp(), upvoted:false, downvoted: false)
-            SVProgressHUD.dismiss()
-            delegate?.addMeme(post: data, feed:true)
-            dismiss(animated: true)
-        }
+        let data = PostData(id: imageName, uid: currentUser!.uid, color: color, timestamp: Timestamp(), upvotes: 0, downvotes: 0)
+        SVProgressHUD.dismiss()
+        delegate?.addMeme(post: data)
+        dismiss(animated: true)
     }
     
-    func addToFirestore(download:String, ref:DocumentReference){
+    func addToFirestore(download:String, color:String, ref:DocumentReference){
         let currentUser = Auth.auth().currentUser
+        let userPostRef = Firestore.firestore().collection("users").document(currentUser!.uid).collection("posts").document(ref.documentID)
+        
         ref.setData([
-            "bottomText": "Meme",
             "description": self.descriptionField.text!,
             "downvotes": 0,
             "photoURL": download,
             "timestamp": NSDate(),
-            "topText": "Dank",
             "uid": currentUser!.uid,
-            "upvotes": 0
+            "upvotes": 0,
+            "score": 0,
+            "color": color
+        ]) { err in
+            if let err = err {
+                print("Error adding document: \(err)")
+            } else {
+                print("Document added with ID: \(ref.documentID)")
+            }
+        }
+        
+        userPostRef.setData([
+            "timestamp": NSDate(),
+            "uid": currentUser!.uid,
+            "color": color
         ]) { err in
             if let err = err {
                 print("Error adding document: \(err)")

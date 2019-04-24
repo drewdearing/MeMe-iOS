@@ -177,7 +177,7 @@ class RegisterViewController: UIViewController, ImagePickerDelegate {
                             } else {
                                 SVProgressHUD.dismiss()
                                 self.statusLabel.text = "User created!"
-                                let newUser = Profile(username: fields.name, email: fields.email, numFollowing: 0, numFollowers: 0, profilePicURL: fields.photoURL)
+                                let newUser = CurrentProfile(username: fields.name, email: fields.email, numFollowing: 0, numFollowers: 0, profilePicURL: fields.photoURL)
                                 UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
                                 //go to home
                                 self.performSegue(withIdentifier: "RegisterSegue", sender: self)
