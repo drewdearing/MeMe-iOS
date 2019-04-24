@@ -126,9 +126,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             groupChatNameTextField.textInputView.isUserInteractionEnabled = false
             groupChatNameTextField.resignFirstResponder()
             
-            if (groupID == "") {
-                let temp = createGroup()
-            }else{
+            if (groupID != "") {
                 let ref = Firestore.firestore().collection("groups").document(groupID)
                 
                 let refUsersInGroup = ref.collection("usersInGroup")
@@ -157,7 +155,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                         }
                     }
                 }
-                
             }
             
             
@@ -165,6 +162,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
 
     private func getMembers() {
+            print("get members")
             let q = DispatchQueue(label:"GroupSettings")
             q.sync {
                 let db = Firestore.firestore().collection("groups")
