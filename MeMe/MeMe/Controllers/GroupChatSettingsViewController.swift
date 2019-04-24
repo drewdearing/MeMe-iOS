@@ -126,33 +126,41 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             groupChatNameTextField.textInputView.isUserInteractionEnabled = false
             groupChatNameTextField.resignFirstResponder()
             
-            let ref = Firestore.firestore().collection("groups").document(groupID)
-            let refUsersInGroup = ref.collection("usersInGroup")
-            let ref_user = Firestore.firestore().collection("users")
-            
-            ref.setData([
-                "name": name
-            ]) { err in
-                if let err = err {
-                    print("Error adding document: \(err)")
-                } else {
-                    print("Name changed successful with ID: \(ref.documentID)")
+            if (groupID == "") {
+                let temp = createGroup()
+            }else{
+                let ref = Firestore.firestore().collection("groups").document(groupID)
+                
+                let refUsersInGroup = ref.collection("usersInGroup")
+                let ref_user = Firestore.firestore().collection("users")
+                
+                ref.setData([
+                    "name": name
+                ]) { err in
+                    if let err = err {
+                        print("Error adding document: \(err)")
+                    } else {
+                        print("Name changed successful with ID: \(ref.documentID)")
+                    }
                 }
-            }
-    
-            refUsersInGroup.getDocuments{ (querySnapshot, err) in
-                for document in querySnapshot!.documents {
-                    ref_user.document(document.documentID).collection("groups").document(ref.documentID).setData([
-                        "name": name
-                    ]) { err in
-                        if let err = err {
-                            print("Error writing document: \(err)")
-                        } else {
-                            print("Document successfully written!")
+                
+                refUsersInGroup.getDocuments{ (querySnapshot, err) in
+                    for document in querySnapshot!.documents {
+                        ref_user.document(document.documentID).collection("groups").document(ref.documentID).setData([
+                            "name": name
+                        ]) { err in
+                            if let err = err {
+                                print("Error writing document: \(err)")
+                            } else {
+                                print("Document successfully written!")
+                            }
                         }
                     }
                 }
+                
             }
+            
+            
         }
     }
 
@@ -183,47 +191,12 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             }
     }
     
+    
     @IBAction func saveButton(_ sender: Any) {
         if (groupChatNameTextField.text != "") {
-            let currentUser = Auth.auth().currentUser
-            let ref = Firestore.firestore().collection("groups").document()
-            let refid = ref.documentID
-            ref.setData([
-                "name": groupChatNameTextField.text
-            ]) { err in
-                if let err = err {
-                    print("Error adding document: \(err)")
-                } else {
-                    self.groupdocid = ref.documentID
-                    print("Document added with ID: \(ref.documentID)")
-                }
-            }
-            
-            ref.collection("usersInGroup").document((currentUser?.uid)!).setData([
-                "username": getCurrentProfile()?.username,
-                "profilePicURL": getCurrentProfile()?.profilePicURL
-            ]) { err in
-                if let err = err {
-                    print("Error writing document: \(err)")
-                } else {
-                    print("Document successfully written!")
-                }
-            }
-            
-            
+            let refid = createGroup()
             let ref_user = Firestore.firestore().collection("users")
-            
-            ref_user.document((currentUser?.uid)!).collection("groups").document(refid).setData([
-                "name": groupChatNameTextField.text
-            ]) { err in
-                if let err = err {
-                    print("Error writing document: \(err)")
-                } else {
-                    print("Document successfully written!")
-                }
-            }
-            
-            
+            let currentUser = Auth.auth().currentUser
             
             ref_user.document((currentUser?.uid)!).getDocument { (document, error) in
                 if let username = document?.get("username") {
@@ -237,7 +210,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                     }
                     self.currentMemebersTableView.reloadData()
                 } else {
-                    print("error bitch")
+                    print("Error")
                 }
             }
             
@@ -268,7 +241,42 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         currentMemebersTableView.reloadData()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    func createGroup () -> String {
+        let currentUser = Auth.auth().currentUser
+        let ref = Firestore.firestore().collection("groups").document()
+        let refid = ref.documentID
+        ref.setData([
+            "name": groupChatNameTextField.text
+        ]) { err in
+            if let err = err {
+                print("Error adding document: \(err)")
+            } else {
+                self.groupdocid = ref.documentID
+                print("Document added with ID: \(ref.documentID)")
+            }
+        }
         
+        ref.collection("usersInGroup").document((currentUser?.uid)!).setData([
+            "username": getCurrentProfile()?.username,
+            "profilePicURL": getCurrentProfile()?.profilePicURL
+        ]) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            } else {
+                print("Document successfully written!")
+            }
+        }
+        
+        let ref_user = Firestore.firestore().collection("users")
+        ref_user.document((currentUser?.uid)!).collection("groups").document(refid).setData([
+            "name": groupChatNameTextField.text
+        ]) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            } else {
+                print("Document successfully written!")
+            }
+        }
+        return refid
     }
 }
