@@ -24,6 +24,7 @@
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Vu1-qV-uR0">
                                 <rect key="frame" x="16" y="437" width="100" height="100"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="NTW-HQ-LUk"/>
                                     <constraint firstAttribute="height" constant="100" id="gPi-BJ-HIJ"/>
