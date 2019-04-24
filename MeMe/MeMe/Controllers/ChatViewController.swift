@@ -56,6 +56,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                 print("ERROR")
                 return
             }
+            
             snapshot.documentChanges.forEach{ change in
                 self.handleGroupChange(change)
             }
@@ -163,8 +164,10 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     
     private func handleGroupChange(_ change: DocumentChange) {
         if change.document.exists {
-            chat.groupChatName = change.document.get("name") as! String
-            navItem.title = chat.groupChatName
+            if(chat.groupId == change.document.documentID) {
+                chat.groupChatName = change.document.get("name") as! String
+                navItem.title = chat.groupChatName
+            }
         }
     }
     

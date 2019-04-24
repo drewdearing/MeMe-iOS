@@ -193,8 +193,6 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
                     if let docData = document.data(),
                         let userID = docData["uid"] as? String,
                         let photoURL = docData["photoURL"] as? String,
-                        let topText = docData["topText"] as? String,
-                        let bottomText = docData["bottomText"] as? String,
                         let description = docData["description"] as? String,
                         let timestamp = docData["timestamp"] as? Firebase.Timestamp,
                         let upVotes = docData["upvotes"] as? Int,
@@ -202,8 +200,6 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
                         
                         let post = MyPost(userID: userID,
                                         photoURL: photoURL,
-                                        topText: topText,
-                                        bottomText: bottomText,
                                         description: description,
                                         timeStamp: timestamp,
                                         upVotes: upVotes,

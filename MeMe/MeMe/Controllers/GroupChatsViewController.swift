@@ -34,7 +34,6 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
                 print("ERROR")
                 return
             }
-            print("SOMETHING WAS CHANGED")
             snapshot.documentChanges.forEach{ change in
                 self.updateGroups(change)
             }

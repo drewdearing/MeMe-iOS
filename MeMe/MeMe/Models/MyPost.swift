@@ -14,8 +14,6 @@ import FirebaseFirestore
 struct MyPost {
     var userID: String
     var photoURL: String
-    var topText: String
-    var bottomText: String
     var description: String
     var timeStamp: Firebase.Timestamp
     var upVotes: Int
@@ -25,8 +23,6 @@ struct MyPost {
         return [
             "uid": userID,
             "photoURL": photoURL,
-            "topText": topText,
-            "bottomText": bottomText,
             "description": description,
             "timestamp": timeStamp,
             "upvotes": upVotes,
@@ -39,8 +35,6 @@ extension MyPost : DocumentSerializable {
         guard
             let userID = dictionary["uid"] as? String,
             let photoURL = dictionary["photoURL"] as? String,
-            let topText = dictionary["topText"] as? String,
-            let bottomText = dictionary["bottomText"] as? String,
             let description = dictionary["description"] as? String,
             let timeStamp = dictionary["timestamp"] as? Firebase.Timestamp,
             let upVotes = dictionary["upvotes"] as? Int,
@@ -49,8 +43,7 @@ extension MyPost : DocumentSerializable {
                 return nil
         }
         
-        self.init(userID: userID, photoURL: photoURL, topText: topText,
-                  bottomText: bottomText, description: description,
+        self.init(userID: userID, photoURL: photoURL, description: description,
                   timeStamp: timeStamp, upVotes: upVotes, downVotes: downVotes)
     }
 }
@@ -59,8 +52,6 @@ extension MyPost: Equatable {
     static func == (lhs: MyPost, rhs: MyPost) -> Bool {
         return lhs.userID == rhs.userID &&
             lhs.photoURL == rhs.photoURL &&
-            lhs.topText == rhs.topText &&
-            lhs.bottomText == rhs.bottomText &&
             lhs.description == rhs.description &&
             lhs.timeStamp == rhs.timeStamp &&
             lhs.upVotes == rhs.upVotes &&
