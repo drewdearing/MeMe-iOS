@@ -306,6 +306,45 @@ exports.getDiscoverFeed = functions.https.onRequest((req, res) => {
     })
 })
 
+exports.getUserPosts = functions.https.onRequest((req, res) => {
+    let uid = req.query.uid;
+    let time = parseFloat(req.query.timestamp)
+    let numPosts = 50;
+    if (isNaN(time) || time < 0){
+        time = new Date().getTime() * 0.001
+    }
+    var seconds = parseInt(time)
+    var nano = parseInt((time - seconds) * 1000000000)
+    let expireTime = (new Date().getTime() * 0.001) - 86400
+    let expireSeconds = parseInt(expireTime)
+    let expireNano = parseInt((expireTime - expireSeconds) * 1000000000)
+    let timestamp = new admin.firestore.Timestamp(seconds, nano)
+    let expireTimestamp = new admin.firestore.Timestamp(expireSeconds, expireNano)
+    let userRef = db.collection('users').doc(uid).collection('posts').where('timestamp', '<=', timestamp)
+    let postIDs = []
+    userRef.get().then((posts) => {
+        posts.docs.forEach((post) => {
+            if(post.exists){
+                let postData = post.data()
+                let postTimestamp = postData.timestamp.toDate()
+                if(postTimestamp <= expireTimestamp.toDate()){
+                    post.ref.delete()
+                }
+                else{
+                    postIDs.push({
+                        id: post.id,
+                        uid: postData.uid,
+                        color: postData.color,
+                        timestamp: postData.timestamp
+                    })
+                }
+            }
+        })
+        postIDs.slice(0, numPosts)
+        res.status(200).json({posts: postIDs})
+    })
+})
+
 exports.getUserFeed = functions.https.onRequest((req, res) => {
     let uid = req.query.uid;
     let time = parseFloat(req.query.timestamp)
@@ -318,7 +357,6 @@ exports.getUserFeed = functions.https.onRequest((req, res) => {
     let expireTime = (new Date().getTime() * 0.001) - 86400
     let expireSeconds = parseInt(expireTime)
     let expireNano = parseInt((expireTime - expireSeconds) * 1000000000)
-
     let timestamp = new admin.firestore.Timestamp(seconds, nano)
     let expireTimestamp = new admin.firestore.Timestamp(expireSeconds, expireNano)
     let followedUsers = [uid]

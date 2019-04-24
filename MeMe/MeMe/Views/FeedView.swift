@@ -93,6 +93,7 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
                 delegate.navigateToPost(postVC: postVC)
             }
         }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func reloadPosts(){
