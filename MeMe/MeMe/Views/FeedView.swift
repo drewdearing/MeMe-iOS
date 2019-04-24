@@ -98,7 +98,7 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
     
     func reloadPosts(){
         postData = [:]
-        data = []
+        //data = []
         SVProgressHUD.show(withStatus: "loading...")
         getPosts { (feedContainer) in
             for post in feedContainer.posts {

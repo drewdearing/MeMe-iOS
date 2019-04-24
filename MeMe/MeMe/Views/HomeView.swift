@@ -70,8 +70,10 @@ class HomeView: FeedView {
     }
     
     func scrollToTop() {
-        let indexPath = IndexPath(row: 0, section: 0)
-        tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        if data.count > 0 {
+            let indexPath = IndexPath(row: 0, section: 0)
+            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        }
     }
     
 }
