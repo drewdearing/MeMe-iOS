@@ -129,6 +129,8 @@ class FeedTableViewCell: UITableViewCell {
     }
     
     @IBAction func upVote(_ sender: Any) {
+        downVoteButton.isUserInteractionEnabled = false
+        upvoteButton.isUserInteractionEnabled = false
         if !upvoted {
             if downvoted {
                 downvoted = false
@@ -153,6 +155,8 @@ class FeedTableViewCell: UITableViewCell {
                     DispatchQueue.main.async {
                         self.upvotes = voteData.upvotes
                         self.downvotes = voteData.downvotes
+                        self.downVoteButton.isUserInteractionEnabled = true
+                        self.upvoteButton.isUserInteractionEnabled = true
                         self.updateVoteCounter()
                         self.updateCache()
                     }
@@ -165,6 +169,8 @@ class FeedTableViewCell: UITableViewCell {
     }
     
     @IBAction func downVote(_ sender: Any) {
+        downVoteButton.isUserInteractionEnabled = false
+        upvoteButton.isUserInteractionEnabled = false
         if !downvoted {
             if upvoted {
                 upvoted = false
@@ -189,6 +195,8 @@ class FeedTableViewCell: UITableViewCell {
                     DispatchQueue.main.async {
                         self.upvotes = voteData.upvotes
                         self.downvotes = voteData.downvotes
+                        self.downVoteButton.isUserInteractionEnabled = true
+                        self.upvoteButton.isUserInteractionEnabled = true
                         self.updateVoteCounter()
                         self.updateCache()
                     }

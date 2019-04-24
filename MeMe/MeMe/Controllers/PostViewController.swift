@@ -143,6 +143,8 @@ class PostViewController: UIViewController {
     }
     
     @IBAction func upVote(_ sender: Any) {
+        downVoteButton.isUserInteractionEnabled = false
+        upVoteButton.isUserInteractionEnabled = false
         if !upvoted {
             if downvoted {
                 downvoted = false
@@ -167,6 +169,8 @@ class PostViewController: UIViewController {
                     DispatchQueue.main.async {
                         self.upvotes = voteData.upvotes
                         self.downvotes = voteData.downvotes
+                        self.downVoteButton.isUserInteractionEnabled = true
+                        self.upVoteButton.isUserInteractionEnabled = true
                         self.updateVoteCounter()
                         self.updateCache()
                     }
@@ -179,6 +183,8 @@ class PostViewController: UIViewController {
     }
     
     @IBAction func downVote(_ sender: Any) {
+        downVoteButton.isUserInteractionEnabled = false
+        upVoteButton.isUserInteractionEnabled = false
         if !downvoted {
             if upvoted {
                 upvoted = false
@@ -203,6 +209,8 @@ class PostViewController: UIViewController {
                     DispatchQueue.main.async {
                         self.upvotes = voteData.upvotes
                         self.downvotes = voteData.downvotes
+                        self.downVoteButton.isUserInteractionEnabled = true
+                        self.upVoteButton.isUserInteractionEnabled = true
                         self.updateVoteCounter()
                         self.updateCache()
                     }
