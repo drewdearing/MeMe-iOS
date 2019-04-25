@@ -248,18 +248,43 @@ class PostViewController: UIViewController {
     @IBAction func follow(_ sender: Any) {
         if let currentUser = Auth.auth().currentUser {
             if !following {
-                Firestore.firestore().collection("users").document(uid).collection("followers").document(currentUser.uid).setData([
-                    "following":true
-                    ])
+                followMember()
                 followButton.setTitle("Unfollow", for: .normal)
                 following = true
             }
             else{
-                Firestore.firestore().collection("users").document(uid).collection("followers").document(currentUser.uid).delete()
+                unfollowMember()
                 followButton.setTitle("Follow", for: .normal)
                 following = false
             }
-            
+        }
+    }
+        
+    func followMember() {
+        let urlPath = "https://us-central1-meme-d3805.cloudfunctions.net/follow"
+        if let currentUser = Auth.auth().currentUser {
+            var urlPathBase = urlPath
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            urlPathBase = urlPathBase.appending("&following=" + uid)
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "GET"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in 	}
+            task.resume()
+        }
+    }
+    
+    func unfollowMember() {
+        let urlPath = "https://us-central1-meme-d3805.cloudfunctions.net/unfollow"
+        if let currentUser = Auth.auth().currentUser {
+            var urlPathBase = urlPath
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            urlPathBase = urlPathBase.appending("&following=" + uid)
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "GET"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in     }
+            task.resume()
         }
     }
     

@@ -276,19 +276,45 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
     @IBAction func follow(_ sender: Any) {
         if let currentUser = Auth.auth().currentUser {
             if !followed {
-                Firestore.firestore().collection("users").document(userID).collection("followers").document(currentUser.uid).setData([
-                    "following":true
-                    ])
+                followMember()
                 followButton.setImage(#imageLiteral(resourceName: "heartFilled"), for: .normal)
                 followersLabel.text = "Followed"
                 followed = true
             }
             else{
-                Firestore.firestore().collection("users").document(userID).collection("followers").document(currentUser.uid).delete()
+                unfollowMember()
                 followButton.setImage(#imageLiteral(resourceName: "heart"), for: .normal)
                 followersLabel.text = "Follow"
                 followed = false
             }
+        }
+    }
+    
+    func followMember() {
+        let urlPath = "https://us-central1-meme-d3805.cloudfunctions.net/follow"
+        if let currentUser = Auth.auth().currentUser {
+            var urlPathBase = urlPath
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            urlPathBase = urlPathBase.appending("&following=" + userID)
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "GET"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in     }
+            task.resume()
+        }
+    }
+    
+    func unfollowMember() {
+        let urlPath = "https://us-central1-meme-d3805.cloudfunctions.net/unfollow"
+        if let currentUser = Auth.auth().currentUser {
+            var urlPathBase = urlPath
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            urlPathBase = urlPathBase.appending("&following=" + userID)
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "GET"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in     }
+            task.resume()
         }
     }
     

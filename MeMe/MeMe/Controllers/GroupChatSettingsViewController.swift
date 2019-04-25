@@ -77,7 +77,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = indexPath.row
         //should delete group document from user in database
-        currentMembers.remove(at: row)
+        //currentMembers.remove(at: row)
         currentMemebersTableView.reloadData()
     }
     
@@ -114,7 +114,8 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func saveName() {
-        if let name = groupChatNameTextField.text {
+        if groupChatNameTextField.text != "" {
+            let name = groupChatNameTextField.text
             isEdit = false
             editButton.setImage(#imageLiteral(resourceName: "edit"), for: .normal)
             vcTitle.title = name
