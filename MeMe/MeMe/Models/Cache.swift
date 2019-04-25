@@ -42,6 +42,10 @@ class Cache {
                 }
                 for profile in profiles {
                     profileData[profile.id] = profile
+                    let profileRef = Firestore.firestore().collection("users").document(profile.id)
+                    profileListeners[profile.id] = profileRef.addSnapshotListener { (profileDoc, profileDocErr) in
+                        self.handleProfileDoc(profileDoc: profileDoc)
+                    }
                 }
             }
             catch{

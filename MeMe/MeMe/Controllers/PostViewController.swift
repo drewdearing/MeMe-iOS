@@ -138,8 +138,13 @@ class PostViewController: UIViewController {
         else{
             downVoteButton.setImage(#imageLiteral(resourceName: "angle-arrow-down"), for: .normal)
         }
+        
         upVoteCounter.text = String(upvotes)
         downVoteCounter.text = String(downvotes)
+        
+        if let delegate = self.delegate {
+            delegate.refreshCell(index: self.index)
+        }
     }
     
     @IBAction func upVote(_ sender: Any) {
@@ -236,9 +241,6 @@ class PostViewController: UIViewController {
                 self.upvoted = post.upvoted
                 self.downvoted = post.downvoted
                 self.updateVoteCounter()
-                if let delegate = self.delegate {
-                    delegate.refreshCell(index: self.index)
-                }
             }
         }
     }
