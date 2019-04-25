@@ -35,6 +35,10 @@ class Cache {
                 let profiles = try context.fetch(profileRequest) as! [Profile]
                 for post in posts {
                     postData[post.id] = post
+                    let postRef = Firestore.firestore().collection("post").document(post.id)
+                    postListeners[post.id] = postRef.addSnapshotListener { (postDoc, postDocErr) in
+                        self.handlePostDoc(postDoc: postDoc)
+                    }
                 }
                 for profile in profiles {
                     profileData[profile.id] = profile
@@ -147,52 +151,14 @@ class Cache {
                 let group = DispatchGroup()
                 profileTasks[uid] = group
                 group.enter()
-                let currentUser = Auth.auth().currentUser!
                 let profileRef = Firestore.firestore().collection("users").document(uid)
-                let followRef = profileRef.collection("followers").document(currentUser.uid)
-                profileRef.getDocument { (profileDoc, profileErr) in
-                    if let profileDoc = profileDoc, let data = profileDoc.data() {
-                        let numFollowers = data["numFollowers"] as! Int
-                        let numFollowing = data["numFollowing"] as! Int
-                        let profilePicURL = data["profilePicURL"] as! String
-                        let username = data["username"] as! String
-                        followRef.getDocument { (followDoc, followErr) in
-                            if let followDoc = followDoc {
-                                var following = false
-                                if followDoc.exists {
-                                    following = true
-                                }
-                                if let context = self.getContext(){
-                                    let profile = Profile(context: context)
-                                    profile.following = following
-                                    profile.id = uid
-                                    profile.numFollowers = Int32(numFollowers)
-                                    profile.numFollowing = Int32(numFollowing)
-                                    profile.profilePicURL = profilePicURL
-                                    profile.username = username
-                                    self.profileData[uid] = profile
-                                    self.updateCore()
-                                    complete(profile)
-                                    self.profileTasks[uid] = nil
-                                    group.leave()
-                                }
-                                else{
-                                    complete(nil)
-                                    self.profileTasks[uid] = nil
-                                    group.leave()
-                                }
-                            }
-                            else{
-                                complete(nil)
-                                self.profileTasks[uid] = nil
-                                group.leave()
-                            }
-                        }
-                    }
-                    else{
-                        complete(nil)
-                        self.profileTasks[uid] = nil
-                        group.leave()
+                profileListeners[uid] = profileRef.addSnapshotListener { (profileDoc, profileErr) in
+                    self.handleProfileDoc(profileDoc: profileDoc)
+                }
+                DispatchQueue.global(qos: .background).async {
+                    group.wait()
+                    DispatchQueue.main.async {
+                        self.getProfile(uid: uid, complete: complete)
                     }
                 }
             }
@@ -214,6 +180,94 @@ class Cache {
         }
         else{
             getPost(id: id, complete: complete)
+        }
+    }
+    
+    func updateProfile(uid: String, data:[String:Any], complete: @escaping (Profile?) -> Void){
+        let numFollowers = data["numFollowers"] as! Int32
+        let numFollowing = data["numFollowing"] as! Int32
+        let profilePicURL = data["profilePicURL"] as! String
+        let username = data["username"] as! String
+        let following = data["following"] as! Bool
+        if let profile = profileData[uid] {
+            profile.numFollowers = numFollowers
+            profile.numFollowing = numFollowing
+            profile.profilePicURL = profilePicURL
+            profile.username = username
+            profile.following = following
+            updateCore()
+            complete(profile)
+        }
+        else{
+            getProfile(uid: uid, complete: complete)
+        }
+    }
+    
+    private func handleProfileDoc(profileDoc:DocumentSnapshot?){
+        let uid = profileDoc!.documentID
+        if let profileDoc = profileDoc, let data = profileDoc.data() {
+            let currentUser = Auth.auth().currentUser!
+            let followRef = profileDoc.reference.collection("followers").document(currentUser.uid)
+            let numFollowers = data["numFollowers"] as! Int32
+            let numFollowing = data["numFollowing"] as! Int32
+            let profilePicURL = data["profilePicURL"] as! String
+            let username = data["username"] as! String
+            followRef.getDocument { (followDoc, followErr) in
+                if let followDoc = followDoc {
+                    var following = false
+                    if followDoc.exists {
+                        following = true
+                    }
+                    if self.profileData[uid] != nil {
+                        let data:[String:Any] = [
+                            "numFollowers": numFollowers,
+                            "numFollowing": numFollowing,
+                            "profilePicURL": profilePicURL,
+                            "username": username,
+                            "following": following
+                        ]
+                        self.updateProfile(uid: uid, data: data, complete: { (profile) in
+                            if let dispatchGroup = self.profileTasks[uid], let group = dispatchGroup {
+                                self.profileTasks[uid] = nil
+                                group.leave()
+                            }
+                        })
+                    }
+                    else if let context = self.getContext(){
+                        let profile = Profile(context: context)
+                        profile.following = following
+                        profile.id = uid
+                        profile.numFollowers = numFollowers
+                        profile.numFollowing = numFollowing
+                        profile.profilePicURL = profilePicURL
+                        profile.username = username
+                        self.profileData[uid] = profile
+                        self.updateCore()
+                        if let dispatchGroup = self.profileTasks[uid], let group = dispatchGroup {
+                            self.profileTasks[uid] = nil
+                            group.leave()
+                        }
+                    }
+                    else{
+                        if let dispatchGroup = self.profileTasks[uid], let group = dispatchGroup {
+                            self.profileTasks[uid] = nil
+                            group.leave()
+                        }
+                    }
+                }
+                else{
+                    if let dispatchGroup = self.profileTasks[uid], let group = dispatchGroup {
+                        self.profileTasks[uid] = nil
+                        group.leave()
+                    }
+                }
+            }
+        }
+        else{
+            if let dispatchGroup = self.profileTasks[uid], let group = dispatchGroup {
+                self.profileTasks[uid] = nil
+                group.leave()
+            }
         }
     }
     
