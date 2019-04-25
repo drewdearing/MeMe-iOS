@@ -61,10 +61,12 @@ protocol FeedViewDelegate {
     func navigateToPost(postVC:PostViewController)
 }
 
-class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDelegate, IndividualPostDelegate {
+class FeedView: UIView, UITableViewDelegate, UIScrollViewDelegate, UITableViewDataSource, FeedCellDelegate, IndividualPostDelegate {
     var postData:[String:PostData] = [:]
     var data:[PostData] = []
     var delegate:FeedViewDelegate?
+    var hitTop = false
+    var hitBottom = false
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
@@ -94,6 +96,21 @@ class FeedView: UIView, UITableViewDelegate, UITableViewDataSource, FeedCellDele
             }
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (!hitBottom && scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
+            hitBottom = true
+            print("bottom")
+        }
+        if (!hitTop && scrollView.contentOffset.y < 0){
+            hitTop = true
+            print("top")
+        }
+        if (scrollView.contentOffset.y >= 0 && scrollView.contentOffset.y <= (scrollView.contentSize.height - scrollView.frame.size.height)){
+            hitBottom = false
+            hitTop = false
+        }
     }
     
     func reloadPosts(){
