@@ -19,6 +19,10 @@ class Cache {
     private var imageTasks:[String:DispatchGroup?] = [:]
     private var profileTasks:[String:DispatchGroup?] = [:]
     private var postTasks:[String:DispatchGroup?] = [:]
+    
+    private var postListeners:[String:ListenerRegistration?] = [:]
+    private var profileListeners:[String:ListenerRegistration?] = [:]
+    
     private static var cache:Cache? = nil
     
     private init(){
@@ -71,67 +75,9 @@ class Cache {
                 let group = DispatchGroup()
                 postTasks[id] = group
                 group.enter()
-                let currentUser = Auth.auth().currentUser
                 let postRef = Firestore.firestore().collection("post").document(id)
-                let voteRef = Firestore.firestore().collection("post").document(id).collection("votes").document(currentUser!.uid)
-                postRef.getDocument { (postDoc, postDocErr) in
-                    if let postDoc = postDoc {
-                        if postDoc.exists {
-                            let data = postDoc.data()!
-                            let color = data["color"] as! String
-                            let description = data["description"] as! String
-                            let downvotes = data["downvotes"] as! Int
-                            let upvotes = data["upvotes"] as! Int
-                            let photoURL = data["photoURL"] as! String
-                            let timestamp = data["timestamp"] as! Firebase.Timestamp
-                            let uid = data["uid"] as! String
-                            voteRef.getDocument(completion: { (voteDoc, voteDocErr) in
-                                var upvoted = false
-                                var downvoted = false
-                                if let voteDoc = voteDoc {
-                                    if voteDoc.exists{
-                                        let up = voteDoc.data()!["up"] as! Bool
-                                        upvoted = up
-                                        downvoted = !up
-                                    }
-                                }
-                                if let context = self.getContext(){
-                                    let post = Post(context: context)
-                                    post.color = color
-                                    post.desc = description
-                                    post.downvoted = downvoted
-                                    post.downvotes = Int32(downvotes)
-                                    post.id = id
-                                    post.nanoseconds = timestamp.nanoseconds
-                                    post.photoURL = photoURL
-                                    post.seconds = timestamp.seconds
-                                    post.uid = uid
-                                    post.upvoted = upvoted
-                                    post.upvotes = Int32(upvotes)
-                                    self.postData[id] = post
-                                    self.updateCore()
-                                    complete(post)
-                                    group.leave()
-                                    self.postTasks[id] = nil
-                                }
-                                else{
-                                    complete(nil)
-                                    group.leave()
-                                    self.postTasks[id] = nil
-                                }
-                            })
-                        }
-                        else{
-                            complete(nil)
-                            group.leave()
-                            self.postTasks[id] = nil
-                        }
-                    }
-                    else{
-                        complete(nil)
-                        group.leave()
-                        self.postTasks[id] = nil
-                    }
+                postListeners[id] = postRef.addSnapshotListener { (postDoc, postDocErr) in
+                    self.handlePostDoc(id: id, postDoc: postDoc, complete: complete)
                 }
             }
         }
@@ -162,15 +108,15 @@ class Cache {
                         self.imageData[imageURL] = image
                         DispatchQueue.main.async {
                             complete(image)
-                            group.leave()
                             self.imageTasks[imageURL] = nil
+                            group.leave()
                         }
                     }
                     else{
                         DispatchQueue.main.async {
                             complete(nil)
-                            group.leave()
                             self.imageTasks[imageURL] = nil
+                            group.leave()
                         }
                     }
                 }
@@ -221,26 +167,26 @@ class Cache {
                                     self.profileData[uid] = profile
                                     self.updateCore()
                                     complete(profile)
-                                    group.leave()
                                     self.profileTasks[uid] = nil
+                                    group.leave()
                                 }
                                 else{
                                     complete(nil)
-                                    group.leave()
                                     self.profileTasks[uid] = nil
+                                    group.leave()
                                 }
                             }
                             else{
                                 complete(nil)
-                                group.leave()
                                 self.profileTasks[uid] = nil
+                                group.leave()
                             }
                         }
                     }
                     else{
                         complete(nil)
-                        group.leave()
                         self.profileTasks[uid] = nil
+                        group.leave()
                     }
                 }
             }
@@ -262,6 +208,89 @@ class Cache {
         }
         else{
             getPost(id: id, complete: complete)
+        }
+    }
+    
+    private func handlePostDoc(id:String, postDoc:DocumentSnapshot?, complete: @escaping (Post?) -> Void){
+        if let postDoc = postDoc {
+            if postDoc.exists {
+                let currentUser = Auth.auth().currentUser
+                let voteRef = Firestore.firestore().collection("post").document(id).collection("votes").document(currentUser!.uid)
+                let data = postDoc.data()!
+                let color = data["color"] as! String
+                let description = data["description"] as! String
+                let downvotes = data["downvotes"] as! Int32
+                let upvotes = data["upvotes"] as! Int32
+                let photoURL = data["photoURL"] as! String
+                let timestamp = data["timestamp"] as! Firebase.Timestamp
+                let uid = data["uid"] as! String
+                voteRef.getDocument(completion: { (voteDoc, voteDocErr) in
+                    var upvoted = false
+                    var downvoted = false
+                    if let voteDoc = voteDoc {
+                        if voteDoc.exists{
+                            let up = voteDoc.data()!["up"] as! Bool
+                            upvoted = up
+                            downvoted = !up
+                        }
+                    }
+                    if self.postData[id] != nil {
+                        let data:[String:Any] = [
+                            "upvotes": upvotes,
+                            "downvotes": downvotes,
+                            "upvoted": upvoted,
+                            "downvoted":downvoted
+                        ]
+                        self.updatePost(id: id, data: data, complete: complete)
+                        if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
+                            self.postTasks[id] = nil
+                            group.leave()
+                        }
+                    }
+                    else if let context = self.getContext(){
+                        let post = Post(context: context)
+                        post.color = color
+                        post.desc = description
+                        post.downvoted = downvoted
+                        post.downvotes = Int32(downvotes)
+                        post.id = id
+                        post.nanoseconds = timestamp.nanoseconds
+                        post.photoURL = photoURL
+                        post.seconds = timestamp.seconds
+                        post.uid = uid
+                        post.upvoted = upvoted
+                        post.upvotes = Int32(upvotes)
+                        self.postData[id] = post
+                        self.updateCore()
+                        complete(post)
+                        if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
+                            self.postTasks[id] = nil
+                            group.leave()
+                        }
+                    }
+                    else{
+                        complete(nil)
+                        if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
+                            self.postTasks[id] = nil
+                            group.leave()
+                        }
+                    }
+                })
+            }
+            else{
+                complete(nil)
+                if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
+                    self.postTasks[id] = nil
+                    group.leave()
+                }
+            }
+        }
+        else{
+            complete(nil)
+            if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
+                self.postTasks[id] = nil
+                group.leave()
+            }
         }
     }
     
