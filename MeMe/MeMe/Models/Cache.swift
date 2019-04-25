@@ -77,7 +77,13 @@ class Cache {
                 group.enter()
                 let postRef = Firestore.firestore().collection("post").document(id)
                 postListeners[id] = postRef.addSnapshotListener { (postDoc, postDocErr) in
-                    self.handlePostDoc(id: id, postDoc: postDoc, complete: complete)
+                    self.handlePostDoc(postDoc: postDoc)
+                }
+                DispatchQueue.global(qos: .background).async {
+                    group.wait()
+                    DispatchQueue.main.async {
+                        self.getPost(id: id, complete: complete)
+                    }
                 }
             }
         }
@@ -211,7 +217,8 @@ class Cache {
         }
     }
     
-    private func handlePostDoc(id:String, postDoc:DocumentSnapshot?, complete: @escaping (Post?) -> Void){
+    private func handlePostDoc(postDoc:DocumentSnapshot?){
+        let id = postDoc!.documentID
         if let postDoc = postDoc {
             if postDoc.exists {
                 let currentUser = Auth.auth().currentUser
@@ -241,11 +248,12 @@ class Cache {
                             "upvoted": upvoted,
                             "downvoted":downvoted
                         ]
-                        self.updatePost(id: id, data: data, complete: complete)
-                        if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
-                            self.postTasks[id] = nil
-                            group.leave()
-                        }
+                        self.updatePost(id: id, data: data, complete: { (post) in
+                            if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
+                                self.postTasks[id] = nil
+                                group.leave()
+                            }
+                        })
                     }
                     else if let context = self.getContext(){
                         let post = Post(context: context)
@@ -262,14 +270,12 @@ class Cache {
                         post.upvotes = Int32(upvotes)
                         self.postData[id] = post
                         self.updateCore()
-                        complete(post)
                         if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
                             self.postTasks[id] = nil
                             group.leave()
                         }
                     }
                     else{
-                        complete(nil)
                         if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
                             self.postTasks[id] = nil
                             group.leave()
@@ -278,7 +284,6 @@ class Cache {
                 })
             }
             else{
-                complete(nil)
                 if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
                     self.postTasks[id] = nil
                     group.leave()
@@ -286,7 +291,6 @@ class Cache {
             }
         }
         else{
-            complete(nil)
             if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
                 self.postTasks[id] = nil
                 group.leave()
