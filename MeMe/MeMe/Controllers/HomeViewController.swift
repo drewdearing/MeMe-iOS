@@ -51,7 +51,9 @@ class HomeViewController: TabViewController, NewMemeDelegate, FeedViewDelegate, 
     }
     
     override func update() {
-        feedView.reloadPosts()
+        if !feedView.loading {
+            feedView.reloadPosts()
+        }
         feedView.scrollToTop()
     }
     

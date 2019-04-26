@@ -51,7 +51,9 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
     }
     
     override func update() {
-        feedView.reloadPosts()
+        if !feedView.loading {
+            feedView.reloadPosts()
+        }
         feedView.scrollToTop()
     }
     

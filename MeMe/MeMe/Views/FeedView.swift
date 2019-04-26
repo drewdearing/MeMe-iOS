@@ -145,8 +145,11 @@ class FeedView: UIView, UITableViewDelegate, UIScrollViewDelegate, UITableViewDa
                         }
                     }
                 }
-                else if showProgress {
-                    SVProgressHUD.dismiss()
+                else {
+                    self.loading = false
+                    if showProgress {
+                        SVProgressHUD.dismiss()
+                    }
                 }
             }
         }
