@@ -19,7 +19,7 @@ class ProfileSettingsViewController: UIViewController {
     
     var user: User!
     
-    var delegate: UsernameUpdatedDelegate!
+    var delegate: ProfileSettingsDelegate!
     
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var email: UITextField!
@@ -346,13 +346,6 @@ class ProfileSettingsViewController: UIViewController {
         }
     }
     
-    @IBAction func logoutButton(_ sender: Any) {
-        try! Auth.auth().signOut()
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        if let loginVC = storyboard.instantiateViewController(withIdentifier: "loginVC") as? LoginViewController {
-            self.present(loginVC, animated: true, completion: nil)
-        }
-    }
     /*
      // MARK: - Navigation
      
