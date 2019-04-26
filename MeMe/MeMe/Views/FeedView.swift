@@ -176,8 +176,7 @@ class FeedView: UIView, UITableViewDelegate, UIScrollViewDelegate, UITableViewDa
     func tappedAction(uid: String) {
         let postStoryBoard: UIStoryboard = UIStoryboard(name: "Profile", bundle: nil)
         if let profileVC = postStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
-            profileVC.userID = uid
-            profileVC.currentProfile = false
+            profileVC.uid = uid
             if let delegate = delegate {
                 delegate.navigateToProfile(profileVC: profileVC)
             }

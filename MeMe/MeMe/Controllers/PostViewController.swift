@@ -291,8 +291,7 @@ class PostViewController: UIViewController {
     @IBAction func usernameButton(_ sender: Any) {
         let postStoryBoard: UIStoryboard = UIStoryboard(name: "Profile", bundle: nil)
         if let postVCDestination = postStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
-            postVCDestination.userID = uid
-            postVCDestination.currentProfile = false
+            postVCDestination.uid = uid
             self.navigationController?.pushViewController(postVCDestination, animated: true)
         }
     }
@@ -300,8 +299,7 @@ class PostViewController: UIViewController {
     @IBAction func tappedImage(recognizer: AnyObject) {
         let postStoryBoard: UIStoryboard = UIStoryboard(name: "Profile", bundle: nil)
         if let postVCDestination = postStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
-            postVCDestination.userID = uid
-            postVCDestination.currentProfile = false
+            postVCDestination.uid = uid
             self.navigationController?.pushViewController(postVCDestination, animated: true)
         }
     }
