@@ -270,7 +270,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
             if let profileVC = profileStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
                 cache.getProfile(uid: userID) { (profile) in
                     if let profile = profile {
-                        profileVC.userID = profile.id
+                        profileVC.uid = profile.id
                         self.navigationController?.pushViewController(profileVC, animated: true)
                     }
                 }
