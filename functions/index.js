@@ -132,8 +132,10 @@ exports.getUserPosts = functions.https.onRequest((req, res) => {
                 }
             }
         })
-        postIDs.slice(0, numPosts)
-        res.status(200).json({posts: postIDs})
+        postIDs.sort((a, b) => {
+            return b.timestamp.toDate() - a.timestamp.toDate()
+        })
+        res.status(200).json({posts: postIDs.slice(0, numPosts)})
     })
 })
 
@@ -169,15 +171,17 @@ exports.getDiscoverFeed = functions.https.onRequest((req, res) => {
                 }
             }
         })
-        postIDs.slice(0, numPosts)
-        res.status(200).json({posts: postIDs})
+        postIDs.sort((a, b) => {
+            return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes)
+        })
+        res.status(200).json({posts: postIDs.slice(0, numPosts)})
     })
 })
 
 exports.getUserFeed = functions.https.onRequest((req, res) => {
     let uid = req.query.uid;
     let time = parseFloat(req.query.timestamp)
-    let numPosts = 50;
+    let numPosts = 50
     if (isNaN(time) || time < 0){
         time = new Date().getTime() * 0.001
     }
@@ -223,8 +227,10 @@ exports.getUserFeed = functions.https.onRequest((req, res) => {
                     }
                 })
             })
-            postIDs.slice(0, numPosts)
-            res.status(200).json({posts: postIDs})
+            postIDs.sort((a, b) => {
+                return b.timestamp.toDate() - a.timestamp.toDate()
+            })
+            res.status(200).json({posts: postIDs.slice(0, numPosts)})
         })
     })
 })

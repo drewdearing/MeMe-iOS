@@ -67,6 +67,8 @@ class FeedView: UIView, UITableViewDelegate, UIScrollViewDelegate, UITableViewDa
     var delegate:FeedViewDelegate?
     var hitTop = false
     var hitBottom = false
+    var loading = false
+    var table:UITableView!
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
@@ -99,30 +101,73 @@ class FeedView: UIView, UITableViewDelegate, UIScrollViewDelegate, UITableViewDa
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (!hitBottom && scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
+        if (!loading && !hitBottom && scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
             hitBottom = true
-            print("bottom")
         }
-        if (!hitTop && scrollView.contentOffset.y < 0){
+        if (!loading && !hitTop && scrollView.contentOffset.y < 0){
             hitTop = true
-            print("top")
         }
         if (scrollView.contentOffset.y >= 0 && scrollView.contentOffset.y <= (scrollView.contentSize.height - scrollView.frame.size.height)){
-            hitBottom = false
+            if(!loading && hitTop){
+                reloadPosts(showProgress: false)
+            }
+            else if(!loading && hitBottom){
+                loadMorePosts(showProgress: false)
+            }
             hitTop = false
+            hitBottom = false
         }
     }
     
-    func reloadPosts(){
+    func loadMorePosts(showProgress:Bool = true){
+        loading = true
+        if showProgress {
+            SVProgressHUD.show(withStatus: "loading...")
+        }
+        getMorePosts { (feedContainer) in
+            if feedContainer.posts.count > 0 {
+                var currentIndex = self.data.count - 1
+                var added = 0
+                for post in feedContainer.posts {
+                    if self.postData[post.id] == nil {
+                        self.postData[post.id] = post
+                        currentIndex += 1
+                        added += 1
+                    }
+                }
+                if added > 0 {
+                    self.update()
+                    DispatchQueue.main.async {
+                        self.table.scrollToRow(at: IndexPath(row: currentIndex, section: 0), at: .bottom, animated: false)
+                        self.loading = false
+                        if showProgress {
+                            SVProgressHUD.dismiss()
+                        }
+                    }
+                }
+                else if showProgress {
+                    SVProgressHUD.dismiss()
+                }
+            }
+        }
+    }
+    
+    func reloadPosts(showProgress:Bool = true){
+        loading = true
         postData = [:]
         //data = []
-        SVProgressHUD.show(withStatus: "loading...")
+        if showProgress {
+            SVProgressHUD.show(withStatus: "loading...")
+        }
         getPosts { (feedContainer) in
             for post in feedContainer.posts {
                 self.postData[post.id] = post
             }
             self.update()
-            SVProgressHUD.dismiss()
+            self.loading = false
+            if showProgress {
+                SVProgressHUD.dismiss()
+            }
         }
     }
     
@@ -137,19 +182,39 @@ class FeedView: UIView, UITableViewDelegate, UIScrollViewDelegate, UITableViewDa
         }
     }
     
+    func refreshCell(index: IndexPath) {
+        table.reloadRows(at: [index], with: .automatic)
+    }
+    
+    func scrollToTop() {
+        if data.count > 0 {
+            let indexPath = IndexPath(row: 0, section: 0)
+            table.scrollToRow(at: indexPath, at: .top, animated: true)
+        }
+    }
+    
+    func update() {
+        DispatchQueue.main.async {
+            let newData = self.sortData()
+            self.data = newData
+            self.table.reloadData()
+        }
+    }
+    
     func addPost(post: PostData) {
         //add post to feed
     }
     
-    func refreshCell(index: IndexPath) {
-        //override
-    }
-    
-    func update(){
+    func sortData() -> [PostData] {
         //override me
+        return data
     }
     
     func getPosts(complete: @escaping (FeedContainer) -> Void) {
+        //override me
+    }
+    
+    func getMorePosts(complete: @escaping (FeedContainer) -> Void) {
         //override me
     }
 

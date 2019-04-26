@@ -31,27 +31,8 @@ class DiscoverView: FeedView {
         tableView.register(UINib.init(nibName: HomeTableCellId, bundle: nil), forCellReuseIdentifier: HomeTableCellId)
         tableView.delegate = self
         tableView.dataSource = self
+        table = tableView
         reloadPosts()
-    }
-    
-    override func update(){
-        DispatchQueue.main.async {
-            let newData = Array(self.postData.values).sorted(by: {($0.upvotes - $0.downvotes) > ($1.upvotes - $1.downvotes)})
-            self.data = newData
-            self.tableView.reloadData()
-        }
-    }
-    
-    override func addPost(post: PostData) {
-        let score = post.upvotes - post.downvotes
-        let newData = Array(self.postData.values).sorted(by: {($0.upvotes - $0.downvotes) > ($1.upvotes - $1.downvotes)})
-        if newData.count > 0 {
-            let topPost = newData[0]
-            if score > (topPost.upvotes - topPost.downvotes) {
-                self.postData[post.id] = post
-                self.update()
-            }
-        }
     }
     
     override func getPosts(complete: @escaping (FeedContainer) -> Void) {
@@ -71,15 +52,43 @@ class DiscoverView: FeedView {
         task.resume()
     }
     
-    override func refreshCell(index: IndexPath) {
-        tableView.reloadRows(at: [index], with: .automatic)
+    override func getMorePosts(complete: @escaping (FeedContainer) -> Void) {
+        var urlPathBase = urlPath
+        if data.count > 0 {
+            let post = data[data.count-1]
+            let score = post.upvotes - post.downvotes
+            urlPathBase = urlPathBase.appending("?maxScore="+String(score))
+            print(urlPathBase)
+        }
+        let request = NSMutableURLRequest()
+        request.url = URL(string: urlPathBase)
+        request.httpMethod = "GET"
+        let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in
+            guard let data = data else { return }
+            do {
+                let postContainer = try JSONDecoder().decode(FeedContainer.self, from: data)
+                complete(postContainer)
+            } catch let jsonErr {
+                print("Error: \(jsonErr)")
+            }
+        }
+        task.resume()
     }
     
-    func scrollToTop() {
-        if data.count > 0 {
-            let indexPath = IndexPath(row: 0, section: 0)
-            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+    override func addPost(post: PostData) {
+        let score = post.upvotes - post.downvotes
+        let newData = Array(self.postData.values).sorted(by: {($0.upvotes - $0.downvotes) > ($1.upvotes - $1.downvotes)})
+        if newData.count > 0 {
+            let topPost = newData[0]
+            if score > (topPost.upvotes - topPost.downvotes) {
+                self.postData[post.id] = post
+                self.update()
+            }
         }
+    }
+    
+    override func sortData() -> [PostData] {
+        return Array(self.postData.values).sorted(by: {($0.upvotes - $0.downvotes) > ($1.upvotes - $1.downvotes)})
     }
     
 }

@@ -34,6 +34,7 @@ class HomeView: FeedView {
         tableView.register(UINib.init(nibName: HomeTableCellId, bundle: nil), forCellReuseIdentifier: HomeTableCellId)
         tableView.delegate = self
         tableView.dataSource = self
+        table = tableView
         reloadPosts()
     }
     
@@ -41,6 +42,33 @@ class HomeView: FeedView {
         if let currentUser = Auth.auth().currentUser {
             var urlPathBase = urlPath
             urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            let request = NSMutableURLRequest()
+            request.url = URL(string: urlPathBase)
+            request.httpMethod = "GET"
+            let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, err) in
+                guard let data = data else { return }
+                do {
+                    let postContainer = try JSONDecoder().decode(FeedContainer.self, from: data)
+                    complete(postContainer)
+                } catch let jsonErr {
+                    print("Error: \(jsonErr)")
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    override func getMorePosts(complete: @escaping (FeedContainer) -> Void) {
+        if let currentUser = Auth.auth().currentUser {
+            var urlPathBase = urlPath
+            urlPathBase = urlPathBase.appending("?uid=" + currentUser.uid)
+            if data.count > 0 {
+                let post = data[data.count-1]
+                var timestamp = Double(post.timestamp._seconds)
+                timestamp += Double(post.timestamp._nanoseconds) * 0.000000001
+                urlPathBase = urlPathBase.appending("&timestamp="+String(timestamp))
+            }
+            print(urlPathBase)
             let request = NSMutableURLRequest()
             request.url = URL(string: urlPathBase)
             request.httpMethod = "GET"
@@ -67,23 +95,8 @@ class HomeView: FeedView {
         }
     }
     
-    override func update() {
-        DispatchQueue.main.async {
-            let newData = Array(self.postData.values).sorted(by: {$0.timestamp > $1.timestamp})
-            self.data = newData
-            self.tableView.reloadData()
-        }
-    }
-    
-    override func refreshCell(index: IndexPath) {
-        tableView.reloadRows(at: [index], with: .automatic)
-    }
-    
-    func scrollToTop() {
-        if data.count > 0 {
-            let indexPath = IndexPath(row: 0, section: 0)
-            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
-        }
+    override func sortData() -> [PostData] {
+        return Array(self.postData.values).sorted(by: {$0.timestamp > $1.timestamp})
     }
     
 }
