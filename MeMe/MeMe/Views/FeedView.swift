@@ -101,13 +101,15 @@ class FeedView: UIView, UITableViewDelegate, UIScrollViewDelegate, UITableViewDa
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (!loading && !hitBottom && scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
+        if (!loading && !hitBottom && scrollView.contentOffset.y >= max(0, scrollView.contentSize.height - scrollView.frame.size.height)) {
             hitBottom = true
+            hitTop = false
         }
         if (!loading && !hitTop && scrollView.contentOffset.y < 0){
             hitTop = true
+            hitBottom = false
         }
-        if (scrollView.contentOffset.y >= 0 && scrollView.contentOffset.y <= (scrollView.contentSize.height - scrollView.frame.size.height)){
+        if (scrollView.contentOffset.y >= 0 && scrollView.contentOffset.y <= max(0, scrollView.contentSize.height - scrollView.frame.size.height)){
             if(!loading && hitTop){
                 reloadPosts(showProgress: false)
             }
@@ -125,31 +127,28 @@ class FeedView: UIView, UITableViewDelegate, UIScrollViewDelegate, UITableViewDa
             SVProgressHUD.show(withStatus: "loading...")
         }
         getMorePosts { (feedContainer) in
-            if feedContainer.posts.count > 0 {
-                var currentIndex = self.data.count - 1
-                var added = 0
-                for post in feedContainer.posts {
-                    if self.postData[post.id] == nil {
-                        self.postData[post.id] = post
-                        currentIndex += 1
-                        added += 1
-                    }
+            let currentIndex = self.data.count
+            var added = 0
+            for post in feedContainer.posts {
+                if self.postData[post.id] == nil {
+                    self.postData[post.id] = post
+                    added += 1
                 }
-                if added > 0 {
-                    self.update()
-                    DispatchQueue.main.async {
-                        self.table.scrollToRow(at: IndexPath(row: currentIndex, section: 0), at: .bottom, animated: false)
-                        self.loading = false
-                        if showProgress {
-                            SVProgressHUD.dismiss()
-                        }
-                    }
-                }
-                else {
+            }
+            if added > 0 {
+                self.update()
+                DispatchQueue.main.async {
+                    self.table.scrollToRow(at: IndexPath(row: currentIndex, section: 0), at: .bottom, animated: false)
                     self.loading = false
                     if showProgress {
                         SVProgressHUD.dismiss()
                     }
+                }
+            }
+            else {
+                self.loading = false
+                if showProgress {
+                    SVProgressHUD.dismiss()
                 }
             }
         }
