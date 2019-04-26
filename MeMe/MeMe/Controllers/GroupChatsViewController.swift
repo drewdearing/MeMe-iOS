@@ -16,8 +16,7 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet var groupChatsTableView: UITableView!
     private var groupChats: [GroupChat] = []
     var selectedChat:GroupChat?
-    
-    private var listener: ListenerRegistration?
+
     private let db = Firestore.firestore()
     
     override func viewDidLoad() {
@@ -26,29 +25,6 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
         groupChatsTableView.dataSource = self
         
         setUpGroups()
-        
-        let user = Auth.auth().currentUser
-        let ref = Firestore.firestore().collection("users").document((user?.uid)!).collection("groups")
-        listener = ref.addSnapshotListener{ query,error in
-            guard let snapshot = query else {
-                print("ERROR")
-                return
-            }
-            snapshot.documentChanges.forEach{ change in
-                self.updateGroups(change)
-            }
-        }
-    }
-    
-    private func updateGroups(_ change: DocumentChange) {
-        if change.document.exists {
-            for group in groupChats {
-                if group.groupId == change.document.documentID {
-                    group.groupChatName = change.document.get("name") as? String
-                }
-            }
-            groupChatsTableView.reloadData()
-        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -98,15 +74,19 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
                     if let err = err {
                         print("Error getting documents: \(err)")
                         return
-                    } else {
-                        for document in querySnapshot!.documents {
-                            let name = document.get("name")
-                            let id = document.documentID
-                                self.groupChats.append(GroupChat(id: id, groupChatName: name as! String))
-                        }
                     }
-                    //SVProgressHUD.dismiss()
-                    self.groupChatsTableView.reloadData()
+                    else {
+                          for document in querySnapshot!.documents {
+                            cache.getGroup(id: document.documentID, complete: { (group) in
+                                if let group = group {
+                                    let name = group.name
+                                    let groupID = group.id
+                                    self.groupChats.append(GroupChat(id: groupID, groupChatName: name))
+                                    self.groupChatsTableView.reloadData()
+                                }
+                            })
+                          }
+                    }
                 }
             }
         }

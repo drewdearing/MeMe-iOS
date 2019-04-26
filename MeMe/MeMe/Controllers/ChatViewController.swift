@@ -18,7 +18,6 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     @IBOutlet weak var navItem: UINavigationItem!
     private var messages: [Message] = []
     private var listener: ListenerRegistration?
-    private var groupListener: ListenerRegistration?
     private let db = Firestore.firestore()
     private var ref: CollectionReference?
     
@@ -47,18 +46,6 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
             
             snapshot.documentChanges.forEach{ change in
                 self.handleDocumentChange(change)
-            }
-        }
-        
-        let groupRef = db.collection("groups")
-        groupListener = groupRef.addSnapshotListener{ query,error in
-            guard let snapshot = query else {
-                print("ERROR")
-                return
-            }
-            
-            snapshot.documentChanges.forEach{ change in
-                self.handleGroupChange(change)
             }
         }
     }
@@ -158,15 +145,6 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                     let message = Message(id: id, content: content, image: nil, sender: sender, date: date.dateValue())
                     insertMessage(message)
                 }
-            }
-        }
-    }
-    
-    private func handleGroupChange(_ change: DocumentChange) {
-        if change.document.exists {
-            if(chat.groupId == change.document.documentID) {
-                chat.groupChatName = change.document.get("name") as! String
-                navItem.title = chat.groupChatName
             }
         }
     }

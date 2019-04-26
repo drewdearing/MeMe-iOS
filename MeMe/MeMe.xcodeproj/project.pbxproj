@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17428C552273B4C400A983E4 /* Group+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17428C532273B4C400A983E4 /* Group+CoreDataClass.swift */; };
+		17428C562273B4C400A983E4 /* Group+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17428C542273B4C400A983E4 /* Group+CoreDataProperties.swift */; };
 		1745B70222557E6800DDFB34 /* AddMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1745B70122557E6800DDFB34 /* AddMembersViewController.swift */; };
 		177FB7A622598529002B7588 /* Chat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 177FB7A522598529002B7588 /* Chat.storyboard */; };
 		177FB7A822598576002B7588 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177FB7A722598576002B7588 /* ChatViewController.swift */; };
@@ -84,6 +86,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		17428C532273B4C400A983E4 /* Group+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Group+CoreDataClass.swift"; sourceTree = "<group>"; };
+		17428C542273B4C400A983E4 /* Group+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Group+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		1745B70122557E6800DDFB34 /* AddMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMembersViewController.swift; sourceTree = "<group>"; };
 		177FB7A522598529002B7588 /* Chat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chat.storyboard; sourceTree = "<group>"; };
 		177FB7A722598576002B7588 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -209,9 +213,9 @@
 				17A35F8B2254022200C2362D /* GroupChatSettingsViewController.swift */,
 				1745B70122557E6800DDFB34 /* AddMembersViewController.swift */,
 				17A35F952254185600C2362D /* PostViewController.swift */,
+				17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */,
 				17FD8FCA225EE6C800DC855B /* ProfilePreviewViewController.swift */,
 				609987A52255E15D002EFA2F /* ProfileViewController.swift */,
-				17A35F972254187E00C2362D /* ProfileSettingsViewController.swift */,
 				3B143718225572D100331A5B /* TabViewController.swift */,
 				177FB7A722598576002B7588 /* ChatViewController.swift */,
 			);
@@ -260,6 +264,8 @@
 		3B860CDE2252C9E600831C41 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				17428C532273B4C400A983E4 /* Group+CoreDataClass.swift */,
+				17428C542273B4C400A983E4 /* Group+CoreDataProperties.swift */,
 				3BA760D0226FC4FA00FBB835 /* Profile+CoreDataClass.swift */,
 				3BA760D1226FC4FA00FBB835 /* Profile+CoreDataProperties.swift */,
 				3BA760C4226FC2D100FBB835 /* Post+CoreDataClass.swift */,
@@ -513,12 +519,14 @@
 				3BE25156225527B600B8FCAC /* Cache.swift in Sources */,
 				3B143719225572D100331A5B /* TabViewController.swift in Sources */,
 				609987AE2255ED05002EFA2F /* Message.swift in Sources */,
+				17428C552273B4C400A983E4 /* Group+CoreDataClass.swift in Sources */,
 				3BEC942A22547F90003AE517 /* HomeViewController.swift in Sources */,
 				3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */,
 				17A35FA322541A9F00C2362D /* CurrentUserTableViewCell.swift in Sources */,
 				3BA760C1226FB7F500FBB835 /* Timestamp.swift in Sources */,
 				60430CCE2231CC630033C92F /* LoginViewController.swift in Sources */,
 				6037F706224AD165000D0E57 /* EditMemeViewController.swift in Sources */,
+				17428C562273B4C400A983E4 /* Group+CoreDataProperties.swift in Sources */,
 				609987AA2255E480002EFA2F /* GroupChatsViewController.swift in Sources */,
 				17A35F982254187E00C2362D /* ProfileSettingsViewController.swift in Sources */,
 				17A35FA722541B6500C2362D /* PotentialUserTableViewCell.swift in Sources */,

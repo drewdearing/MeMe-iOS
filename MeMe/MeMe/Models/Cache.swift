@@ -15,13 +15,16 @@ class Cache {
     private var postData:[String:Post] = [:]
     private var profileData:[String:Profile] = [:]
     private var imageData:[String:UIImage] = [:]
+    private var groupData:[String:Group] = [:]
     
     private var imageTasks:[String:DispatchGroup?] = [:]
     private var profileTasks:[String:DispatchGroup?] = [:]
     private var postTasks:[String:DispatchGroup?] = [:]
+    private var groupTasks:[String:DispatchGroup?] = [:]
     
     private var postListeners:[String:ListenerRegistration?] = [:]
     private var profileListeners:[String:ListenerRegistration?] = [:]
+    private var groupListeners:[String:ListenerRegistration?] = [:]
     
     private static var cache:Cache? = nil
     
@@ -30,9 +33,11 @@ class Cache {
         if let context = getContext() {
             let postRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
             let profileRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
+            let groupRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Group")
             do{
                 let posts = try context.fetch(postRequest) as! [Post]
                 let profiles = try context.fetch(profileRequest) as! [Profile]
+                let groups = try context.fetch(groupRequest) as! [Group]
                 for post in posts {
                     postData[post.id] = post
                     let postRef = Firestore.firestore().collection("post").document(post.id)
@@ -45,6 +50,13 @@ class Cache {
                     let profileRef = Firestore.firestore().collection("users").document(profile.id)
                     profileListeners[profile.id] = profileRef.addSnapshotListener { (profileDoc, profileDocErr) in
                         self.handleProfileDoc(profileDoc: profileDoc)
+                    }
+                }
+                for group in groups {
+                    groupData[group.id] = group
+                    let groupRef = Firestore.firestore().collection("groups").document(group.id)
+                    groupListeners[group.id] = groupRef.addSnapshotListener { (groupDoc, groupDocErr) in
+                        self.handleGroupDoc(groupDoc: groupDoc)
                     }
                 }
             }
@@ -91,6 +103,37 @@ class Cache {
                     group.wait()
                     DispatchQueue.main.async {
                         self.getPost(id: id, complete: complete)
+                    }
+                }
+            }
+        }
+    }
+    
+    func getGroup(id: String, complete: @escaping (Group?) -> Void) {
+        if let group = groupData[id] {
+            complete(group)
+        }
+        else {
+            if let dispatchGroup = groupTasks[id], let group = dispatchGroup {
+                DispatchQueue.global(qos: .background).async {
+                    group.wait()
+                    DispatchQueue.main.async {
+                        self.getGroup(id: id, complete: complete)
+                    }
+                }
+            }
+            else{
+                let group = DispatchGroup()
+                groupTasks[id] = group
+                group.enter()
+                let groupRef = Firestore.firestore().collection("groups").document(id)
+                groupListeners[id] = groupRef.addSnapshotListener { (groupDoc, groupDocErr) in
+                    self.handleGroupDoc(groupDoc: groupDoc)
+                }
+                DispatchQueue.global(qos: .background).async {
+                    group.wait()
+                    DispatchQueue.main.async {
+                        self.getGroup(id: id, complete: complete)
                     }
                 }
             }
@@ -184,6 +227,23 @@ class Cache {
         }
         else{
             getPost(id: id, complete: complete)
+        }
+    }
+    
+    func updateGroup(id: String, data:[String:Any], complete: @escaping (Group?) -> Void){
+        let name = data["name"] as! String
+        let numMembers = data["numMembers"] as! Int32
+        let lastActive = data["lastActive"] as! NSDate
+        if let group = groupData[id] {
+            group.name = name
+            group.numMembers = numMembers
+            group.lastActive = lastActive
+            print("HELLO")
+            updateCore()
+            complete(group)
+        }
+        else {
+            getGroup(id: id, complete: complete)
         }
     }
     
@@ -352,6 +412,73 @@ class Cache {
             if let dispatchGroup = self.postTasks[id], let group = dispatchGroup {
                 self.postTasks[id] = nil
                 group.leave()
+            }
+        }
+    }
+    
+    private func handleGroupDoc(groupDoc: DocumentSnapshot?) {
+        let id = groupDoc!.documentID
+        if let groupDoc = groupDoc {
+            if groupDoc.exists {
+                let currentUser = Auth.auth().currentUser!
+                let data = groupDoc.data()!
+                let name = data["name"] as! String
+                let numMembers = data["numMembers"] as! Int32
+                let userRef = groupDoc.reference.collection("usersInGroup").document(currentUser.uid)
+                userRef.getDocument(completion:  { (userDoc, error) in
+                    var lastActive = Date()
+                    if let userDoc = userDoc {
+                        if userDoc.exists {
+                            let userActive = userDoc.data()!["lastActive"] as! Firebase.Timestamp
+                            lastActive = userActive.dateValue()
+                        }
+                    }
+                    if self.groupData[id] != nil {
+                        let data:[String:Any] = [
+                            "name": name,
+                            "numMembers": numMembers,
+                            "lastActive": lastActive
+                        ]
+                        self.updateGroup(id: id, data: data, complete: { (userGroup) in
+                            if let dispatchGroup = self.groupTasks[id], let group = dispatchGroup {
+                                self.groupTasks[id] = nil
+                                group.leave()
+                            }
+                        })
+                    }
+                    else if let context = self.getContext(){
+                        let group = Group(context: context)
+                        group.id = id
+                        group.name = name
+                        group.numMembers = numMembers
+                        group.unreadMessages = 0
+                        group.lastActive = lastActive as NSDate
+                        self.groupData[id] = group
+                        self.updateCore()
+                        if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
+                            self.groupTasks[id] = nil
+                            g.leave()
+                        }
+                    }
+                    else{
+                        if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
+                            self.groupTasks[id] = nil
+                            g.leave()
+                        }
+                    }
+                })
+            }
+            else{
+                if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
+                    self.groupTasks[id] = nil
+                    g.leave()
+                }
+            }
+        }
+        else{
+            if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
+                self.groupTasks[id] = nil
+                g.leave()
             }
         }
     }
