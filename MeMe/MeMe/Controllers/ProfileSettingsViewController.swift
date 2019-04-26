@@ -346,6 +346,13 @@ class ProfileSettingsViewController: UIViewController {
         }
     }
     
+    @IBAction func logoutButton(_ sender: Any) {
+        try! Auth.auth().signOut()
+        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "loginVC") as? LoginViewController {
+            self.present(loginVC, animated: true, completion: nil)
+        }
+    }
     /*
      // MARK: - Navigation
      

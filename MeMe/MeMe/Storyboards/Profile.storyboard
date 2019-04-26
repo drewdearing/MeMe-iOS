@@ -180,6 +180,7 @@
                         <outlet property="postImagesLoadingIndicator" destination="5Kh-tD-P4P" id="NvC-y1-YTl"/>
                         <outlet property="postsCollectionView" destination="Bpp-bs-HBj" id="ZZz-YE-esr"/>
                         <outlet property="profileImageView" destination="1xi-O3-hYd" id="29Y-BS-FVi"/>
+                        <outlet property="settingsLabel" destination="UMu-r9-az6" id="YX4-5A-6RR"/>
                         <outlet property="usernameLabel" destination="udw-cv-gpd" id="GLu-Lp-hSG"/>
                     </connections>
                 </viewController>
@@ -236,14 +237,29 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zc1-g0-mTD">
+                                <rect key="frame" x="59.5" y="200" width="256" height="30"/>
+                                <color key="backgroundColor" red="0.096026601592730243" green="0.21540697825211264" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="256" id="MnL-TJ-heF"/>
+                                </constraints>
+                                <color key="tintColor" white="0.90000000000000002" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Logout"/>
+                                <connections>
+                                    <action selector="logoutButton:" destination="AVM-Xz-Djp" eventType="touchUpInside" id="JJx-5N-PDa"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="zc1-g0-mTD" firstAttribute="top" secondItem="NXs-iZ-bJk" secondAttribute="bottom" constant="22" id="GfK-Dc-ZYV"/>
                             <constraint firstItem="FFg-rK-m77" firstAttribute="top" secondItem="NXs-iZ-bJk" secondAttribute="bottom" constant="32" id="KD9-RH-1MJ"/>
                             <constraint firstItem="NXs-iZ-bJk" firstAttribute="leading" secondItem="ARe-7p-RWg" secondAttribute="leading" constant="8" id="Rmy-4m-pEQ"/>
                             <constraint firstItem="9bN-HG-uH8" firstAttribute="top" secondItem="FFg-rK-m77" secondAttribute="bottom" constant="16" id="SWW-cq-um5"/>
                             <constraint firstItem="FFg-rK-m77" firstAttribute="centerX" secondItem="6yl-k6-w3N" secondAttribute="centerX" id="VxK-zQ-kz4"/>
+                            <constraint firstItem="zc1-g0-mTD" firstAttribute="centerX" secondItem="9bN-HG-uH8" secondAttribute="centerX" id="Zwf-fw-q70"/>
                             <constraint firstItem="9bN-HG-uH8" firstAttribute="centerX" secondItem="6yl-k6-w3N" secondAttribute="centerX" id="dRT-HS-X8L"/>
+                            <constraint firstItem="9bN-HG-uH8" firstAttribute="top" secondItem="zc1-g0-mTD" secondAttribute="bottom" constant="16.5" id="kiK-so-3Ta"/>
                             <constraint firstItem="NXs-iZ-bJk" firstAttribute="top" secondItem="ARe-7p-RWg" secondAttribute="top" constant="8" id="vRA-eI-QEm"/>
                             <constraint firstItem="ARe-7p-RWg" firstAttribute="trailing" secondItem="NXs-iZ-bJk" secondAttribute="trailing" constant="8" id="yDI-mr-64N"/>
                         </constraints>

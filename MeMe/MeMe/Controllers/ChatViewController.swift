@@ -284,4 +284,20 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         }
     }
     
+    func didTapAvatar(in cell: MessageCollectionViewCell) {
+        if let indexPath = messagesCollectionView.indexPath(for: cell) {
+            let message = messages[indexPath.section]
+            let userID = message.sender.id
+            let profileStoryBoard: UIStoryboard = UIStoryboard(name: "Profile", bundle: nil)
+            if let profileVC = profileStoryBoard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
+                cache.getProfile(uid: userID) { (profile) in
+                    if let profile = profile {
+                        profileVC.userID = profile.id
+                        self.navigationController?.pushViewController(profileVC, animated: true)
+                    }
+                }
+            }
+        }
+    }
+    
 }

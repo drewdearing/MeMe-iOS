@@ -27,7 +27,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var followersLabel: UILabel!
     @IBOutlet weak var followingLabel: UILabel!
-    
+    @IBOutlet weak var settingsLabel: UIBarButtonItem!
     @IBOutlet weak var followButton: UIButton!
     @IBOutlet var postsCollectionView: UICollectionView!
     
@@ -71,7 +71,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
             }
         }
 
-        if(currentProfile) {
+        if(userID == Auth.auth().currentUser?.uid) {
             DispatchQueue.global(qos: .userInteractive).async {
                 self.fetchPosts()
             }
@@ -83,6 +83,8 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UsernameUpdatedDel
                 fetchProfileImage(currentUserProfile: currentUserProfile)
             }
         } else {
+            settingsLabel.isEnabled = false
+            settingsLabel.tintColor = UIColor.clear
             DispatchQueue.global(qos: .userInteractive).async {
                 self.fetchUser(userID: self.userID)
             }
