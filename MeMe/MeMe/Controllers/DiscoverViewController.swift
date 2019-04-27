@@ -7,17 +7,45 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseStorage
+import FirebaseFirestore
 
-class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelegate, ImagePickerDelegate {
+public let SearchUserCellID = "SearchUserCellID"
+
+class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelegate, ImagePickerDelegate, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var feedView: DiscoverView!
     var imagePicker:ImagePicker!
     var selectedImage:UIImage?
     
+    //
+    @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var searchUserTableView: UITableView!
+    
+    var database: Firestore = Firestore.firestore()
+    var storage: Storage = Storage.storage()
+    
+    var allUsers: [User] = []
+    var allProfileImage: [User: UIImage] = [:]
+    
+    var searchUsernames: [String] = []
+    var users: [User] = []
+    
+    private var isFetching: Bool = false
+    //
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         feedView.delegate = self
         self.imagePicker = ImagePicker(presentationController: self, delegate: self, editAllowed: false)
+        
+        searchUserTableView.delegate = self
+        searchUserTableView.dataSource = self
+        searchBar.delegate = self
+        searchUserTableView.isHidden = true
+        
+        fetchAllUsers()
     }
     
     func addMeme(post: PostData) {
@@ -59,4 +87,98 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
         feedView.scrollToTop()
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return users.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: SearchUserCellID, for: indexPath as IndexPath) as? SearchUserTableViewCell
+        let row = indexPath.row
+        let user = users[row]
+        cell?.usernameLabel.text = user.username
+        cell?.profileImageView.image = allProfileImage[user]
+        
+        return cell!
+    }
+    
+    func fetchAllUsers() {
+        isFetching = true
+        DispatchQueue.global(qos: .userInteractive).async {
+            
+            _ = self.database.collection("users").getDocuments() { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    for document in querySnapshot!.documents {
+                        if let fetchedUser = User(dictionary: document.data()) {
+                            self.allUsers.append(fetchedUser)
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.isFetching = false
+                        self.fetchProfilePictures();
+                    }
+                }
+            }
+        }
+    }
+    
+    private func fetchProfilePictures() {
+        for user in self.allUsers {
+            DispatchQueue.global(qos: .userInteractive).async {
+                let url = URL(string: user.profilePicture)
+                let data = try? Data(contentsOf: url!)
+                if let imageData = data {
+                    if let image = UIImage(data: imageData) {
+                        DispatchQueue.main.async {
+                            self.allProfileImage.updateValue(image, forKey: user)
+                            self.searchUserTableView.reloadData()
+                        }
+                    }
+                }
+            }
+        }
+        
+        self.isFetching = false;
+    }
+}
+
+extension DiscoverViewController : UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        var usernames: [String] = []
+        
+        if isFetching {
+            return
+        } else if searchText.isEmpty {
+            searchUserTableView.isHidden = true
+            return
+        } else {
+            searchUserTableView.isHidden = false
+        }
+        
+        for user in allUsers  {
+            usernames.append(user.username)
+        }
+        
+        searchUsernames = usernames.filter({$0.lowercased().prefix(searchText.count) == searchText.lowercased()})
+        
+        users.removeAll()
+        
+        for index in 0 ..< allUsers.count {
+            for jndex in 0 ..< searchUsernames.count {
+                if allUsers[index].username == searchUsernames[jndex] &&
+                    allUsers[index].username != Auth.auth().currentUser!.uid {
+                    users.append(allUsers[index])
+                }
+            }
+        }
+        
+        searchUserTableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text?.removeAll(keepingCapacity: true)
+        searchUserTableView.reloadData()
+        searchUserTableView.isHidden = true
+    }
 }

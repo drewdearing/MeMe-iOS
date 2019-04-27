@@ -19,16 +19,70 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mY6-SH-oQC" customClass="DiscoverView" customModule="MeMe" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <rect key="frame" x="0.0" y="120" width="375" height="498"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="BO4-ja-1bj">
+                                <rect key="frame" x="0.0" y="120" width="375" height="498"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchUserCellID" rowHeight="66" id="h3K-gy-zFY" customClass="SearchUserTableViewCell" customModule="MeMe" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="66"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="h3K-gy-zFY" id="0xz-On-YHa">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="65.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="G9C-CK-yZq">
+                                                    <rect key="frame" x="8" y="8" width="50" height="50"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="50" id="amF-2u-QZr"/>
+                                                        <constraint firstAttribute="width" constant="50" id="xpC-qJ-ani"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OfB-GF-YRW">
+                                                    <rect key="frame" x="66" y="22.5" width="286" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="OfB-GF-YRW" firstAttribute="centerY" secondItem="0xz-On-YHa" secondAttribute="centerY" id="37a-Un-Ofh"/>
+                                                <constraint firstItem="OfB-GF-YRW" firstAttribute="leading" secondItem="G9C-CK-yZq" secondAttribute="trailing" constant="8" id="7L1-aL-HfN"/>
+                                                <constraint firstItem="G9C-CK-yZq" firstAttribute="centerY" secondItem="0xz-On-YHa" secondAttribute="centerY" id="RFE-ck-cvl"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="OfB-GF-YRW" secondAttribute="trailing" constant="8" id="duK-Kz-qkO"/>
+                                                <constraint firstItem="G9C-CK-yZq" firstAttribute="leading" secondItem="0xz-On-YHa" secondAttribute="leading" constant="8" id="jpk-lE-fBe"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="profileImageView" destination="G9C-CK-yZq" id="F7z-Zi-n0y"/>
+                                            <outlet property="usernameLabel" destination="OfB-GF-YRW" id="yR5-iu-F1G"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="LhR-P6-r8L">
+                                <rect key="frame" x="0.0" y="64" width="375" height="56"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="56" id="qT8-Xa-Shv"/>
+                                </constraints>
+                                <textInputTraits key="textInputTraits"/>
+                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="mY6-SH-oQC" firstAttribute="leading" secondItem="EXK-q2-Znm" secondAttribute="leading" id="bpo-kX-Ad7"/>
-                            <constraint firstItem="mY6-SH-oQC" firstAttribute="top" secondItem="EXK-q2-Znm" secondAttribute="top" id="cSW-Yj-N7q"/>
-                            <constraint firstItem="EXK-q2-Znm" firstAttribute="trailing" secondItem="mY6-SH-oQC" secondAttribute="trailing" id="nPa-bH-KTG"/>
-                            <constraint firstItem="EXK-q2-Znm" firstAttribute="bottom" secondItem="mY6-SH-oQC" secondAttribute="bottom" id="wUk-kI-uc1"/>
+                            <constraint firstItem="BO4-ja-1bj" firstAttribute="bottom" secondItem="EXK-q2-Znm" secondAttribute="bottom" id="0qU-Lg-sns"/>
+                            <constraint firstItem="mY6-SH-oQC" firstAttribute="trailing" secondItem="EXK-q2-Znm" secondAttribute="trailing" id="81E-xF-pmt"/>
+                            <constraint firstItem="LhR-P6-r8L" firstAttribute="trailing" secondItem="EXK-q2-Znm" secondAttribute="trailing" id="DSW-k2-CpG"/>
+                            <constraint firstItem="mY6-SH-oQC" firstAttribute="top" secondItem="LhR-P6-r8L" secondAttribute="bottom" id="MSi-Dh-LE7"/>
+                            <constraint firstItem="mY6-SH-oQC" firstAttribute="leading" secondItem="EXK-q2-Znm" secondAttribute="leading" id="QbC-Gl-3jU"/>
+                            <constraint firstItem="LhR-P6-r8L" firstAttribute="top" secondItem="EXK-q2-Znm" secondAttribute="top" id="R4w-Bw-29T"/>
+                            <constraint firstItem="BO4-ja-1bj" firstAttribute="leading" secondItem="EXK-q2-Znm" secondAttribute="leading" id="ZbI-gS-aaY"/>
+                            <constraint firstItem="BO4-ja-1bj" firstAttribute="trailing" secondItem="EXK-q2-Znm" secondAttribute="trailing" id="dRU-i7-Y0B"/>
+                            <constraint firstItem="LhR-P6-r8L" firstAttribute="leading" secondItem="EXK-q2-Znm" secondAttribute="leading" id="rF0-4f-4VP"/>
+                            <constraint firstItem="BO4-ja-1bj" firstAttribute="top" secondItem="LhR-P6-r8L" secondAttribute="bottom" id="ueT-sA-s0d"/>
+                            <constraint firstItem="mY6-SH-oQC" firstAttribute="bottom" secondItem="EXK-q2-Znm" secondAttribute="bottom" id="xop-gd-axz"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="EXK-q2-Znm"/>
                     </view>
@@ -41,6 +95,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="feedView" destination="mY6-SH-oQC" id="iBx-wz-Yje"/>
+                        <outlet property="searchBar" destination="LhR-P6-r8L" id="khc-8g-0UK"/>
+                        <outlet property="searchUserTableView" destination="BO4-ja-1bj" id="Sxz-YF-Lvl"/>
                         <segue destination="4ZZ-Lo-yCb" kind="popoverPresentation" identifier="NewMemeSegue" popoverAnchorBarButtonItem="ckN-rx-dhX" id="rcd-st-7oz">
                             <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                         </segue>
