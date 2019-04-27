@@ -13,7 +13,9 @@ import Firebase
 import Photos
 
 class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate, MessageCellDelegate, IndividualPostDelegate {
-    var chat:GroupChat!
+    
+    var chatID:String!
+    var groupChat:Group!
     
     @IBOutlet weak var navItem: UINavigationItem!
     private var messages: [Message] = []
@@ -21,23 +23,50 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     private let db = Firestore.firestore()
     private var ref: CollectionReference?
     
-
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        navItem.title = chat.groupChatName
-        print("id is: " + (chat?.groupId)!)
-        checkListerner()
         
         messageInputBar.delegate = self
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         messagesCollectionView.messageCellDelegate = self
+        
+        cache.getGroup(id: chatID) { (group) in
+            if let group = group {
+                self.navItem.title = group.name
+                let data:[String:Any] = [
+                    "name": group.name,
+                    "numMembers": group.numMembers,
+                    "lastActive": NSDate(),
+                    "unreadMessages": 0 as Int32,
+                    "active": true
+                ]
+                cache.updateGroup(id: group.id, data: data, complete: { (groupChat) in
+                    self.groupChat = groupChat
+                    self.checkListener()
+                })
+            }
+        }
     }
     
-    private func checkListerner() {
-        ref = db.collection("groups").document((chat?.groupId)!).collection("messages")
+    override func viewWillDisappear(_ animated: Bool) {
+        listener?.remove()
+        let currentUser = Auth.auth().currentUser!
+        let userRef = Firestore.firestore().collection("groups").document(groupChat.id).collection("usersInGroup").document(currentUser.uid)
+        let data:[String:Any] = [
+            "name": groupChat.name,
+            "numMembers": groupChat.numMembers,
+            "lastActive": NSDate(),
+            "unreadMessages": 0 as Int32,
+            "active": false
+        ]
+        cache.updateGroup(id: groupChat.id, data: data, complete: {_ in })
+        userRef.updateData(["lastActive": NSDate()])
+    }
+    
+    private func checkListener() {
+        ref = db.collection("groups").document(groupChat.id).collection("messages")
         listener = ref?.addSnapshotListener{ query,error in
             guard let snapshot = query else {
                 print("ERROR")
@@ -47,35 +76,36 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
             snapshot.documentChanges.forEach{ change in
                 self.handleDocumentChange(change)
             }
+            self.updateMessages()
         }
     }
     
     
     @IBAction func settingsAction(_ sender: Any) {
         performSegue(withIdentifier: "settingsIdentifier", sender: self)
-        
-
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "settingsIdentifier") {
             let dest: GroupChatSettingsViewController = segue.destination as! GroupChatSettingsViewController
             dest.identity = "settingsIdentifier"
-            dest.groupName = chat.groupChatName
-            dest.groupID = chat.groupId
+            dest.groupName = groupChat.name
+            dest.groupID = groupChat.id
         }
     }
+    
     private func save(_ message: Message) {
+        var content = message.content
+        if message.image != nil {
+            content = message.postID
+        }
         ref?.document(message.messageId).setData([
-            "id": message.messageId,
             "sent": message.sentDate,
             "uid": message.sender.id,
-            "name": message.sender.displayName,
-            "meme": message.image != nil,
-            "post": message.postID,
-            "content": message.content
+            "image": message.image != nil,
+            "content": content
         ]) { error in
-            if let e = error {
+            if error != nil {
                 print("ERROR")
                 return
             }
@@ -85,6 +115,22 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     
     func addPost(post: PostData) {
         //add post?
+    }
+    
+    private func updateMessages(){
+        let scrollViewHeight = messagesCollectionView.bounds.height
+        let scrollSizeHeight = messagesCollectionView.contentSize.height
+        let bottomInset = messagesCollectionView.contentInset.bottom
+        let scrollBottomOffset = scrollSizeHeight + bottomInset - scrollViewHeight
+        let shouldScrolltoBottom = messagesCollectionView.contentOffset.y >= scrollBottomOffset
+        
+        messagesCollectionView.reloadData()
+        
+        if shouldScrolltoBottom {
+            DispatchQueue.main.async {
+                self.messagesCollectionView.scrollToBottom(animated: true)
+            }
+        }
     }
     
     private func insertMessage(_ message: Message) {
@@ -97,53 +143,46 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         messages.sort { (a, b) -> Bool in
             a.sentDate.timeIntervalSince1970 < b.sentDate.timeIntervalSince1970
         }
-        
-        let scrollViewHeight = messagesCollectionView.bounds.height
-        let scrollSizeHeight = messagesCollectionView.contentSize.height
-        let bottomInset = messagesCollectionView.contentInset.bottom
-        let scrollBottomOffset = scrollSizeHeight + bottomInset - scrollViewHeight
-        
-        let isLatestMessage = messages[0].messageId == message.messageId
-        let shouldScrolltoBottom = messagesCollectionView.contentOffset.y >= scrollBottomOffset && isLatestMessage
-        
-        messagesCollectionView.reloadData()
-        
-        if shouldScrolltoBottom{
-            DispatchQueue.main.async {
-                self.messagesCollectionView.scrollToBottom(animated: true)
-            }
-        }
     }
     
     private func handleDocumentChange(_ change: DocumentChange) {
         if change.document.exists {
             if change.type == .added {
                 let data = change.document.data()
-                let id = data["id"] as! String
+                let id = change.document.documentID
                 let content = data["content"] as! String
-                let isImage = data["meme"] as! Bool
-                let postID = data["post"] as! String
+                let isImage = data["image"] as! Bool
                 let uid = data["uid"] as! String
-                let name = data["name"] as! String
                 let date = data["sent"] as! Firebase.Timestamp
-                let sender = Sender(id: uid, displayName: name)
-                if isImage {
-                    cache.getPost(id: postID) { (post) in
-                        if let post = post {
-                            let postImageURL = post.photoURL
-                            cache.getImage(imageURL: postImageURL, complete: { (cachedImage) in
-                                if let cachedImage = cachedImage {
-                                    let image = MessageImage(image: cachedImage, post: postID)
+                cache.getProfile(uid: uid) { (profile) in
+                    if let profile = profile {
+                        let name = profile.username
+                        let sender = Sender(id: uid, displayName: name)
+                        if isImage {
+                            cache.getPost(id: content) { (post) in
+                                let expireTime = Timestamp(s:Date().timeIntervalSince1970 - 86400)
+                                if let post = post, Timestamp(s: post.seconds, n: post.nanoseconds) > expireTime {
+                                    let postImageURL = post.photoURL
+                                    cache.getImage(imageURL: postImageURL, complete: { (cachedImage) in
+                                        if let cachedImage = cachedImage {
+                                            let image = MessageImage(image: cachedImage, post: content)
+                                            let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
+                                            self.insertMessage(message)
+                                        }
+                                    })
+                                }
+                                else{
+                                    let image = MessageImage(image: #imageLiteral(resourceName: "expired"), post: content)
                                     let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
                                     self.insertMessage(message)
                                 }
-                            })
+                            }
+                        }
+                        else{
+                            let message = Message(id: id, content: content, image: nil, sender: sender, date: date.dateValue())
+                            self.insertMessage(message)
                         }
                     }
-                }
-                else{
-                    let message = Message(id: id, content: content, image: nil, sender: sender, date: date.dateValue())
-                    insertMessage(message)
                 }
             }
         }

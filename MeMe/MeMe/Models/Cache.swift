@@ -16,15 +16,18 @@ class Cache {
     private var profileData:[String:Profile] = [:]
     private var imageData:[String:UIImage] = [:]
     private var groupData:[String:Group] = [:]
+    private var messageData:[String:[String:ChatMessage]] = [:]
     
     private var imageTasks:[String:DispatchGroup?] = [:]
     private var profileTasks:[String:DispatchGroup?] = [:]
     private var postTasks:[String:DispatchGroup?] = [:]
     private var groupTasks:[String:DispatchGroup?] = [:]
+    private var messageTasks:[String:[String:DispatchGroup?]?] = [:]
     
     private var postListeners:[String:ListenerRegistration?] = [:]
     private var profileListeners:[String:ListenerRegistration?] = [:]
     private var groupListeners:[String:ListenerRegistration?] = [:]
+    private var chatListeners:[String:ListenerRegistration?] = [:]
     
     private static var cache:Cache? = nil
     
@@ -34,10 +37,12 @@ class Cache {
             let postRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
             let profileRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
             let groupRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Group")
+            let messageRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ChatMessage")
             do{
                 let posts = try context.fetch(postRequest) as! [Post]
                 let profiles = try context.fetch(profileRequest) as! [Profile]
                 let groups = try context.fetch(groupRequest) as! [Group]
+                let messages = try context.fetch(messageRequest) as! [ChatMessage]
                 for post in posts {
                     postData[post.id] = post
                     let postRef = Firestore.firestore().collection("post").document(post.id)
@@ -52,11 +57,24 @@ class Cache {
                         self.handleProfileDoc(profileDoc: profileDoc)
                     }
                 }
+                for message in messages {
+                    self.addMessageToData(message: message)
+                }
                 for group in groups {
                     groupData[group.id] = group
                     let groupRef = Firestore.firestore().collection("groups").document(group.id)
+                    let messageRef = groupRef.collection("messages")
                     groupListeners[group.id] = groupRef.addSnapshotListener { (groupDoc, groupDocErr) in
                         self.handleGroupDoc(groupDoc: groupDoc)
+                    }
+                    chatListeners[group.id] = messageRef.addSnapshotListener { (query, error) in
+                        if let query = query {
+                            query.documentChanges.forEach { change in
+                                if change.type == .added {
+                                    self.handleMessageDoc(messageDoc: change.document)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -87,7 +105,7 @@ class Cache {
                 DispatchQueue.global(qos: .background).async {
                     group.wait()
                     DispatchQueue.main.async {
-                        self.getPost(id: id, complete: complete)
+                        complete(self.postData[id])
                     }
                 }
             }
@@ -102,7 +120,7 @@ class Cache {
                 DispatchQueue.global(qos: .background).async {
                     group.wait()
                     DispatchQueue.main.async {
-                        self.getPost(id: id, complete: complete)
+                        complete(self.postData[id])
                     }
                 }
             }
@@ -118,7 +136,7 @@ class Cache {
                 DispatchQueue.global(qos: .background).async {
                     group.wait()
                     DispatchQueue.main.async {
-                        self.getGroup(id: id, complete: complete)
+                        complete(self.groupData[id])
                     }
                 }
             }
@@ -127,13 +145,73 @@ class Cache {
                 groupTasks[id] = group
                 group.enter()
                 let groupRef = Firestore.firestore().collection("groups").document(id)
+                let messageRef = groupRef.collection("messages")
                 groupListeners[id] = groupRef.addSnapshotListener { (groupDoc, groupDocErr) in
                     self.handleGroupDoc(groupDoc: groupDoc)
                 }
                 DispatchQueue.global(qos: .background).async {
                     group.wait()
+                    self.chatListeners[id] = messageRef.addSnapshotListener { (query, error) in
+                        if let query = query {
+                            query.documentChanges.forEach { change in
+                                if change.type == .added {
+                                    self.handleMessageDoc(messageDoc: change.document)
+                                }
+                            }
+                        }
+                    }
                     DispatchQueue.main.async {
-                        self.getGroup(id: id, complete: complete)
+                        complete(self.groupData[id])
+                    }
+                }
+            }
+        }
+    }
+    
+    func getChatMessage(groupId:String, id:String, complete: @escaping (ChatMessage?) -> Void){
+        if let groupMessages = self.messageData[groupId], let message = groupMessages[id] {
+            complete(message)
+        }
+        else{
+            if let messageTasks = self.messageTasks[groupId], let tasks = messageTasks {
+                if let dispatchGroup = tasks[id], let group = dispatchGroup {
+                    DispatchQueue.global(qos: .background).async {
+                        group.wait()
+                        DispatchQueue.main.async {
+                            if let groupMessages = self.messageData[groupId], let message = groupMessages[id] {
+                                complete(message)
+                            }
+                            else{
+                                complete(nil)
+                            }
+                        }
+                    }
+                }
+            }
+            else{
+                let group = DispatchGroup()
+                if let messageTasks = self.messageTasks[groupId], var tasks = messageTasks {
+                    tasks[id] = group
+                }
+                else{
+                    var tasks:[String:DispatchGroup?] = [:]
+                    tasks[id] = group
+                    self.messageTasks[groupId] = tasks
+                }
+                group.enter()
+                let messageRef = Firestore.firestore().collection("groups").document(groupId).collection("messages").document(id)
+                messageRef.getDocument { (messageDoc, error) in
+                    self.handleMessageDoc(messageDoc: messageDoc)
+                }
+                DispatchQueue.global(qos: .background).async {
+                    group.wait()
+                    DispatchQueue.main.async {
+                        if let groupMessages = self.messageData[groupId], let message = groupMessages[id] {
+                            complete(message)
+                        }
+                        else{
+                            complete(nil)
+                        }
                     }
                 }
             }
@@ -149,7 +227,7 @@ class Cache {
                 DispatchQueue.global(qos: .background).async {
                     group.wait()
                     DispatchQueue.main.async {
-                        self.getImage(imageURL: imageURL, complete: complete)
+                        complete(self.imageData[imageURL])
                     }
                 }
             }
@@ -190,7 +268,7 @@ class Cache {
                 DispatchQueue.global(qos: .background).async {
                     group.wait()
                     DispatchQueue.main.async {
-                        self.getProfile(uid: uid, complete: complete)
+                        complete(self.profileData[uid])
                     }
                 }
             }
@@ -205,7 +283,7 @@ class Cache {
                 DispatchQueue.global(qos: .background).async {
                     group.wait()
                     DispatchQueue.main.async {
-                        self.getProfile(uid: uid, complete: complete)
+                        complete(self.profileData[uid])
                     }
                 }
             }
@@ -234,11 +312,14 @@ class Cache {
         let name = data["name"] as! String
         let numMembers = data["numMembers"] as! Int32
         let lastActive = data["lastActive"] as! NSDate
+        let active = data["active"] as! Bool
+        let unreadMessages = data["unreadMessages"] as! Int32
         if let group = groupData[id] {
             group.name = name
             group.numMembers = numMembers
             group.lastActive = lastActive
-            print("HELLO")
+            group.active = active
+            group.unreadMessages = unreadMessages
             updateCore()
             complete(group)
         }
@@ -416,6 +497,87 @@ class Cache {
         }
     }
     
+    private func handleMessageDoc(messageDoc: DocumentSnapshot?) {
+        let id = messageDoc!.documentID
+        let groupID = messageDoc!.reference.parent.parent!.documentID
+        if let messageDoc = messageDoc {
+            if messageDoc.exists {
+                let data = messageDoc.data()!
+                let content = data["content"] as! String
+                let image = data["image"] as! Bool
+                let sent = data["sent"] as! Firebase.Timestamp
+                let uid = data["uid"] as! String
+                getGroup(id: groupID) { (group) in
+                    if let group = group, !group.active {
+                        let lastActive = group.lastActive as Date
+                        if lastActive < sent.dateValue() {
+                            let data:[String:Any] = [
+                                "name": group.name,
+                                "numMembers": group.numMembers,
+                                "lastActive": group.lastActive,
+                                "unreadMessages": group.unreadMessages + 1,
+                                "active": group.active
+                            ]
+                            self.updateGroup(id: groupID, data: data, complete: {_ in })
+                        }
+                    }
+                }
+                if let context = self.getContext(), self.messageData[id] == nil {
+                    let message = ChatMessage(context: context)
+                    message.id = id
+                    message.content = content
+                    message.group = groupID
+                    message.image = image
+                    message.sent = sent.dateValue() as NSDate
+                    message.uid = uid
+                    self.addMessageToData(message: message)
+                    self.updateCore()
+                    if let messageTasks = self.messageTasks[groupID], let tasks = messageTasks {
+                        if let dispatchGroup = tasks[id], let group = dispatchGroup {
+                            self.messageTasks[id] = nil
+                            group.leave()
+                        }
+                    }
+                }
+                else{
+                    if let messageTasks = self.messageTasks[groupID], let tasks = messageTasks {
+                        if let dispatchGroup = tasks[id], let group = dispatchGroup {
+                            self.messageTasks[id] = nil
+                            group.leave()
+                        }
+                    }
+                }
+            }
+            else{
+                if let messageTasks = self.messageTasks[groupID], let tasks = messageTasks {
+                    if let dispatchGroup = tasks[id], let group = dispatchGroup {
+                        self.messageTasks[id] = nil
+                        group.leave()
+                    }
+                }
+            }
+        }
+        else{
+            if let messageTasks = self.messageTasks[groupID], let tasks = messageTasks {
+                if let dispatchGroup = tasks[id], let group = dispatchGroup {
+                    self.messageTasks[id] = nil
+                    group.leave()
+                }
+            }
+        }
+    }
+    
+    private func addMessageToData(message:ChatMessage){
+        if var groupMessages = messageData[message.group] {
+            groupMessages[message.id] = message
+        }
+        else{
+            var groupMessages:[String:ChatMessage] = [:]
+            groupMessages[message.id] = message
+            messageData[message.group] = groupMessages
+        }
+    }
+    
     private func handleGroupDoc(groupDoc: DocumentSnapshot?) {
         let id = groupDoc!.documentID
         if let groupDoc = groupDoc {
@@ -437,7 +599,9 @@ class Cache {
                         let data:[String:Any] = [
                             "name": name,
                             "numMembers": numMembers,
-                            "lastActive": lastActive
+                            "lastActive": lastActive,
+                            "unreadMessages": Int32(0),
+                            "active": false
                         ]
                         self.updateGroup(id: id, data: data, complete: { (userGroup) in
                             if let dispatchGroup = self.groupTasks[id], let group = dispatchGroup {
@@ -449,9 +613,10 @@ class Cache {
                     else if let context = self.getContext(){
                         let group = Group(context: context)
                         group.id = id
+                        group.active = false
                         group.name = name
                         group.numMembers = numMembers
-                        group.unreadMessages = 0
+                        group.unreadMessages = Int32(0)
                         group.lastActive = lastActive as NSDate
                         self.groupData[id] = group
                         self.updateCore()

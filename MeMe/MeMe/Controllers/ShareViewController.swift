@@ -74,16 +74,17 @@ class ShareViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func sendMessage(message:Message, ref:CollectionReference){
+        var content = message.content
+        if message.image != nil {
+            content = message.postID
+        }
         ref.document(message.messageId).setData([
-            "id": message.messageId,
             "sent": message.sentDate,
             "uid": message.sender.id,
-            "name": message.sender.displayName,
-            "meme": message.image != nil,
-            "post": message.postID,
-            "content": message.content
+            "image": message.image != nil,
+            "content": content
         ]) { error in
-            if let e = error {
+            if error != nil {
                 print("ERROR")
                 return
             }

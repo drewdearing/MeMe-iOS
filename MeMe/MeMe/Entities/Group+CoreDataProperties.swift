@@ -22,5 +22,6 @@ extension Group {
     @NSManaged public var unreadMessages: Int32
     @NSManaged public var lastActive: NSDate
     @NSManaged public var numMembers: Int32
+    @NSManaged public var active: Bool
 
 }

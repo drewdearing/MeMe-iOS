@@ -53,7 +53,7 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ChatSelectSegue" {
             let dest = segue.destination as! ChatViewController
-            dest.chat = selectedChat
+            dest.chatID = selectedChat?.groupId
         } else if segue.identifier == "GroupSettingsSegue" {
             let dest = segue.destination as! GroupChatSettingsViewController
             dest.delegate = self

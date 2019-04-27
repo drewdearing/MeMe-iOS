@@ -47,6 +47,8 @@
 		23BD7A5C5DD54070A9759157 /* Pods_MeMe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */; };
 		3B143719225572D100331A5B /* TabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B143718225572D100331A5B /* TabViewController.swift */; };
 		3B1B71BC225E6CCE003B80E6 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */; };
+		3B1BCACF2274270B00BA2DDB /* ChatMessage+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BCACD2274270B00BA2DDB /* ChatMessage+CoreDataClass.swift */; };
+		3B1BCAD02274270B00BA2DDB /* ChatMessage+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BCACE2274270B00BA2DDB /* ChatMessage+CoreDataProperties.swift */; };
 		3B37D73F225EAA2F00790005 /* EditToolsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B37D73E225EAA2F00790005 /* EditToolsViewController.swift */; };
 		3B3F47C32249ACBA00B2C5A0 /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3F47C12249ACBA00B2C5A0 /* FeedTableViewCell.swift */; };
 		3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */; };
@@ -126,6 +128,8 @@
 		1DB01D846AD8C092D75F1DD1 /* Pods_MeMe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MeMe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B143718225572D100331A5B /* TabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabViewController.swift; sourceTree = "<group>"; };
 		3B1B71BB225E6CCE003B80E6 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		3B1BCACD2274270B00BA2DDB /* ChatMessage+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessage+CoreDataClass.swift"; sourceTree = "<group>"; };
+		3B1BCACE2274270B00BA2DDB /* ChatMessage+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessage+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3B37D73E225EAA2F00790005 /* EditToolsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditToolsViewController.swift; sourceTree = "<group>"; };
 		3B3F47C12249ACBA00B2C5A0 /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedTableViewCell.swift; path = MeMe/Cells/FeedTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FeedTableViewCell.xib; path = MeMe/Cells/FeedTableViewCell.xib; sourceTree = SOURCE_ROOT; };
@@ -264,6 +268,8 @@
 		3B860CDE2252C9E600831C41 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				3B1BCACD2274270B00BA2DDB /* ChatMessage+CoreDataClass.swift */,
+				3B1BCACE2274270B00BA2DDB /* ChatMessage+CoreDataProperties.swift */,
 				17428C532273B4C400A983E4 /* Group+CoreDataClass.swift */,
 				17428C542273B4C400A983E4 /* Group+CoreDataProperties.swift */,
 				3BA760D0226FC4FA00FBB835 /* Profile+CoreDataClass.swift */,
@@ -517,6 +523,7 @@
 				17A35F9B2254192200C2362D /* GroupChat.swift in Sources */,
 				17C6E84E2239B2D8004665F0 /* MessageView.swift in Sources */,
 				3BE25156225527B600B8FCAC /* Cache.swift in Sources */,
+				3B1BCACF2274270B00BA2DDB /* ChatMessage+CoreDataClass.swift in Sources */,
 				3B143719225572D100331A5B /* TabViewController.swift in Sources */,
 				609987AE2255ED05002EFA2F /* Message.swift in Sources */,
 				17428C552273B4C400A983E4 /* Group+CoreDataClass.swift in Sources */,
@@ -559,6 +566,7 @@
 				3B3F47C32249ACBA00B2C5A0 /* FeedTableViewCell.swift in Sources */,
 				3BA760D3226FC4FA00FBB835 /* Profile+CoreDataProperties.swift in Sources */,
 				3BDA3462225DBCE1009EA280 /* ShareViewController.swift in Sources */,
+				3B1BCAD02274270B00BA2DDB /* ChatMessage+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
