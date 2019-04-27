@@ -11,11 +11,8 @@ import Firebase
 
 class MainViewController: UITabBarController, UITabBarControllerDelegate {
     
-    
-    
     var currentController:UIViewController?
-    var chatListeners:[String:ListenerRegistration] = [:]
-    var userListeners:[String:ListenerRegistration] = [:]
+    var groups:[String:Bool] = [:]
     var unreadMessages:[String:Int32] = [:]
     
     override func viewDidLoad() {
@@ -28,39 +25,30 @@ class MainViewController: UITabBarController, UITabBarControllerDelegate {
                 query.documentChanges.forEach { change in
                     if change.type == .added {
                         let groupId = change.document.documentID
-                        let chatRef = Firestore.firestore().collection("groups").document(groupId).collection("messages")
-                        let userRef = Firestore.firestore().collection("groups").document(groupId).collection("usersInGroup").document(currentUser.uid)
-                        if self.chatListeners[change.document.documentID] == nil {
-                            self.chatListeners[groupId] = chatRef.addSnapshotListener({ (chatQuery, chatErr) in
-                                cache.getGroup(id: groupId, complete: { (group) in
-                                    if let group = group {
-                                        self.unreadMessages[group.id] = group.unreadMessages
-                                        self.updateMessageCounter()
-                                    }
-                                })
+                        self.groups[groupId] = true
+                        if self.unreadMessages[groupId] == nil {
+                            cache.getGroup(id: groupId, complete: { (group) in
+                                if let group = group {
+                                    self.unreadMessages[group.id] = group.unreadMessages
+                                    self.updateMessageCounter()
+                                }
                             })
-                        }
-                        if self.userListeners[change.document.documentID] == nil {
-                            self.userListeners[groupId] = userRef.addSnapshotListener({ (chatQuery, chatErr) in
-                                cache.getGroup(id: groupId, complete: { (group) in
-                                    if let group = group {
+                            cache.addGroupUpdateListener(id: groupId) { (group) in
+                                if let group = group {
+                                    if let inGroup = self.groups[group.id], inGroup {
                                         self.unreadMessages[group.id] = group.unreadMessages
-                                        self.updateMessageCounter()
                                     }
-                                })
-                            })
+                                    else{
+                                        self.unreadMessages[group.id] = nil
+                                    }
+                                }
+                                self.updateMessageCounter()
+                            }
                         }
                     }
                     if change.type == .removed {
+                        self.groups[change.document.documentID] = false
                         self.unreadMessages[change.document.documentID] = nil
-                        if self.chatListeners[change.document.documentID] != nil {
-                            self.chatListeners[change.document.documentID]?.remove()
-                            self.chatListeners[change.document.documentID] = nil
-                        }
-                        if self.userListeners[change.document.documentID] != nil {
-                            self.userListeners[change.document.documentID]?.remove()
-                            self.userListeners[change.document.documentID] = nil
-                        }
                     }
                 }
             }

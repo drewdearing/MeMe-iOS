@@ -29,6 +29,8 @@ class Cache {
     private var groupListeners:[String:ListenerRegistration?] = [:]
     private var chatListeners:[String:ListenerRegistration?] = [:]
     
+    private var groupUpdateListeners:[String:[(Group?) -> Void]?] = [:]
+    
     private static var cache:Cache? = nil
     
     private init(){
@@ -290,6 +292,16 @@ class Cache {
         }
     }
     
+    func addGroupUpdateListener(id:String, listener: @escaping (Group?) -> Void){
+        if let groupListeners = groupUpdateListeners[id], var listeners = groupListeners {
+            listeners.append(listener)
+        }
+        else{
+            let groupListeners:[(Group?) -> Void] = [listener]
+            groupUpdateListeners[id] = groupListeners
+        }
+    }
+    
     func updatePost(id: String, data:[String:Any], complete: @escaping (Post?) -> Void){
         let upvotes = data["upvotes"] as! Int32
         let downvotes = data["downvotes"] as! Int32
@@ -321,6 +333,7 @@ class Cache {
             group.active = active
             group.unreadMessages = unreadMessages
             updateCore()
+            callGroupUpdateListeners(id: id, group: group)
             complete(group)
         }
         else {
@@ -345,6 +358,14 @@ class Cache {
         }
         else{
             getProfile(uid: uid, complete: complete)
+        }
+    }
+    
+    private func callGroupUpdateListeners(id:String, group:Group?){
+        if let groupListeners = self.groupUpdateListeners[id], let listeners = groupListeners {
+            for listener in listeners {
+                listener(group)
+            }
         }
     }
     
