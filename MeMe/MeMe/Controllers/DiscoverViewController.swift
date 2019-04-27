@@ -37,8 +37,10 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
     }
     
     func didSelect(image: UIImage?) {
-        selectedImage = image
-        performSegue(withIdentifier: "NewMemeSegue", sender: self)
+        if let image = image {
+            selectedImage = image
+            performSegue(withIdentifier: "NewMemeSegue", sender: self)
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

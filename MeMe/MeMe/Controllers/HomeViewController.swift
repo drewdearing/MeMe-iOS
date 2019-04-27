@@ -25,8 +25,10 @@ class HomeViewController: TabViewController, NewMemeDelegate, FeedViewDelegate, 
     }
     
     func didSelect(image: UIImage?) {
-        selectedImage = image
-        performSegue(withIdentifier: "NewMemeSegue", sender: self)
+        if let image = image {
+            selectedImage = image
+            performSegue(withIdentifier: "NewMemeSegue", sender: self)
+        }
     }
     
     @IBAction func selectImage(_ sender: Any) {
