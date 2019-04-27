@@ -531,7 +531,8 @@ class Cache {
                 getGroup(id: groupID) { (group) in
                     if let group = group, !group.active {
                         let lastActive = group.lastActive as Date
-                        if lastActive < sent.dateValue() {
+                        let currentUID = Auth.auth().currentUser!.uid
+                        if lastActive < sent.dateValue() && currentUID != uid {
                             let data:[String:Any] = [
                                 "name": group.name,
                                 "numMembers": group.numMembers,
