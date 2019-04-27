@@ -252,14 +252,31 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qzF-3U-bX4">
+                                <rect key="frame" x="59.5" y="520" width="256" height="34"/>
+                                <color key="backgroundColor" red="0.34509803919999998" green="0.76078431369999999" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="256" id="YgP-t2-clF"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Logout">
+                                    <color key="titleColor" white="0.90000000000000002" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="onClickLogout:" destination="AVM-Xz-Djp" eventType="touchUpInside" id="7uz-3g-brk"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="9bN-HG-uH8" firstAttribute="centerX" secondItem="6yl-k6-w3N" secondAttribute="centerX" id="7UY-Mb-KtL"/>
                             <constraint firstItem="FFg-rK-m77" firstAttribute="top" secondItem="NXs-iZ-bJk" secondAttribute="bottom" constant="32" id="KD9-RH-1MJ"/>
                             <constraint firstItem="NXs-iZ-bJk" firstAttribute="leading" secondItem="ARe-7p-RWg" secondAttribute="leading" constant="8" id="Rmy-4m-pEQ"/>
+                            <constraint firstItem="qzF-3U-bX4" firstAttribute="centerX" secondItem="6yl-k6-w3N" secondAttribute="centerX" id="S3l-yX-sJO"/>
                             <constraint firstItem="9bN-HG-uH8" firstAttribute="top" secondItem="FFg-rK-m77" secondAttribute="bottom" constant="16" id="SWW-cq-um5"/>
                             <constraint firstItem="FFg-rK-m77" firstAttribute="centerX" secondItem="6yl-k6-w3N" secondAttribute="centerX" id="VxK-zQ-kz4"/>
                             <constraint firstItem="9bN-HG-uH8" firstAttribute="centerX" secondItem="6yl-k6-w3N" secondAttribute="centerX" id="dRT-HS-X8L"/>
+                            <constraint firstItem="ARe-7p-RWg" firstAttribute="bottom" secondItem="qzF-3U-bX4" secondAttribute="bottom" constant="64" id="nCJ-Oe-S1f"/>
                             <constraint firstItem="NXs-iZ-bJk" firstAttribute="top" secondItem="ARe-7p-RWg" secondAttribute="top" constant="8" id="vRA-eI-QEm"/>
                             <constraint firstItem="ARe-7p-RWg" firstAttribute="trailing" secondItem="NXs-iZ-bJk" secondAttribute="trailing" constant="8" id="yDI-mr-64N"/>
                         </constraints>
@@ -298,9 +315,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="globe" width="100" height="100"/>
-        <image name="heart" width="100" height="100"/>
-        <image name="settings" width="30" height="30"/>
+        <image name="globe" width="75" height="75"/>
+        <image name="heart" width="75" height="75"/>
+        <image name="settings" width="45" height="45"/>
         <image name="user_male" width="30" height="30"/>
     </resources>
 </document>

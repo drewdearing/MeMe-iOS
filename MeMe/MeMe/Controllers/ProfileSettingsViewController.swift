@@ -50,6 +50,16 @@ class ProfileSettingsViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(ProfileSettingsViewController.saveProfileEdits))
     }
     
+    @IBAction func onClickLogout(_ sender: Any) {
+        let mainStoryBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        if let loginVCDestination = mainStoryBoard.instantiateViewController(withIdentifier: loginStoryIdentifier) as? LoginViewController {
+            
+            let navController = UINavigationController(rootViewController: loginVCDestination)
+            present(navController, animated: true, completion: nil)
+        }
+    }
+    
+    
     @objc func saveProfileEdits() {
         
         Auth.auth().signIn(withEmail: email.text!, password: password.text!) { [weak self] user, error in
