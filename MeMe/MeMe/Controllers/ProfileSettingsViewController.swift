@@ -72,16 +72,14 @@ class ProfileSettingsViewController: UIViewController {
                         self?.username.isUserInteractionEnabled = true
                         self?.password.isUserInteractionEnabled = true
                     } else {
-                        DispatchQueue.global(qos: .background).async {
+                        DispatchQueue.main.async {
                             self!.updateUsername(newUsername: (self?.username.text)!, currentUserID: currentUserID)
-                            DispatchQueue.main.async {
-                                self!.statusLabel.text = "Username Updated"
-                                self?.username.isUserInteractionEnabled = true
-                                self?.password.isUserInteractionEnabled = true
-                                
-                                if self!.delegate != nil {
-                                    self!.delegate.updateUsername(newUsername: (self?.username.text)!)
-                                }
+                            self!.statusLabel.text = "Username Updated"
+                            self?.username.isUserInteractionEnabled = true
+                            self?.password.isUserInteractionEnabled = true
+                            
+                            if self!.delegate != nil {
+                                self!.delegate.updateUsername(newUsername: (self?.username.text)!)
                             }
                         }
                     }

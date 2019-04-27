@@ -15,23 +15,25 @@
             <objects>
                 <viewController storyboardIdentifier="profileView" id="KIc-hq-VUJ" customClass="ProfileViewController" customModule="MeMe" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dJQ-Jp-dAT">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="1000"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yei-tU-TQc">
-                                <rect key="frame" x="0.0" y="64" width="375" height="887"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n3V-UO-IyL" userLabel="ContentView">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="887"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="554"/>
                                         <subviews>
-                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TBh-fL-Hji">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TBh-fL-Hji">
                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="285"/>
+                                                <color key="backgroundColor" red="0.32549019607843138" green="0.59215686274509804" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="285" id="Imx-9M-bd8"/>
                                                 </constraints>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tYW-gY-Adr">
                                                 <rect key="frame" x="123.5" y="221" width="128" height="128"/>
+                                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="128" id="DQw-yV-dts"/>
                                                     <constraint firstAttribute="height" constant="128" id="XhY-UU-OLZ"/>
@@ -77,8 +79,11 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="T97-mp-Qeb">
-                                                <rect key="frame" x="0.0" y="386" width="375" height="501"/>
+                                                <rect key="frame" x="0.0" y="386" width="375" height="168"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" priority="999" constant="168" id="p1q-yc-Nld"/>
+                                                </constraints>
                                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="tc5-BS-u69">
                                                     <size key="itemSize" width="100" height="100"/>
                                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -86,14 +91,14 @@
                                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                 </collectionViewFlowLayout>
                                                 <cells>
-                                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="IXb-Ww-jDE" customClass="ProfilePostCollectionViewCell" customModule="MeMe" customModuleProvider="target">
+                                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ProfileCellIdentifier" id="IXb-Ww-jDE" customClass="ProfilePostCollectionViewCell" customModule="MeMe" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
                                                             <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
-                                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yYr-85-cy7">
+                                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yYr-85-cy7">
                                                                     <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                                                 </imageView>
                                                             </subviews>
@@ -123,7 +128,7 @@
                                             <constraint firstAttribute="trailing" secondItem="NQl-zK-rsN" secondAttribute="trailing" constant="43.75" id="Aci-Pe-BI8"/>
                                             <constraint firstItem="T97-mp-Qeb" firstAttribute="top" secondItem="Xad-Cg-u1n" secondAttribute="bottom" constant="8" id="Bxb-48-AGN"/>
                                             <constraint firstItem="T97-mp-Qeb" firstAttribute="leading" secondItem="n3V-UO-IyL" secondAttribute="leading" id="E8s-uJ-Mgb"/>
-                                            <constraint firstAttribute="bottom" secondItem="T97-mp-Qeb" secondAttribute="bottom" id="FTY-7I-dsc"/>
+                                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="T97-mp-Qeb" secondAttribute="bottom" id="FTY-7I-dsc"/>
                                             <constraint firstItem="TBh-fL-Hji" firstAttribute="top" secondItem="n3V-UO-IyL" secondAttribute="top" id="Fdb-tA-WUS"/>
                                             <constraint firstItem="NQl-zK-rsN" firstAttribute="top" secondItem="TBh-fL-Hji" secondAttribute="bottom" constant="8" id="ILi-Yh-CQw"/>
                                             <constraint firstItem="Xad-Cg-u1n" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="n3V-UO-IyL" secondAttribute="leading" constant="16" id="Id5-Kb-WeC"/>
@@ -167,22 +172,24 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <size key="freeformSize" width="375" height="1000"/>
+                    <size key="freeformSize" width="375" height="667"/>
                     <connections>
                         <outlet property="backgroundImageView" destination="TBh-fL-Hji" id="UTt-Rd-RsX"/>
                         <outlet property="followButton" destination="oz7-2n-2uh" id="jvA-Bp-1Ci"/>
                         <outlet property="followersLabel" destination="5Gq-85-MdM" id="6JW-Ly-bWw"/>
                         <outlet property="followingLabel" destination="XFg-Wu-dzS" id="Zyx-eu-Xz7"/>
+                        <outlet property="heightConstraint" destination="p1q-yc-Nld" id="jUj-ug-Pza"/>
                         <outlet property="navBarItem" destination="RT3-OH-P3x" id="EVF-uN-GXF"/>
                         <outlet property="postsCollectionView" destination="T97-mp-Qeb" id="CW6-pX-Nwy"/>
                         <outlet property="profileImageView" destination="tYW-gY-Adr" id="bcd-dq-Nt2"/>
+                        <outlet property="scrollView" destination="yei-tU-TQc" id="q7a-ph-3ZY"/>
                         <outlet property="settingsButton" destination="UMu-r9-az6" id="fOj-Og-5mR"/>
                         <outlet property="usernameLabel" destination="Xad-Cg-u1n" id="dxf-gQ-ePl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yQQ-0c-h3z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1080.8" y="121.4392803598201"/>
+            <point key="canvasLocation" x="1073" y="122"/>
         </scene>
         <!--Profile Settings View Controller-->
         <scene sceneID="wdj-UA-Ucr">
