@@ -172,7 +172,6 @@ extension DiscoverViewController : UISearchBarDelegate {
                 }
             }
         }
-        
         searchUserTableView.reloadData()
     }
     
@@ -180,5 +179,11 @@ extension DiscoverViewController : UISearchBarDelegate {
         searchBar.text?.removeAll(keepingCapacity: true)
         searchUserTableView.reloadData()
         searchUserTableView.isHidden = true
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let current = users[indexPath.row]
+        print(current.username)
+        
     }
 }
