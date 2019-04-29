@@ -190,7 +190,7 @@ extension DiscoverViewController : UISearchBarDelegate {
         if let controller = storyboard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
             // set data to controller
             controller.uid = allUsersID[current]!
-            self.present(controller, animated: true, completion: nil)
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
 }
