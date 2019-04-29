@@ -45,11 +45,18 @@ class Cache {
                 let profiles = try context.fetch(profileRequest) as! [Profile]
                 let groups = try context.fetch(groupRequest) as! [Group]
                 let messages = try context.fetch(messageRequest) as! [ChatMessage]
+                let postExpireTime = Date(timeIntervalSinceNow: -86400)
                 for post in posts {
-                    postData[post.id] = post
-                    let postRef = Firestore.firestore().collection("post").document(post.id)
-                    postListeners[post.id] = postRef.addSnapshotListener { (postDoc, postDocErr) in
-                        self.handlePostDoc(postDoc: postDoc)
+                    let timestamp = Firebase.Timestamp(seconds: post.seconds, nanoseconds: post.nanoseconds).dateValue()
+                    if timestamp > postExpireTime {
+                        postData[post.id] = post
+                        let postRef = Firestore.firestore().collection("post").document(post.id)
+                        postListeners[post.id] = postRef.addSnapshotListener { (postDoc, postDocErr) in
+                            self.handlePostDoc(postDoc: postDoc)
+                        }
+                    }
+                    else{
+                        context.delete(post)
                     }
                 }
                 for profile in profiles {
@@ -79,6 +86,7 @@ class Cache {
                         }
                     }
                 }
+                updateCore()
             }
             catch{
                 print("cant fetch")
