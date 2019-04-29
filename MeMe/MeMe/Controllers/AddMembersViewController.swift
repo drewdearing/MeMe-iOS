@@ -137,12 +137,25 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
             potentialMembersTableView.reloadData()
             return
         }
-        currentPotentialMembers = potentialMembers.filter({names -> Bool in
-            guard let text = searchBar.text else { return false}
-            //for user in potentialMembers {
-            return names.contains(text)
-        })
+//        currentPotentialMembers = potentialMembers.filter({names -> Bool in
+//            guard let text = searchBar.text else { return false}
+//            //for user in potentialMembers {
+//            return names.contains(text)
+//        })
+        currentPotentialMembers.removeAll()
+        if let text = searchBar.text {
+            for member in potentialMembers {
+                cache.getProfile(uid: member) { (profile) in
+                    if let profile = profile {
+                        if profile.username.lowercased().contains(text.lowercased()) {
+                            self.currentPotentialMembers.append(member)
+                        }
+                    }
+                }
+            }
+        }
         potentialMembersTableView.reloadData()
+        return
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
