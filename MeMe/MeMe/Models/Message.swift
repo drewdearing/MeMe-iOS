@@ -17,22 +17,6 @@ class MessageImage: MediaItem {
     var size: CGSize
     var postID: String
     
-    init(url:String, post:String){
-        self.postID = post
-        self.url = URL(string: url)
-        self.placeholderImage = MessageImage.placeholderImage
-        
-        let data = try? Data(contentsOf: self.url!)
-        if let imgData = data {
-            let download = UIImage(data:imgData)
-            self.image = download
-            self.size = self.image!.size
-        }
-        else{
-            self.size = self.placeholderImage.size
-        }
-    }
-    
     init(image: UIImage, post:String){
         self.image = image
         self.size = image.size

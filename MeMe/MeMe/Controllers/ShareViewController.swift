@@ -13,9 +13,8 @@ import MessageKit
 
 class ShareViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var tableView: UITableView!
-    var postID:String?
-    var photoURL:String?
-    var data:[GroupChat] = []
+    var postID:String!
+    var groups:[String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,9 +30,8 @@ class ShareViewController: UIViewController, UITableViewDelegate, UITableViewDat
                     print("Error getting documents: \(err)")
                 } else {
                     for document in querySnapshot!.documents {
-                        let name = document.data()["name"] as! String
                         let id = document.documentID
-                        self.data.append(GroupChat(id: id, groupChatName: name))
+                        self.groups.append(id)
                     }
                     SVProgressHUD.dismiss()
                     self.tableView.reloadData()
@@ -43,12 +41,16 @@ class ShareViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+        return groups.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "groupCell", for: indexPath as IndexPath)
-        cell.textLabel?.text = data[indexPath.row].groupChatName
+        cache.getGroup(id: groups[indexPath.row]) { (group) in
+            if let group = group {
+                cell.textLabel?.text = group.name
+            }
+        }
         return cell
     }
     
@@ -57,38 +59,25 @@ class ShareViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     @IBAction func done(_ sender: Any) {
-        if let profile = getCurrentProfile() {
-            if let currentUser = Auth.auth().currentUser {
-                if let indexPaths = self.tableView.indexPathsForSelectedRows {
-                    for indexPath in indexPaths {
-                        let id = data[indexPath.row].groupId
-                        let ref = Firestore.firestore().collection("groups").document(id!).collection("messages")
-                        let image = MessageImage(url: photoURL!, post: postID!)
-                        let message = Message(id: ref.document().documentID, content: "", image: image, sender: Sender(id: currentUser.uid, displayName: profile.username))
-                        sendMessage(message: message, ref: ref)
+        let uid = Auth.auth().currentUser!.uid
+        let sent = Date()
+        if let indexPaths = self.tableView.indexPathsForSelectedRows {
+            for indexPath in indexPaths {
+                let id = groups[indexPath.row]
+                let ref = Firestore.firestore().collection("groups").document(id).collection("messages")
+                ref.document().setData([
+                    "sent": sent,
+                    "uid": uid,
+                    "image": true,
+                    "content": postID
+                ]) { error in
+                    if error != nil {
+                        print("ERROR")
+                        return
                     }
-                    dismiss(animated: true)
                 }
             }
+            dismiss(animated: true)
         }
     }
-    
-    func sendMessage(message:Message, ref:CollectionReference){
-        var content = message.content
-        if message.image != nil {
-            content = message.postID
-        }
-        ref.document(message.messageId).setData([
-            "sent": message.sentDate,
-            "uid": message.sender.id,
-            "image": message.image != nil,
-            "content": content
-        ]) { error in
-            if error != nil {
-                print("ERROR")
-                return
-            }
-        }
-    }
-    
 }

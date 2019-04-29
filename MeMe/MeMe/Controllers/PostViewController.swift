@@ -308,7 +308,6 @@ class PostViewController: UIViewController {
         if segue.identifier == "ShareSegue" {
             let dest = segue.destination as! ShareViewController
             dest.postID = postID
-            dest.photoURL = memeURL
         }
     }
 }
