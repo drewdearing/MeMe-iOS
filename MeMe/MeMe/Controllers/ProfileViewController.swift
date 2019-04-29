@@ -56,7 +56,11 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
         profileImageView.layer.borderWidth = 10
         profileImageView.layer.borderColor = UIColor.white.cgColor
         profileImageView.clipsToBounds = true
-        
+        setProfile()
+        reloadPosts(showProgress: false)
+    }
+    
+    func setProfile(){
         cache.getProfile(uid: uid) { (profile) in
             if let profile = profile {
                 self.numFollowers = profile.numFollowers
@@ -81,8 +85,6 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
                 })
             }
         }
-        
-        reloadPosts(showProgress: false)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -342,6 +344,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
             reloadPosts(showProgress: false)
         }
         scrollToTop()
+        setProfile()
     }
     
     func updateUsername(newUsername: String) {
