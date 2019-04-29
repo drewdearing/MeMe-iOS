@@ -83,8 +83,30 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //let row = indexPath.row
+        let user_id = currentMembers[indexPath.row]
+        
+        if (user_id != Auth.auth().currentUser?.uid) {
+            let ref = Firestore.firestore().collection("users").document(user_id).collection("groups").document(groupID).delete() { err in
+                if let err = err {
+                    print("Error removing document: \(err)")
+                } else {
+                    print("Document successfully removed!")
+                }
+            }
+            
+            let ref_user = Firestore.firestore().collection("groups").document(groupID).collection("usersInGroup").document(user_id).delete() { err in
+                if let err = err {
+                    print("Error removing document: \(err)")
+                } else {
+                    print("Document successfully removed!")
+                }
+            }
+            currentMembers.remove(at: indexPath.row)
+            let ref_num = Firestore.firestore().collection("groups").document(groupID).setData(["numMembers" : currentMembers.count], merge: true)
+            
+        }
         currentMemebersTableView.reloadData()
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
