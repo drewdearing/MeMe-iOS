@@ -160,7 +160,6 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let currentID = currentPotentialMembers[indexPath.row]
-        
         let currentCell = potentialMembersTableView.cellForRow(at: indexPath) as! PotentialUserTableViewCell
         
         if (delegate != nil) {
@@ -186,7 +185,11 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
                     print("Document successfully written!")
                 }
             }
-            	
+            currentPotentialMembers.remove(at: indexPath.row)
+            potentialMembers.removeAll { (user) -> Bool in
+                return user == currentID
+            }
+            potentialMembersTableView.reloadData()
             delegate?.addMember(id: currentID)
         }
     }

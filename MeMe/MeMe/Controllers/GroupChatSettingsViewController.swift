@@ -92,6 +92,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             let vc: AddMembersViewController = segue.destination as! AddMembersViewController
             vc.delegate = self
             vc.currentMembers = self.currentMembers
+            
             if (identity == "settingsIdentifier") {
                 vc.groupname = self.groupName
                 vc.groupddocid = self.groupID
@@ -178,8 +179,8 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                             let id = document.documentID
                             self.currentMembers.append(id)
                         }
+                        self.currentMemebersTableView.reloadData()
                     }
-                    self.currentMemebersTableView.reloadData()
                 }
             }
     }
@@ -188,6 +189,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     @IBAction func saveButton(_ sender: Any) {
         if (groupChatNameTextField.text != "") {
             let refid = createGroup()
+            groupID = refid
             let ref_user = Firestore.firestore().collection("users")
             let currentUser = Auth.auth().currentUser
             
@@ -218,19 +220,19 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             print(groupID)
             if !currentMembers.contains(id) {
                 currentMembers.append(id)
+                currentMemebersTableView.reloadData()
                 let ref_group = Firestore.firestore().collection("groups").document(groupID)
                 ref_group.setData(["numMembers" : currentMembers.count], merge: true) { err in
                     if let err = err {
                         print("Error writing document: \(err)")
                     } else {
-                        print("Document successfully written!")
+                        print("Successfully add a member!")
                     }
                 }
                 print("Added")
             } else {
                 print("Already added")
             }
-            currentMemebersTableView.reloadData()
         }
     }
     
