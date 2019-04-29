@@ -11,7 +11,7 @@ import Firebase
 
 private let cellIdentifier = "GroupChatTableViewCell"
 
-class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, addGroupsDelegate {
+class GroupChatsViewController: TabViewController, UITableViewDelegate, UITableViewDataSource, addGroupsDelegate {
 
     @IBOutlet var groupChatsTableView: UITableView!
     private var groupChats: [GroupChat] = []
@@ -94,5 +94,10 @@ class GroupChatsViewController: UIViewController, UITableViewDelegate, UITableVi
     func addGroup(name: String, id: String) {
         groupChats.append(GroupChat(id: id, groupChatName: name))
         groupChatsTableView.reloadData()
+    }
+    
+    override func update() {
+        groupChats.removeAll()
+        setUpGroups()
     }
 }
