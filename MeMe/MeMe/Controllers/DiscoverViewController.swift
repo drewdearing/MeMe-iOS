@@ -28,6 +28,7 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
     
     var allUsers: [User] = []
     var allProfileImage: [User: UIImage] = [:]
+    var allUsersID: [User: String] = [:]
     
     var searchUsernames: [String] = []
     var users: [User] = []
@@ -112,6 +113,7 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
                     for document in querySnapshot!.documents {
                         if let fetchedUser = User(dictionary: document.data()) {
                             self.allUsers.append(fetchedUser)
+                            self.allUsersID.updateValue(document.documentID, forKey: fetchedUser)
                         }
                     }
                     DispatchQueue.main.async {
@@ -183,7 +185,12 @@ extension DiscoverViewController : UISearchBarDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let current = users[indexPath.row]
-        print(current.username)
-        
+        tableView.deselectRow(at: indexPath, animated: true)
+        let storyboard = UIStoryboard(name: "Profile", bundle: nil)
+        if let controller = storyboard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
+            // set data to controller
+            controller.uid = allUsersID[current]!
+            self.present(controller, animated: true, completion: nil)
+        }
     }
 }
