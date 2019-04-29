@@ -165,7 +165,8 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
         
         if (delegate != nil) {
             //group name you want to add user in
-            let ref_group = Firestore.firestore().collection("groups").document(groupddocid).collection("usersInGroup").document(currentID).setData([
+            let ref_group = Firestore.firestore().collection("groups").document(groupddocid).collection("usersInGroup").document(currentID)
+            ref_group.setData([
                 "lastActive": NSDate()
             ]) { err in
                 if let err = err {

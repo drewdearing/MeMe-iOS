@@ -28,6 +28,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     @IBOutlet weak var currentMemebersTableView: UITableView!
     private var currentMembers: [String] = []
     private var isEdit = false
+    
     var groupdocid = String ()
     var identity = String ()
     var groupName = String()
@@ -213,13 +214,24 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func addMember(id: String) {
-        if !currentMembers.contains(id) {
-            currentMembers.append(id)
-            print("Added")
-        } else {
-            print("Already added")
+        if groupID != "" {
+            print(groupID)
+            if !currentMembers.contains(id) {
+                currentMembers.append(id)
+                let ref_group = Firestore.firestore().collection("groups").document(groupID)
+                ref_group.setData(["numMembers" : currentMembers.count], merge: true) { err in
+                    if let err = err {
+                        print("Error writing document: \(err)")
+                    } else {
+                        print("Document successfully written!")
+                    }
+                }
+                print("Added")
+            } else {
+                print("Already added")
+            }
+            currentMemebersTableView.reloadData()
         }
-        currentMemebersTableView.reloadData()
     }
     
     func createGroup () -> String {
@@ -228,7 +240,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         let refid = ref.documentID
         ref.setData([
             "name": groupChatNameTextField.text,
-            "numMembers": "1"
+            "numMembers": 1
         ]) { err in
             if let err = err {
                 print("Error adding document: \(err)")
