@@ -38,7 +38,7 @@ class Container {
 }
 
 protocol memberDelegate {
-    func addMember(name: String, container: Container)
+    func addMember(id: String)
 }
 
 class AddMembersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
@@ -175,7 +175,7 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
                 }
             }
             	
-            delegate?.addMember(name: cellname, container: current)
+            delegate?.addMember(id: userid)
             currentCell.addlabel.adjustsFontSizeToFitWidth = true
             currentCell.addlabel.text = current.status
             currentCell.addlabel.isHidden = false

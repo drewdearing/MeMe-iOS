@@ -51,12 +51,19 @@ class ProfileSettingsViewController: UIViewController {
     }
     
     @IBAction func onClickLogout(_ sender: Any) {
-        let mainStoryBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        if let loginVCDestination = mainStoryBoard.instantiateViewController(withIdentifier: loginStoryIdentifier) as? LoginViewController {
-            
-            let navController = UINavigationController(rootViewController: loginVCDestination)
-            present(navController, animated: true, completion: nil)
+        try! Auth.auth().signOut()
+        
+        Auth.auth().addStateDidChangeListener { auth, user in
+            if let user = user {
+                // user is signed in so don't do anything
+            } else {
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                let controller = storyboard.instantiateViewController(withIdentifier: "loginVC")
+                self.present(controller, animated: true, completion: nil)
+                Auth.auth().removeStateDidChangeListener(auth)
+            }
         }
+
     }
     
     

@@ -26,7 +26,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     @IBOutlet weak var editButton: UIButton!
     
     @IBOutlet weak var currentMemebersTableView: UITableView!
-    private var currentMembers: [Container] = []
+    private var currentMembers: [String] = []
     private var isEdit = false
     var groupdocid = String ()
     var identity = String ()
@@ -68,16 +68,24 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         let row = indexPath.row
         let currentUser = currentMembers[indexPath.row]
         
-        cell?.usernameLabel.text = currentUser.member
-        cell?.userProfileImageView.image = currentUser.image
+        //cell?.usernameLabel.text = currentUser.username
+        //cell?.userProfileImageView.image = currentUser
+        
+        cache.getProfile(uid: currentUser) { (profile) in
+            if let profile = profile {
+                cell?.usernameLabel.text = profile.username
+                let profilePicURL = profile.profilePicURL
+                cache.getImage(imageURL: profilePicURL, complete: { (profilePic) in
+                    cell?.userProfileImageView.image = profilePic
+                })
+            }
+        }
         
         return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let row = indexPath.row
-        //should delete group document from user in database
-        //currentMembers.remove(at: row)
+        //let row = indexPath.row
         currentMemebersTableView.reloadData()
     }
     
@@ -129,13 +137,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             
             if (groupID != "") {
                 let ref = Firestore.firestore().collection("groups").document(groupID)
-                
-                let refUsersInGroup = ref.collection("usersInGroup")
-                let ref_user = Firestore.firestore().collection("users")
-                
-                ref.setData([
-                    "name": name
-                ]) { err in
+                ref.setData(["name": name,], merge: true) { err in
                     if let err = err {
                         print("Error adding document: \(err)")
                     } else {
@@ -143,6 +145,8 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                     }
                 }
                 
+                let refUsersInGroup = ref.collection("usersInGroup")
+                let ref_user = Firestore.firestore().collection("users")
                 refUsersInGroup.getDocuments{ (querySnapshot, err) in
                     for document in querySnapshot!.documents {
                         ref_user.document(document.documentID).collection("groups").document(ref.documentID).setData([
@@ -157,8 +161,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                     }
                 }
             }
-            
-            
         }
     }
 
@@ -174,15 +176,8 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                         return
                     } else {
                         for document in querySnapshot!.documents {
-                            let name = document.get("username")
-                            let pic = document.get("profilePicURL")
                             let id = document.documentID
-                            let url = URL(string: pic as! String)
-                            let data = try? Data(contentsOf: url!)
-                            if let imageData = data {
-                                let image = UIImage(data: imageData)
-                                self.currentMembers.append(Container(member: name as! String, image: image as! UIImage, profile: pic as! String, id: id as! String, inGroup: true))
-                            }
+                            self.currentMembers.append(id)
                         }
                     }
                     self.currentMemebersTableView.reloadData()
@@ -199,14 +194,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             
             ref_user.document((currentUser?.uid)!).getDocument { (document, error) in
                 if let username = document?.get("username") {
-                    self.currentMembers.removeAll()
-                    let pic = document!.get("profilePicURL")
-                    let url = URL(string: pic as! String)
-                    let data = try? Data(contentsOf: url!)
-                    if let imageData = data {
-                        let image = UIImage(data: imageData)
-                        self.currentMembers.append(Container(member: username as! String, image: image!, profile: document?.get("profilePicURL") as! String, id: (currentUser?.uid)!, inGroup: true))
-                    }
+                    self.currentMembers.append((currentUser?.uid)!)
                     self.currentMemebersTableView.reloadData()
                 } else {
                     print("Error")
@@ -226,17 +214,13 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         }
     }
     
-    func addMember(name: String, container: Container) {
-        print(container)
-        if (!currentMembers.contains {
-                $0.id == container.id
-            }) {
-            currentMembers.append(container)
-            container.status = "Added!"
-        }else{
-            container.status = "Already added!"
+    func addMember(id: String) {
+        if !currentMembers.contains(id) {
+            currentMembers.append(id)
+            print("Added")
+        } else {
+            print("Already added")
         }
-        container.inGroup = true
         currentMemebersTableView.reloadData()
     }
     
@@ -245,7 +229,8 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         let ref = Firestore.firestore().collection("groups").document()
         let refid = ref.documentID
         ref.setData([
-            "name": groupChatNameTextField.text
+            "name": groupChatNameTextField.text,
+            "numMembers": "1"
         ]) { err in
             if let err = err {
                 print("Error adding document: \(err)")
@@ -256,8 +241,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         }
         
         ref.collection("usersInGroup").document((currentUser?.uid)!).setData([
-            "username": getCurrentProfile()?.username,
-            "profilePicURL": getCurrentProfile()?.profilePicURL
+            "lastActive": NSDate(),
         ]) { err in
             if let err = err {
                 print("Error writing document: \(err)")
