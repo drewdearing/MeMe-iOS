@@ -142,19 +142,8 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let postStoryBoard: UIStoryboard = UIStoryboard(name: "ProfilePreviewStoryboard", bundle: nil)
         if let postVCDestination = postStoryBoard.instantiateViewController(withIdentifier: "previewVC") as? ProfilePreviewViewController {
-            cache.getProfile(uid: uid) { (profile) in
-                if let profile = profile {
-                    postVCDestination.username = profile.username
-                    cache.getPost(id: self.data[indexPath.item].id, complete: { (post) in
-                        if let post = post {
-                            cache.getImage(imageURL: post.photoURL, complete: { (image) in
-                                postVCDestination.selectedImage = image
-                                self.navigationController?.pushViewController(postVCDestination, animated: true)
-                            })
-                        }
-                    })
-                }
-            }
+            postVCDestination.post = self.data[indexPath.item].id
+            self.navigationController?.pushViewController(postVCDestination, animated: true)
         }
     }
     

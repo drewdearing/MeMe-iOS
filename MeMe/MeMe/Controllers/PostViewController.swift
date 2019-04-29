@@ -24,13 +24,13 @@ class PostViewController: UIViewController {
     @IBOutlet weak var followButton: UIButton!
     @IBOutlet weak var shareButton: UIButton!
     @IBOutlet weak var navItem: UINavigationItem!
-    
     @IBOutlet weak var userButton: UIButton!
-    var post: String!
+    
+    var post: String?
     var index: IndexPath!
     var memeURL:String = ""
     var profileURL:String = ""
-    var uid:String = ""
+    var uid:String!
     var postID:String = ""
     var upvotes:Int32 = 0
     var downvotes:Int32 = 0
@@ -54,12 +54,6 @@ class PostViewController: UIViewController {
         userProfileImageView.addGestureRecognizer(tapGesture)
         userProfileImageView.isUserInteractionEnabled = true
         navItem.title = "Meme"
-        followButton.isEnabled = false
-        cache.getPost(id: post) { (post) in
-            if let post = post {
-                self.fill(post: post)
-            }
-        }
     }
     
     func fill(post:Post){
@@ -79,7 +73,7 @@ class PostViewController: UIViewController {
         postID = post.id
         updateVoteCounter()
         
-        cache.getProfile(uid: uid) { (profile) in
+        cache.getProfile(uid: post.uid) { (profile) in
             if let profile = profile {
                 let username = profile.username
                 let profilePicURL = profile.profilePicURL
@@ -106,20 +100,10 @@ class PostViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         followButton.isEnabled = false
-        followButton.setTitle("Follow", for: .normal)
-        if let currentUser = Auth.auth().currentUser{
-            if uid != currentUser.uid {
-                Firestore.firestore().collection("users").document(uid).collection("followers").document(currentUser.uid).getDocument { (followDoc, err) in
-                    if let doc = followDoc {
-                        if doc.exists {
-                            self.followButton.isEnabled = true
-                            self.following = true
-                            self.followButton.setTitle("Unfollow", for: .normal)
-                        }
-                        else{
-                            self.followButton.isEnabled = true
-                        }
-                    }
+        if let post = post {
+            cache.getPost(id: post) { (post) in
+                if let post = post {
+                    self.fill(post: post)
                 }
             }
         }
