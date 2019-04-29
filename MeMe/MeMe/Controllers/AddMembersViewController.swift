@@ -47,8 +47,9 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var potentialMembersTableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
-    private var potentialMembers: [Container] = []
-    private var currentPotentialMembers: [Container] = []
+    var currentMembers: [String] = []
+    private var potentialMembers: [String] = []
+    private var currentPotentialMembers: [String] = []
     
     
     var loaded = false
@@ -79,21 +80,20 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
             let q = DispatchQueue(label:"xyz")
             
             q.sync {
-                let db = Firestore.firestore().collection("users")
+                let db = Firestore.firestore().collection("users").document(currentUser.uid).collection("followers")
                 db.getDocuments() { (querySnapshot, err) in
                     if let err = err {
                         print("Error getting documents: \(err)")
                         return
                     } else {
                         for document in querySnapshot!.documents {
-                            let name = document.get("username")
-                            let pic = document.get("profilePicURL")
-                            let id = document.documentID
-                            let url = URL(string: pic as! String)
-                            let data = try? Data(contentsOf: url!)
-                            if let imageData = data {
-                                let image = UIImage(data: imageData)
-                                self.potentialMembers.append(Container(member: name as! String, image: image as! UIImage, profile: pic as! String, id: id as! String))
+                            let userID = document.documentID
+                            if !self.currentMembers.contains(userID) {
+                                cache.getProfile(uid: userID) { (profile) in
+                                    if let profile = profile {
+                                        self.potentialMembers.append(profile.id)
+                                    }
+                                }
                             }
                         }
                     }
@@ -117,15 +117,16 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "potentialMembersCellIdentifier", for: indexPath as IndexPath) as? PotentialUserTableViewCell
         let currentUser = currentPotentialMembers[indexPath.row]
-        cell?.usernameLable.text = currentUser.member
-        cell?.userProfileImageView.image = currentUser.image
         
-        cell?.id = currentUser.id
-        cell?.addlabel.text = currentUser.status
-        if(currentUser.inGroup) {
-            cell?.addlabel.isHidden = false
-        } else {
-            cell?.addlabel.isHidden = true
+        cache.getProfile(uid: currentUser) { (profile) in
+            if let profile = profile {
+                cell?.usernameLable.text = profile.username
+                cell?.id = currentUser
+                let profilePicURL = profile.profilePicURL
+                cache.getImage(imageURL: profilePicURL, complete: { (profilePic) in
+                    cell?.userProfileImageView.image = profilePic
+                })
+            }
         }
         return cell!
     }
@@ -138,24 +139,21 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         currentPotentialMembers = potentialMembers.filter({names -> Bool in
             guard let text = searchBar.text else { return false}
-            return names.member.contains(text)
+            //for user in potentialMembers {
+            return names.contains(text)
         })
         potentialMembersTableView.reloadData()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let current = currentPotentialMembers[indexPath.row]
-        let cellname = currentPotentialMembers[indexPath.row].member
+        let currentID = currentPotentialMembers[indexPath.row]
+        
         let currentCell = potentialMembersTableView.cellForRow(at: indexPath) as! PotentialUserTableViewCell
         
         if (delegate != nil) {
             //group name you want to add user in
-            print(groupname)
-            let userid = currentCell.id
-            let name = currentCell.usernameLable.text
-            let ref_group = Firestore.firestore().collection("groups").document(groupddocid).collection("usersInGroup").document(userid).setData([
-                "username": name,
-                "profilePicURL": current.profile
+            let ref_group = Firestore.firestore().collection("groups").document(groupddocid).collection("usersInGroup").document(currentID).setData([
+                "lastActive": NSDate()
             ]) { err in
                 if let err = err {
                     print("Error writing document: \(err)")
@@ -165,7 +163,7 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
             }
             
             
-            let ref_setuser = Firestore.firestore().collection("users").document(userid).collection("groups").document(groupddocid).setData([
+            let ref_setuser = Firestore.firestore().collection("users").document(currentID).collection("groups").document(groupddocid).setData([
                 "name": groupname
             ]) { err in
                 if let err = err {
@@ -175,10 +173,7 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
                 }
             }
             	
-            delegate?.addMember(id: userid)
-            currentCell.addlabel.adjustsFontSizeToFitWidth = true
-            currentCell.addlabel.text = current.status
-            currentCell.addlabel.isHidden = false
+            delegate?.addMember(id: currentID)
         }
     }
     

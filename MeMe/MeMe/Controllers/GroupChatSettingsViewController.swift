@@ -68,9 +68,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         let row = indexPath.row
         let currentUser = currentMembers[indexPath.row]
         
-        //cell?.usernameLabel.text = currentUser.username
-        //cell?.userProfileImageView.image = currentUser
-        
         cache.getProfile(uid: currentUser) { (profile) in
             if let profile = profile {
                 cell?.usernameLabel.text = profile.username
@@ -93,6 +90,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         if (segue.identifier == "addMembersSegue") {
             let vc: AddMembersViewController = segue.destination as! AddMembersViewController
             vc.delegate = self
+            vc.currentMembers = self.currentMembers
             if (identity == "settingsIdentifier") {
                 vc.groupname = self.groupName
                 vc.groupddocid = self.groupID
