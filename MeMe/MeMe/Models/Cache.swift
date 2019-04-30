@@ -16,20 +16,18 @@ class Cache {
     private var profileData:[String:Profile] = [:]
     private var imageData:[String:UIImage] = [:]
     private var groupData:[String:Group] = [:]
-    private var messageData:[String:[String:ChatMessage]] = [:]
     
     private var imageTasks:[String:DispatchGroup?] = [:]
     private var profileTasks:[String:DispatchGroup?] = [:]
     private var postTasks:[String:DispatchGroup?] = [:]
     private var groupTasks:[String:DispatchGroup?] = [:]
-    private var messageTasks:[String:[String:DispatchGroup?]?] = [:]
     
     private var postListeners:[String:ListenerRegistration?] = [:]
     private var profileListeners:[String:ListenerRegistration?] = [:]
     private var groupListeners:[String:ListenerRegistration?] = [:]
     private var chatListeners:[String:ListenerRegistration?] = [:]
     
-    private var groupUpdateListeners:[String:[(Group?) -> Void]?] = [:]
+    private var groupUpdateListeners:[String:[(Group?) -> Void]] = [:]
     
     private static var cache:Cache? = nil
     
@@ -39,12 +37,10 @@ class Cache {
             let postRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
             let profileRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
             let groupRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Group")
-            let messageRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ChatMessage")
             do{
                 let posts = try context.fetch(postRequest) as! [Post]
                 let profiles = try context.fetch(profileRequest) as! [Profile]
                 let groups = try context.fetch(groupRequest) as! [Group]
-                let messages = try context.fetch(messageRequest) as! [ChatMessage]
                 let postExpireTime = Date(timeIntervalSinceNow: -86400)
                 for post in posts {
                     let timestamp = Firebase.Timestamp(seconds: post.seconds, nanoseconds: post.nanoseconds).dateValue()
@@ -65,9 +61,6 @@ class Cache {
                     profileListeners[profile.id] = profileRef.addSnapshotListener { (profileDoc, profileDocErr) in
                         self.handleProfileDoc(profileDoc: profileDoc)
                     }
-                }
-                for message in messages {
-                    self.addMessageToData(message: message)
                 }
                 for group in groups {
                     groupData[group.id] = group
@@ -178,56 +171,6 @@ class Cache {
         }
     }
     
-    func getChatMessage(groupId:String, id:String, complete: @escaping (ChatMessage?) -> Void){
-        if let groupMessages = self.messageData[groupId], let message = groupMessages[id] {
-            complete(message)
-        }
-        else{
-            if let messageTasks = self.messageTasks[groupId], let tasks = messageTasks {
-                if let dispatchGroup = tasks[id], let group = dispatchGroup {
-                    DispatchQueue.global(qos: .background).async {
-                        group.wait()
-                        DispatchQueue.main.async {
-                            if let groupMessages = self.messageData[groupId], let message = groupMessages[id] {
-                                complete(message)
-                            }
-                            else{
-                                complete(nil)
-                            }
-                        }
-                    }
-                }
-            }
-            else{
-                let group = DispatchGroup()
-                if let messageTasks = self.messageTasks[groupId], var tasks = messageTasks {
-                    tasks[id] = group
-                }
-                else{
-                    var tasks:[String:DispatchGroup?] = [:]
-                    tasks[id] = group
-                    self.messageTasks[groupId] = tasks
-                }
-                group.enter()
-                let messageRef = Firestore.firestore().collection("groups").document(groupId).collection("messages").document(id)
-                messageRef.getDocument { (messageDoc, error) in
-                    self.handleMessageDoc(messageDoc: messageDoc)
-                }
-                DispatchQueue.global(qos: .background).async {
-                    group.wait()
-                    DispatchQueue.main.async {
-                        if let groupMessages = self.messageData[groupId], let message = groupMessages[id] {
-                            complete(message)
-                        }
-                        else{
-                            complete(nil)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
     func getImage(imageURL:String, complete: @escaping (UIImage?) -> Void){
         if let image = imageData[imageURL] {
             complete(image)
@@ -301,12 +244,16 @@ class Cache {
     }
     
     func addGroupUpdateListener(id:String, listener: @escaping (Group?) -> Void){
-        if let groupListeners = groupUpdateListeners[id], var listeners = groupListeners {
-            listeners.append(listener)
-        }
-        else{
-            let groupListeners:[(Group?) -> Void] = [listener]
-            groupUpdateListeners[id] = groupListeners
+        DispatchQueue.main.async {
+            print("adding listener: "+id)
+            if self.groupUpdateListeners[id] != nil {
+                print("exists")
+                self.groupUpdateListeners[id]?.append(listener)
+            }
+            else{
+                print("nope")
+                self.groupUpdateListeners[id] = [listener]
+            }
         }
     }
     
@@ -370,8 +317,11 @@ class Cache {
     }
     
     private func callGroupUpdateListeners(id:String, group:Group?){
-        if let groupListeners = self.groupUpdateListeners[id], let listeners = groupListeners {
-            for listener in listeners {
+        print("calling listeners for: "+id)
+        print(groupUpdateListeners[id]?.count)
+        if let groupListeners = self.groupUpdateListeners[id] {
+            for listener in groupListeners {
+                print("calling listener")
                 listener(group)
             }
         }
@@ -527,13 +477,10 @@ class Cache {
     }
     
     private func handleMessageDoc(messageDoc: DocumentSnapshot?) {
-        let id = messageDoc!.documentID
         let groupID = messageDoc!.reference.parent.parent!.documentID
         if let messageDoc = messageDoc {
             if messageDoc.exists {
                 let data = messageDoc.data()!
-                let content = data["content"] as! String
-                let image = data["image"] as! Bool
                 let sent = data["sent"] as! Firebase.Timestamp
                 let uid = data["uid"] as! String
                 getGroup(id: groupID) { (group) in
@@ -552,59 +499,7 @@ class Cache {
                         }
                     }
                 }
-                if let context = self.getContext(), self.messageData[id] == nil {
-                    let message = ChatMessage(context: context)
-                    message.id = id
-                    message.content = content
-                    message.group = groupID
-                    message.image = image
-                    message.sent = sent.dateValue() as NSDate
-                    message.uid = uid
-                    self.addMessageToData(message: message)
-                    self.updateCore()
-                    if let messageTasks = self.messageTasks[groupID], let tasks = messageTasks {
-                        if let dispatchGroup = tasks[id], let group = dispatchGroup {
-                            self.messageTasks[id] = nil
-                            group.leave()
-                        }
-                    }
-                }
-                else{
-                    if let messageTasks = self.messageTasks[groupID], let tasks = messageTasks {
-                        if let dispatchGroup = tasks[id], let group = dispatchGroup {
-                            self.messageTasks[id] = nil
-                            group.leave()
-                        }
-                    }
-                }
             }
-            else{
-                if let messageTasks = self.messageTasks[groupID], let tasks = messageTasks {
-                    if let dispatchGroup = tasks[id], let group = dispatchGroup {
-                        self.messageTasks[id] = nil
-                        group.leave()
-                    }
-                }
-            }
-        }
-        else{
-            if let messageTasks = self.messageTasks[groupID], let tasks = messageTasks {
-                if let dispatchGroup = tasks[id], let group = dispatchGroup {
-                    self.messageTasks[id] = nil
-                    group.leave()
-                }
-            }
-        }
-    }
-    
-    private func addMessageToData(message:ChatMessage){
-        if var groupMessages = messageData[message.group] {
-            groupMessages[message.id] = message
-        }
-        else{
-            var groupMessages:[String:ChatMessage] = [:]
-            groupMessages[message.id] = message
-            messageData[message.group] = groupMessages
         }
     }
     
@@ -621,11 +516,9 @@ class Cache {
                     Timestamp.getServerTime(complete: { (serverTime) in
                         if let serverTime = serverTime {
                             var lastActive = serverTime.dateValue()
-                            if let userDoc = userDoc {
-                                if userDoc.exists {
-                                    let userActive = userDoc.data()!["lastActive"] as! Firebase.Timestamp
-                                    lastActive = userActive.dateValue()
-                                }
+                            if let userDoc = userDoc, userDoc.exists {
+                                let userActive = userDoc.data()!["lastActive"] as! Firebase.Timestamp
+                                lastActive = userActive.dateValue()
                             }
                             if self.groupData[id] != nil {
                                 let data:[String:Any] = [

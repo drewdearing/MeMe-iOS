@@ -12,10 +12,11 @@ import Firebase
 private let cellIdentifier = "GroupChatTableViewCell"
 
 class GroupChatsViewController: TabViewController, UITableViewDelegate, UITableViewDataSource, addGroupsDelegate {
-
+    
     @IBOutlet var groupChatsTableView: UITableView!
-    private var groupChats: [GroupChat] = []
-    var selectedChat:GroupChat?
+    private var groups: [String:Bool] = [:]
+    private var groupChats:[String] = []
+    var selectedChat:String?
 
     private let db = Firestore.firestore()
     
@@ -33,15 +34,16 @@ class GroupChatsViewController: TabViewController, UITableViewDelegate, UITableV
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let groupChatCell = groupChatsTableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath as IndexPath) as? GroupChatTableViewCell
+        let groupChatCell = groupChatsTableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath as IndexPath) as! GroupChatTableViewCell
         
-        let row = indexPath.row
-        let groupChat = groupChats[row]
+        cache.getGroup(id: groupChats[indexPath.row]) { (group) in
+            if let group = group {
+                groupChatCell.groupNameLabel.text = group.name
+                groupChatCell.unreadMessagesLabel.text = String(group.unreadMessages)
+            }
+        }
         
-        groupChatCell?.groupNameLabel.text = groupChat.groupChatName
-        groupChatCell?.unreadMessagesLabel.text = String(groupChat.unreadMessages)
-        
-        return groupChatCell!
+        return groupChatCell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -53,7 +55,7 @@ class GroupChatsViewController: TabViewController, UITableViewDelegate, UITableV
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ChatSelectSegue" {
             let dest = segue.destination as! ChatViewController
-            dest.chatID = selectedChat?.groupId
+            dest.chatID = selectedChat
         } else if segue.identifier == "GroupSettingsSegue" {
             let dest = segue.destination as! GroupChatSettingsViewController
             dest.delegate = self
@@ -65,39 +67,49 @@ class GroupChatsViewController: TabViewController, UITableViewDelegate, UITableV
     }
 
     func setUpGroups() {
-        if let currentUser = Auth.auth().currentUser {
-            let q = DispatchQueue(label:"LoadGroups")
-            
-            q.sync {
-                let db = Firestore.firestore().collection("users").document(currentUser.uid).collection("groups")
-                db.getDocuments() { (querySnapshot, err) in
-                    if let err = err {
-                        print("Error getting documents: \(err)")
-                        return
+        let currentUser = Auth.auth().currentUser!
+        let groupsRef = Firestore.firestore().collection("users").document(currentUser.uid).collection("groups")
+        groupsRef.addSnapshotListener { (query, err) in
+            if let query = query {
+                query.documentChanges.forEach { change in
+                    if change.type == .added {
+                        let groupId = change.document.documentID
+                        self.groups[groupId] = true
+                        self.updateData()
+                        cache.addGroupUpdateListener(id: groupId) { (group) in
+                            if let group = group, let inGroup = self.groups[group.id], inGroup {
+                                self.updateData()
+                            }
+                        }
                     }
-                    else {
-                          for document in querySnapshot!.documents {
-                            cache.getGroup(id: document.documentID, complete: { (group) in
-                                if let group = group {
-                                    let name = group.name
-                                    let groupID = group.id
-                                    self.groupChats.append(GroupChat(id: groupID, groupChatName: name))
-                                    self.groupChatsTableView.reloadData()
-                                }
-                            })
-                          }
+                    if change.type == .removed {
+                        self.groups[change.document.documentID] = false
+                        self.updateData()
                     }
                 }
             }
         }
     }
-    func addGroup(name: String, id: String) {
-        groupChats.append(GroupChat(id: id, groupChatName: name))
+    
+    func updateData(){
+        var newGroupChats:[String] = []
+        for group in groups {
+            let id = group.key
+            let inGroup = group.value
+            if inGroup {
+                newGroupChats.append(id)
+            }
+        }
+        groupChats = newGroupChats
         groupChatsTableView.reloadData()
     }
     
+    func addGroup(name:String, id: String) {
+        //cache.getGroup(id:  , complete: <#T##(Group?) -> Void#>)
+        //groupChatsTableView.reloadData()
+    }
+    
     override func update() {
-        groupChats.removeAll()
-        setUpGroups()
+        
     }
 }

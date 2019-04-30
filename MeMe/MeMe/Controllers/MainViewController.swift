@@ -29,6 +29,7 @@ class MainViewController: UITabBarController, UITabBarControllerDelegate {
                         if self.unreadMessages[groupId] == nil {
                             cache.getGroup(id: groupId, complete: { (group) in
                                 if let group = group {
+                                    print("UNREAD: "+String(group.unreadMessages))
                                     self.unreadMessages[group.id] = group.unreadMessages
                                     self.updateMessageCounter()
                                 }
