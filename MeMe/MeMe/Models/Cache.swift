@@ -524,6 +524,17 @@ class Cache {
                                         self.groupTasks[id] = nil
                                         group.leave()
                                     }
+                                    if self.chatListeners[id] == nil {
+                                        self.chatListeners[id] = messageRef.addSnapshotListener { (query, error) in
+                                            if let query = query {
+                                                query.documentChanges.forEach { change in
+                                                    if change.type == .added {
+                                                        self.handleMessageDoc(messageDoc: change.document)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 })
                             }
                             else if let context = self.getContext(){
