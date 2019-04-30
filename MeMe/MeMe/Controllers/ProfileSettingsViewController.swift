@@ -10,7 +10,7 @@ import Firebase
 import FirebaseStorage
 import FirebaseFirestore
 
-private let loginStoryIdentifier = "loginVCStoryIdentifier"
+private let loginStoryIdentifier = "loginVC"
 
 class ProfileSettingsViewController: UIViewController {
     var database: Firestore!
@@ -55,6 +55,7 @@ class ProfileSettingsViewController: UIViewController {
         
         Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
+                print("username", user.uid)
                 // user is signed in so don't do anything
             } else {
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -120,7 +121,7 @@ class ProfileSettingsViewController: UIViewController {
                     self?.username.isUserInteractionEnabled = false
                     self?.password.isUserInteractionEnabled = false
                     self!.navigationItem.rightBarButtonItem?.isEnabled = false
-                    DispatchQueue.global(qos: .background).async {
+                    DispatchQueue.global(qos: .userInteractive).async {
                         self!.deleteUser(currentUserID: currentUserID)
                         DispatchQueue.main.async {
                             let mainStoryBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -151,33 +152,19 @@ class ProfileSettingsViewController: UIViewController {
     }
     
     private func deleteUser(currentUserID: String) {
-        let userDocumentReference = database.collection("users").document(currentUserID)
-        
-        userDocumentReference.getDocument {
-            (userDocumentSnapshot, error) in
-            
-            if let userDocumentSnapshot = userDocumentSnapshot,
-                userDocumentSnapshot.exists,
-                let userData = userDocumentSnapshot.data(),
-                let fetchedUser = User(dictionary: userData) {
-                    print("About to unfollow for user", currentUserID)
-                    self.unfollowUsers(currentUser: fetchedUser)
-                    print("About to delete Posts for user", currentUserID)
-                    self.deleteUserPosts(currentUser: fetchedUser)
-                    print("Setting username and profile Pic to default", currentUserID)
-                    self.setUserToDefaultDeletedUser(currentUserID: currentUserID)
-            }
-        }
+        self.unfollowUsers(currentUserID: currentUserID)
+        self.deleteUserPosts(currentUserID: currentUserID)
+        self.setUserToDefaultDeletedUser(currentUserID: currentUserID)
     }
     
-    private func unfollowUsers(currentUser: User) {
-        unfollowAllFollowing(currentUser: currentUser)
-        removeFromAllFollowingUsers(currentUser: currentUser)
+    private func unfollowUsers(currentUserID: String) {
+        unfollowAllFollowing(currentUserID: currentUserID)
+        removeFromAllFollowingUsers(currentUserID: currentUserID)
     }
     
     private func setUserToDefaultDeletedUser(currentUserID: String) {
         let defaultUsername = "Unknown"
-        let defaultProfilePicURL = "https://firebasestorage.googleapis.com/v0/b/meme-d3805.appspot.com/o/profile_gDIlgji3zEYJIfVj2DBpncr9NN53.png?alt=media&token=f1b19b30-0d90-4e48-9fb8-05fa51dccd5d"
+        let defaultProfilePicURL = "https://cnam.ca/wp-content/uploads/2018/06/default-profile.gif"
         
         DispatchQueue.global(qos: .background).async {
 
@@ -194,135 +181,183 @@ class ProfileSettingsViewController: UIViewController {
         }
     }
     
-    private func unfollowAllFollowing(currentUser: User) {
+    private func unfollowAllFollowing(currentUserID: String) {
         let usersRef = database.collection("users")
-        let following = currentUser.following
-        let currentUserID = authentication.currentUser?.uid
+        let currentUserDocRef = usersRef.document(currentUserID)
+        var following: [String] = []
         
+        // Unfollow by deleting the to be deleted user
         DispatchQueue.global(qos: .userInteractive).async {
-            for followingUser in following {
+            currentUserDocRef.collection("following").getDocuments(completion: { (userDocumentSnapshot, error0) in
                 
-                let followingUserRef = usersRef.document(followingUser)
-                followingUserRef.getDocument { (userDocumentSnapshot, error) in
-                    
-                    if let userDocumentSnapshot = userDocumentSnapshot,
-                        userDocumentSnapshot.exists,
-                        let userData = userDocumentSnapshot.data() {
-                        
-                        if var uFollowingUser = User(dictionary: userData) {
-                            
-                            for followerIndex in 0..<uFollowingUser.followers.count {
-                                if uFollowingUser.followers[followerIndex] == currentUserID {
-                                    uFollowingUser.followers.remove(at: followerIndex)
-                                    
-                                    followingUserRef.updateData(["followers" : uFollowingUser.followers,
-                                                                 "numFollowers": uFollowingUser.followers.count]) {
-                                        error in
-                                        if let error = error {
-                                            print("Error updating document: \(error)")
-                                        } else {
-                                            print("Unfollowed all following users successfully updated")
-                                        }
-                                    }
-                                    return
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    private func removeFromAllFollowingUsers(currentUser: User) {
-        let usersRef = database.collection("users")
-        let followers = currentUser.followers
-        let currentUserID = authentication.currentUser?.uid
-        
-        DispatchQueue.global(qos: .userInteractive).async {
-            
-            for followerUser in followers {
-                
-                let followerUserRef = usersRef.document(followerUser)
-                followerUserRef.getDocument { (userDocumentSnapshot, error) in
-                    
-                    if let userDocumentSnapshot = userDocumentSnapshot,
-                        userDocumentSnapshot.exists,
-                        let userData = userDocumentSnapshot.data() {
-                        
-                        if var uFollowerUser = User(dictionary: userData) {
-                            
-                            for followingIndex in 0..<uFollowerUser.following.count {
-                                if uFollowerUser.following[followingIndex] == currentUserID {
-                                    uFollowerUser.following.remove(at: followingIndex)
-                                    
-                                    followerUserRef.updateData(["following" : uFollowerUser.following,
-                                                                "numFollowing": uFollowerUser.following.count]) {
-                                                                    error in
-                                        if let error = error {
-                                            print("Error updating document: \(error)")
-                                        } else {
-                                            print("Unfollowed all following users successfully updated")
-                                        }
-                                    }
-                                    return
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    private func deleteUserPosts(currentUser: User) {
-        let postsRef = self.database.collection("post")
-        var postImageIndex: Int = currentUser.posts.count
-        
-        DispatchQueue.global(qos: .background).async {
-            
-            while postImageIndex > 0 {
-                postImageIndex -= 1
-                
-                print("Post To Delete", currentUser.posts[postImageIndex])
-                let postRef = postsRef.document(currentUser.posts[postImageIndex])
-                
-                postRef.getDocument { (document, error) in
-                    if let document = document, document.exists {
-                        
-                        if let docData = document.data(),
-                            let photoURL = docData["photoURL"] as? String {
-                            print("photoURL", photoURL)
-                            let httpsReference = self.storage.reference(forURL: photoURL)
-                            httpsReference.delete(completion: { (error) in
-                                if let error = error {
-                                    print("Error deleting Image: \(error)")
-                                } else {
-                                    print("Image successfully Deleted!")
-                                    postRef.delete(completion: { (error) in
-                                        if let error = error {
-                                            print("Error removing document: \(error)")
-                                        } else {
-                                            print("Document successfully removed!")
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    } else {
-                        print("Document does not exist: \(String(describing: error))")
-                    }
-                }
-            }
-            
-            let user = Auth.auth().currentUser
-            user?.delete { error in
-                if let error = error {
-                    // An error happened.
-                    print("Error deleting user: \(error)")
+                if let error0 = error0 {
+                    print("Error getting following documents: \(error0)")
                 } else {
-                    // Account deleted.
-                    print("deleted User successfully!")
+                    for document in userDocumentSnapshot!.documents {
+                        following.append(document.documentID)
+                    }
+                    
+                    for id in following {
+                        usersRef.document(id).collection("followers").document(currentUserID).delete() { deleteError in
+                            if let deleteError = deleteError {
+                                print("Error removing document: \(deleteError)")
+                            } else {
+                                print("Deleting User Document successfully removed from follower!")
+                            }
+                        }
+                    }
+                    
+                    // delete following documents and set numbers correctly
+                    for id in following {
+                        currentUserDocRef.collection("following").document(id).delete() { deleteError in
+                            if let deleteError = deleteError {
+                                print("Error removing document: \(deleteError)")
+                            } else {
+                                print("Deleting User Document successfully removed from follower!")
+                            }
+                        }
+                    }
+                    
+                    currentUserDocRef.updateData(["numFollowing" : 0])
+                    
+                    // Setting Following's new Num
+                    var numFollowers = 0
+                    
+                    for id in following {
+                        usersRef.document(id).collection("followers").getDocuments(completion: { (userDocumentSnapshot, error) in
+                            if let error = error {
+                                print("Error getting following documents: \(error)")
+                            } else {
+                                numFollowers = (userDocumentSnapshot?.count)!
+                                
+                                usersRef.document(id).updateData(["numFollowers" : numFollowers]) { err in
+                                    if let err = err {
+                                        print("Error updating followers \(err)")
+                                    } else {
+                                        print("Document successfully updated for new followers num")
+                                    }
+                                }
+                                
+                                numFollowers = 0
+                            }
+                        })
+                    }
+                }
+            })
+        }
+    }
+    
+    private func removeFromAllFollowingUsers(currentUserID: String) {
+        let usersRef = database.collection("users")
+        let currentUserDocRef = usersRef.document(currentUserID)
+        var followers: [String] = []
+        
+        // Unfollow by deleting the to be deleted user
+        DispatchQueue.global(qos: .userInteractive).async {
+            currentUserDocRef.collection("followers").getDocuments(completion: { (userDocumentSnapshot, error0) in
+                
+                if let error0 = error0 {
+                    print("Error getting following documents: \(error0)")
+                } else {
+                    for document in userDocumentSnapshot!.documents {
+                        followers.append(document.documentID)
+                    }
+                    
+                    for id in followers {
+                        usersRef.document(id).collection("following").document(currentUserID).delete() { deleteError in
+                            if let deleteError = deleteError {
+                                print("Error removing document: \(deleteError)")
+                            } else {
+                                print("Deleting User Document successfully removed from follower!")
+                            }
+                        }
+                    }
+                    
+                    // delete following documents and set numbers correctly
+                    for id in followers {
+                        currentUserDocRef.collection("followers").document(id).delete() { deleteError in
+                            if let deleteError = deleteError {
+                                print("Error removing document: \(deleteError)")
+                            } else {
+                                print("Deleting User Document successfully removed from follower!")
+                            }
+                        }
+                    }
+                    currentUserDocRef.updateData(["numFollowers" : 0])
+
+                    // Setting Following's new Num
+                    var numFollowing = 0
+                    
+                    for id in followers {
+                        usersRef.document(id).collection("following").getDocuments(completion: { (userDocumentSnapshot, error) in
+                            if let error = error {
+                                print("Error getting following documents: \(error)")
+                            } else {
+                                numFollowing = (userDocumentSnapshot?.count)!
+                                
+                                usersRef.document(id).updateData(["numFollowing" : numFollowing]) { err in
+                                    if let err = err {
+                                        print("Error updating followers \(err)")
+                                    } else {
+                                        print("Document successfully updated for new followers num")
+                                    }
+                                }
+                            
+                                numFollowing = 0
+                            }
+                        })
+                    }
+                }
+            })
+        }
+    }
+    
+    private func deleteUserPosts(currentUserID: String) {
+        let postsRef = self.database.collection("post")
+        let usersRef = database.collection("users").document(currentUserID)
+        var posts: [String] = []
+        
+        DispatchQueue.global(qos: .userInteractive).async {
+            usersRef.collection("posts").getDocuments { (postsQuerySnapshot, error) in
+                if let error = error {
+                    print("Error getting following documents: \(error)")
+                } else {
+                    for document in postsQuerySnapshot!.documents {
+                        posts.append(document.documentID)
+                    }
+                    
+                    DispatchQueue.main.async {
+                        DispatchQueue.global(qos: .userInteractive).async {
+                            for id in posts {
+                                postsRef.document(id).delete() { deleteError in
+                                    if let deleteError = deleteError {
+                                        print("Error removing document: \(deleteError)")
+                                    } else {
+                                        print("Deleting post!")
+                                    }
+                                }
+                                
+                                usersRef.collection("posts").document(id).delete() { deleteError in
+                                    if let deleteError = deleteError {
+                                        print("Error removing document: \(deleteError)")
+                                    } else {
+                                        print("Deleting Post0!")
+                                    }
+                                }
+                            }
+                            
+                            let user = Auth.auth().currentUser
+                            user?.delete { error in
+                                if let error = error {
+                                    // An error happened.
+                                    print("Error deleting user: \(error)")
+                                } else {
+                                    // Account deleted.
+                                    print("deleted User successfully!")
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

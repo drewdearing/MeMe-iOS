@@ -174,7 +174,8 @@ extension DiscoverViewController : UISearchBarDelegate {
         for index in 0 ..< allUsers.count {
             for jndex in 0 ..< searchUsernames.count {
                 if allUsers[index].username == searchUsernames[jndex] &&
-                    allUsers[index].username != Auth.auth().currentUser!.uid {
+                    allUsers[index].username != Auth.auth().currentUser!.uid &&
+                    allUsers[index].profilePicture != "https://cnam.ca/wp-content/uploads/2018/06/default-profile.gif" {
                     users.append(allUsers[index])
                 }
             }
