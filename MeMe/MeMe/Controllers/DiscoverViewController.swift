@@ -104,6 +104,11 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
     
     func fetchAllUsers() {
         isFetching = true
+        
+        allUsers.removeAll()
+        allProfileImage.removeAll()
+        allUsersID.removeAll()
+        
         DispatchQueue.global(qos: .userInteractive).async {
             
             _ = self.database.collection("users").getDocuments() { (querySnapshot, err) in
@@ -128,13 +133,15 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
     private func fetchProfilePictures() {
         for user in self.allUsers {
             DispatchQueue.global(qos: .userInteractive).async {
-                let url = URL(string: user.profilePicture)
-                let data = try? Data(contentsOf: url!)
-                if let imageData = data {
-                    if let image = UIImage(data: imageData) {
-                        DispatchQueue.main.async {
-                            self.allProfileImage.updateValue(image, forKey: user)
-                            self.searchUserTableView.reloadData()
+                if !self.allProfileImage.keys.contains(user) {
+                    let url = URL(string: user.profilePicture)
+                    let data = try? Data(contentsOf: url!)
+                    if let imageData = data {
+                        if let image = UIImage(data: imageData) {
+                            DispatchQueue.main.async {
+                                self.allProfileImage.updateValue(image, forKey: user)
+                                self.searchUserTableView.reloadData()
+                            }
                         }
                     }
                 }
@@ -149,9 +156,7 @@ extension DiscoverViewController : UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         var usernames: [String] = []
         
-        if isFetching {
-            return
-        } else if searchText.isEmpty {
+        if searchText.isEmpty {
             searchUserTableView.isHidden = true
             return
         } else {
@@ -175,6 +180,9 @@ extension DiscoverViewController : UISearchBarDelegate {
             }
         }
         searchUserTableView.reloadData()
+        if !isFetching {
+            fetchAllUsers()
+        }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
