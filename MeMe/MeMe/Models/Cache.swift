@@ -65,18 +65,8 @@ class Cache {
                 for group in groups {
                     groupData[group.id] = group
                     let groupRef = Firestore.firestore().collection("groups").document(group.id)
-                    let messageRef = groupRef.collection("messages")
                     groupListeners[group.id] = groupRef.addSnapshotListener { (groupDoc, groupDocErr) in
                         self.handleGroupDoc(groupDoc: groupDoc)
-                    }
-                    chatListeners[group.id] = messageRef.addSnapshotListener { (query, error) in
-                        if let query = query {
-                            query.documentChanges.forEach { change in
-                                if change.type == .added {
-                                    self.handleMessageDoc(messageDoc: change.document)
-                                }
-                            }
-                        }
                     }
                 }
                 updateCore()
@@ -148,21 +138,11 @@ class Cache {
                 groupTasks[id] = group
                 group.enter()
                 let groupRef = Firestore.firestore().collection("groups").document(id)
-                let messageRef = groupRef.collection("messages")
                 groupListeners[id] = groupRef.addSnapshotListener { (groupDoc, groupDocErr) in
                     self.handleGroupDoc(groupDoc: groupDoc)
                 }
                 DispatchQueue.global(qos: .background).async {
                     group.wait()
-                    self.chatListeners[id] = messageRef.addSnapshotListener { (query, error) in
-                        if let query = query {
-                            query.documentChanges.forEach { change in
-                                if change.type == .added {
-                                    self.handleMessageDoc(messageDoc: change.document)
-                                }
-                            }
-                        }
-                    }
                     DispatchQueue.main.async {
                         complete(self.groupData[id])
                     }
@@ -276,17 +256,32 @@ class Cache {
     }
     
     func updateGroup(id: String, data:[String:Any], complete: @escaping (Group?) -> Void){
-        let name = data["name"] as! String
-        let numMembers = data["numMembers"] as! Int32
-        let lastActive = data["lastActive"] as! NSDate
-        let active = data["active"] as! Bool
-        let unreadMessages = data["unreadMessages"] as! Int32
+        var name = data["name"] as? String
+        var numMembers = data["numMembers"] as? Int32
+        var lastActive = data["lastActive"] as? NSDate
+        var active = data["active"] as? Bool
+        var unreadMessages = data["unreadMessages"] as? Int32
         if let group = groupData[id] {
-            group.name = name
-            group.numMembers = numMembers
-            group.lastActive = lastActive
-            group.active = active
-            group.unreadMessages = unreadMessages
+            if name == nil {
+                name = group.name
+            }
+            if numMembers == nil {
+                numMembers = group.numMembers
+            }
+            if lastActive == nil {
+                lastActive = group.lastActive
+            }
+            if active == nil {
+                active = group.active
+            }
+            if unreadMessages == nil {
+                unreadMessages = group.unreadMessages
+            }
+            group.name = name!
+            group.numMembers = numMembers!
+            group.lastActive = lastActive!
+            group.active = active!
+            group.unreadMessages = unreadMessages!
             updateCore()
             callGroupUpdateListeners(id: id, group: group)
             complete(group)
@@ -317,11 +312,8 @@ class Cache {
     }
     
     private func callGroupUpdateListeners(id:String, group:Group?){
-        print("calling listeners for: "+id)
-        print(groupUpdateListeners[id]?.count)
         if let groupListeners = self.groupUpdateListeners[id] {
             for listener in groupListeners {
-                print("calling listener")
                 listener(group)
             }
         }
@@ -512,6 +504,7 @@ class Cache {
                 let name = data["name"] as! String
                 let numMembers = data["numMembers"] as! Int32
                 let userRef = groupDoc.reference.collection("usersInGroup").document(currentUser.uid)
+                let messageRef = Firestore.firestore().collection("groups").document(id).collection("messages")
                 userRef.getDocument(completion:  { (userDoc, error) in
                     Timestamp.getServerTime(complete: { (serverTime) in
                         if let serverTime = serverTime {
@@ -524,9 +517,7 @@ class Cache {
                                 let data:[String:Any] = [
                                     "name": name,
                                     "numMembers": numMembers,
-                                    "lastActive": lastActive,
-                                    "unreadMessages": Int32(0),
-                                    "active": false
+                                    "lastActive": lastActive
                                 ]
                                 self.updateGroup(id: id, data: data, complete: { (userGroup) in
                                     if let dispatchGroup = self.groupTasks[id], let group = dispatchGroup {
@@ -548,6 +539,17 @@ class Cache {
                                 if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
                                     self.groupTasks[id] = nil
                                     g.leave()
+                                }
+                                if self.chatListeners[group.id] == nil {
+                                    self.chatListeners[group.id] = messageRef.addSnapshotListener { (query, error) in
+                                        if let query = query {
+                                            query.documentChanges.forEach { change in
+                                                if change.type == .added {
+                                                    self.handleMessageDoc(messageDoc: change.document)
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             else{
