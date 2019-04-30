@@ -25,7 +25,6 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
     
     var database: Firestore = Firestore.firestore()
     var storage: Storage = Storage.storage()
-    var listener: ListenerRegistration?
     
     var allUsers: [User] = []
     var allProfileImage: [User: UIImage] = [:]
@@ -48,20 +47,6 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
         searchUserTableView.isHidden = true
         
         fetchAllUsers()
-        
-        let ref = Firestore.firestore().collection("users")
-        listener = ref.addSnapshotListener{ query,error in
-            guard let snapshot = query else {
-                print("ERROR")
-                return
-            }
-            snapshot.documentChanges.forEach{ change in
-                if change.type == .added {
-                    //self.fetchAllUsers()
-                    print("HELLO NEW USER")
-                }
-            }
-        }
     }
     
     func addMeme(post: PostData) {
