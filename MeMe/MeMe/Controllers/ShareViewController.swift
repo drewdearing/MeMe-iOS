@@ -60,24 +60,27 @@ class ShareViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     @IBAction func done(_ sender: Any) {
         let uid = Auth.auth().currentUser!.uid
-        let sent = Date()
-        if let indexPaths = self.tableView.indexPathsForSelectedRows {
-            for indexPath in indexPaths {
-                let id = groups[indexPath.row]
-                let ref = Firestore.firestore().collection("groups").document(id).collection("messages")
-                ref.document().setData([
-                    "sent": sent,
-                    "uid": uid,
-                    "image": true,
-                    "content": postID
-                ]) { error in
-                    if error != nil {
-                        print("ERROR")
-                        return
+        Timestamp.getServerTime { (serverTime) in
+            if let sent = serverTime {
+                if let indexPaths = self.tableView.indexPathsForSelectedRows {
+                    for indexPath in indexPaths {
+                        let id = self.groups[indexPath.row]
+                        let ref = Firestore.firestore().collection("groups").document(id).collection("messages")
+                        ref.document().setData([
+                            "sent": sent.dateValue(),
+                            "uid": uid,
+                            "image": true,
+                            "content": self.postID
+                        ]) { error in
+                            if error != nil {
+                                print("ERROR")
+                                return
+                            }
+                        }
                     }
+                    self.dismiss(animated: true)
                 }
             }
-            dismiss(animated: true)
         }
     }
 }

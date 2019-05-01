@@ -162,10 +162,14 @@ class EditToolsViewController: UIViewController {
     
     func passPost(imageName:String, download:String, color:String){
         let currentUser = Auth.auth().currentUser
-        let data = PostData(id: imageName, uid: currentUser!.uid, color: color, timestamp: Timestamp(), upvotes: 0, downvotes: 0)
-        SVProgressHUD.dismiss()
-        delegate?.addMeme(post: data)
-        dismiss(animated: true)
+        Timestamp.getServerTime { (serverTime) in
+            if let serverTime = serverTime {
+                let data = PostData(id: imageName, uid: currentUser!.uid, color: color, timestamp: serverTime, upvotes: 0, downvotes: 0)
+                SVProgressHUD.dismiss()
+                self.delegate?.addMeme(post: data)
+                self.dismiss(animated: true)
+            }
+        }
     }
     
     func addToFirestore(download:String, color:String, ref:DocumentReference){

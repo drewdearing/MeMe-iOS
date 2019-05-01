@@ -34,18 +34,22 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         
         cache.getGroup(id: chatID) { (group) in
             if let group = group {
-                self.navItem.title = group.name
-                let data:[String:Any] = [
-                    "name": group.name,
-                    "numMembers": group.numMembers,
-                    "lastActive": NSDate(),
-                    "unreadMessages": 0 as Int32,
-                    "active": true
-                ]
-                cache.updateGroup(id: group.id, data: data, complete: { (groupChat) in
-                    self.groupChat = groupChat
-                    self.checkListener()
-                })
+                Timestamp.getServerTime { (serverTime) in
+                    if let lastActive = serverTime {
+                        self.navItem.title = group.name
+                        let data:[String:Any] = [
+                            "name": group.name,
+                            "numMembers": group.numMembers,
+                            "lastActive": lastActive.dateValue() as NSDate,
+                            "unreadMessages": 0 as Int32,
+                            "active": true
+                        ]
+                        cache.updateGroup(id: group.id, data: data, complete: { (groupChat) in
+                            self.groupChat = groupChat
+                            self.checkListener()
+                        })
+                    }
+                }
             }
         }
     }
@@ -54,15 +58,19 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         listener?.remove()
         let currentUser = Auth.auth().currentUser!
         let userRef = Firestore.firestore().collection("groups").document(groupChat.id).collection("usersInGroup").document(currentUser.uid)
-        let data:[String:Any] = [
-            "name": groupChat.name,
-            "numMembers": groupChat.numMembers,
-            "lastActive": NSDate(),
-            "unreadMessages": 0 as Int32,
-            "active": false
-        ]
-        cache.updateGroup(id: groupChat.id, data: data, complete: {_ in })
-        userRef.updateData(["lastActive": NSDate()])
+        Timestamp.getServerTime { (serverTime) in
+            if let lastActive = serverTime {
+                let data:[String:Any] = [
+                    "name": self.groupChat.name,
+                    "numMembers": self.groupChat.numMembers,
+                    "lastActive": lastActive.dateValue() as NSDate,
+                    "unreadMessages": 0 as Int32,
+                    "active": false
+                ]
+                cache.updateGroup(id: self.groupChat.id, data: data, complete: {_ in })
+                userRef.updateData(["lastActive": lastActive.firebaseTimestamp()])
+            }
+        }
     }
     
     private func checkListener() {
@@ -160,21 +168,25 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                         let sender = Sender(id: uid, displayName: name)
                         if isImage {
                             cache.getPost(id: content) { (post) in
-                                let expireTime = Timestamp(s:Date().timeIntervalSince1970 - 86400)
-                                if let post = post, Timestamp(s: post.seconds, n: post.nanoseconds) > expireTime {
-                                    let postImageURL = post.photoURL
-                                    cache.getImage(imageURL: postImageURL, complete: { (cachedImage) in
-                                        if let cachedImage = cachedImage {
-                                            let image = MessageImage(image: cachedImage, post: content)
+                                Timestamp.getServerTime { (serverTime) in
+                                    if let serverTime = serverTime {
+                                        let expireTime = Timestamp(s:serverTime.dateValue().timeIntervalSince1970 - 86400)
+                                        if let post = post, Timestamp(s: post.seconds, n: post.nanoseconds) > expireTime {
+                                            let postImageURL = post.photoURL
+                                            cache.getImage(imageURL: postImageURL, complete: { (cachedImage) in
+                                                if let cachedImage = cachedImage {
+                                                    let image = MessageImage(image: cachedImage, post: content)
+                                                    let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
+                                                    self.insertMessage(message)
+                                                }
+                                            })
+                                        }
+                                        else{
+                                            let image = MessageImage(image: #imageLiteral(resourceName: "expired"), post: content)
                                             let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
                                             self.insertMessage(message)
                                         }
-                                    })
-                                }
-                                else{
-                                    let image = MessageImage(image: #imageLiteral(resourceName: "expired"), post: content)
-                                    let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
-                                    self.insertMessage(message)
+                                    }
                                 }
                             }
                         }
@@ -189,9 +201,13 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     }
     
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        let message = Message(id: (ref?.document().documentID)!, content:text, image:nil, sender: currentSender())
-        save(message)
-        inputBar.inputTextView.text = ""
+        Timestamp.getServerTime { (serverTime) in
+            if let serverTime = serverTime {
+                let message = Message(id: (self.ref?.document().documentID)!, content:text, image:nil, sender: self.currentSender(), date: serverTime.dateValue())
+                self.save(message)
+                inputBar.inputTextView.text = ""
+            }
+        }
     }
     
     func currentSender() -> Sender {

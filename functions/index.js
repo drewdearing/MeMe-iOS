@@ -281,6 +281,16 @@ exports.follow = functions.https.onRequest((req, res) => {
     })
 })
 
+exports.serverTimestamp = functions.https.onRequest((req, res) => {
+    let serverTime = (new Date().getTime() * 0.001)
+    let serverSeconds = parseInt(serverTime)
+    let serverNano = parseInt((serverTime - serverSeconds) * 1000000000)
+    res.status(200).json({
+        _seconds: serverSeconds,
+        _nanoseconds: serverNano
+    })
+})
+
 exports.unfollow = functions.https.onRequest((req, res) => {
     let uid = req.query.uid
     let followingUID = req.query.following

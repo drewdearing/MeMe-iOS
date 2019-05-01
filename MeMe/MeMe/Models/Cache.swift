@@ -618,49 +618,53 @@ class Cache {
                 let numMembers = data["numMembers"] as! Int32
                 let userRef = groupDoc.reference.collection("usersInGroup").document(currentUser.uid)
                 userRef.getDocument(completion:  { (userDoc, error) in
-                    var lastActive = Date()
-                    if let userDoc = userDoc {
-                        if userDoc.exists {
-                            let userActive = userDoc.data()!["lastActive"] as! Firebase.Timestamp
-                            lastActive = userActive.dateValue()
-                        }
-                    }
-                    if self.groupData[id] != nil {
-                        let data:[String:Any] = [
-                            "name": name,
-                            "numMembers": numMembers,
-                            "lastActive": lastActive,
-                            "unreadMessages": Int32(0),
-                            "active": false
-                        ]
-                        self.updateGroup(id: id, data: data, complete: { (userGroup) in
-                            if let dispatchGroup = self.groupTasks[id], let group = dispatchGroup {
-                                self.groupTasks[id] = nil
-                                group.leave()
+                    Timestamp.getServerTime(complete: { (serverTime) in
+                        if let serverTime = serverTime {
+                            var lastActive = serverTime.dateValue()
+                            if let userDoc = userDoc {
+                                if userDoc.exists {
+                                    let userActive = userDoc.data()!["lastActive"] as! Firebase.Timestamp
+                                    lastActive = userActive.dateValue()
+                                }
                             }
-                        })
-                    }
-                    else if let context = self.getContext(){
-                        let group = Group(context: context)
-                        group.id = id
-                        group.active = false
-                        group.name = name
-                        group.numMembers = numMembers
-                        group.unreadMessages = Int32(0)
-                        group.lastActive = lastActive as NSDate
-                        self.groupData[id] = group
-                        self.updateCore()
-                        if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
-                            self.groupTasks[id] = nil
-                            g.leave()
+                            if self.groupData[id] != nil {
+                                let data:[String:Any] = [
+                                    "name": name,
+                                    "numMembers": numMembers,
+                                    "lastActive": lastActive,
+                                    "unreadMessages": Int32(0),
+                                    "active": false
+                                ]
+                                self.updateGroup(id: id, data: data, complete: { (userGroup) in
+                                    if let dispatchGroup = self.groupTasks[id], let group = dispatchGroup {
+                                        self.groupTasks[id] = nil
+                                        group.leave()
+                                    }
+                                })
+                            }
+                            else if let context = self.getContext(){
+                                let group = Group(context: context)
+                                group.id = id
+                                group.active = false
+                                group.name = name
+                                group.numMembers = numMembers
+                                group.unreadMessages = Int32(0)
+                                group.lastActive = lastActive as NSDate
+                                self.groupData[id] = group
+                                self.updateCore()
+                                if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
+                                    self.groupTasks[id] = nil
+                                    g.leave()
+                                }
+                            }
+                            else{
+                                if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
+                                    self.groupTasks[id] = nil
+                                    g.leave()
+                                }
+                            }
                         }
-                    }
-                    else{
-                        if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
-                            self.groupTasks[id] = nil
-                            g.leave()
-                        }
-                    }
+                    })
                 })
             }
             else{
