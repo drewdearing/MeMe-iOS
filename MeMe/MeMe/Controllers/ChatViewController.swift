@@ -15,7 +15,6 @@ import Photos
 class ChatViewController: MessagesViewController, MessageInputBarDelegate, MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate, MessageCellDelegate, IndividualPostDelegate {
     
     var chatID:String!
-    var groupChat:Group!
     
     @IBOutlet weak var navItem: UINavigationItem!
     private var messages: [Message] = []
@@ -44,39 +43,42 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                             "unreadMessages": 0 as Int32,
                             "active": true
                         ]
-                        cache.updateGroup(id: group.id, data: data, complete: { (groupChat) in
-                            self.groupChat = groupChat
-                            self.checkListener()
-                        })
+                        cache.updateGroup(id: group.id, data: data, complete: {_ in })
+                    }
+                }
+            }
+        }
+        self.checkListener()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        listener?.remove()
+        let currentUser = Auth.auth().currentUser!
+        cache.getGroup(id: chatID) { (groupChat) in
+            if let groupChat = groupChat {
+                let userRef = Firestore.firestore().collection("groups").document(groupChat.id).collection("usersInGroup").document(currentUser.uid)
+                Timestamp.getServerTime { (serverTime) in
+                    if let lastActive = serverTime {
+                        let data:[String:Any] = [
+                            "name": groupChat.name,
+                            "numMembers": groupChat.numMembers,
+                            "lastActive": lastActive.dateValue() as NSDate,
+                            "lastUnreadMessage": lastActive.dateValue() as NSDate,
+                            "unreadMessages": 0 as Int32,
+                            "active": false
+                        ]
+                        cache.updateGroup(id: groupChat.id, data: data, complete: {_ in })
+                        userRef.updateData(["lastActive": lastActive.firebaseTimestamp()])
                     }
                 }
             }
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        listener?.remove()
-        let currentUser = Auth.auth().currentUser!
-        let userRef = Firestore.firestore().collection("groups").document(groupChat.id).collection("usersInGroup").document(currentUser.uid)
-        Timestamp.getServerTime { (serverTime) in
-            if let lastActive = serverTime {
-                let data:[String:Any] = [
-                    "name": self.groupChat.name,
-                    "numMembers": self.groupChat.numMembers,
-                    "lastActive": lastActive.dateValue() as NSDate,
-                    "lastUnreadMessage": lastActive.dateValue() as NSDate,
-                    "unreadMessages": 0 as Int32,
-                    "active": false
-                ]
-                cache.updateGroup(id: self.groupChat.id, data: data, complete: {_ in })
-                userRef.updateData(["lastActive": lastActive.firebaseTimestamp()])
-            }
-        }
-    }
-    
     private func checkListener() {
-        ref = db.collection("groups").document(groupChat.id).collection("messages")
-        listener = ref?.addSnapshotListener{ query,error in
+        ref = db.collection("groups").document(chatID).collection("messages")
+        listener = ref?.addSnapshotListener { query,error in
+            print("LISTENER WILL CALLED")
             guard let snapshot = query else {
                 print("ERROR")
                 return
@@ -85,7 +87,6 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
             snapshot.documentChanges.forEach{ change in
                 self.handleDocumentChange(change)
             }
-            self.updateMessages()
         }
     }
     
@@ -96,10 +97,14 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "settingsIdentifier") {
-            let dest: GroupChatSettingsViewController = segue.destination as! GroupChatSettingsViewController
-            dest.identity = "settingsIdentifier"
-            dest.groupName = groupChat.name
-            dest.groupID = groupChat.id
+            cache.getGroup(id: chatID) { (groupChat) in
+                let dest: GroupChatSettingsViewController = segue.destination as! GroupChatSettingsViewController
+                if let groupChat = groupChat {
+                    dest.identity = "settingsIdentifier"
+                    dest.groupName = groupChat.name
+                    dest.groupID = groupChat.id
+                }
+            }
         }
     }
     
@@ -152,6 +157,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         messages.sort { (a, b) -> Bool in
             a.sentDate.timeIntervalSince1970 < b.sentDate.timeIntervalSince1970
         }
+        self.updateMessages()
     }
     
     private func handleDocumentChange(_ change: DocumentChange) {
@@ -168,14 +174,19 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                         let name = profile.username
                         let sender = Sender(id: uid, displayName: name)
                         if isImage {
+                            print("we know theres an image")
                             cache.getPost(id: content) { (post) in
+                                print("post retrieved: "+(post?.id)!)
                                 Timestamp.getServerTime { (serverTime) in
                                     if let serverTime = serverTime {
+                                        print("serverTime got")
                                         let expireTime = Timestamp(s:serverTime.dateValue().timeIntervalSince1970 - 86400)
                                         if let post = post, Timestamp(s: post.seconds, n: post.nanoseconds) > expireTime {
+                                            print("in here")
                                             let postImageURL = post.photoURL
                                             cache.getImage(imageURL: postImageURL, complete: { (cachedImage) in
                                                 if let cachedImage = cachedImage {
+                                                    print("in here 2")
                                                     let image = MessageImage(image: cachedImage, post: content)
                                                     let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
                                                     self.insertMessage(message)
