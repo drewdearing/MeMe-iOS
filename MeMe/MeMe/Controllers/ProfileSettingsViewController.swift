@@ -124,12 +124,9 @@ class ProfileSettingsViewController: UIViewController {
                     DispatchQueue.global(qos: .userInteractive).async {
                         self!.deleteUser(currentUserID: currentUserID)
                         DispatchQueue.main.async {
-                            let mainStoryBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                            if let loginVCDestination = mainStoryBoard.instantiateViewController(withIdentifier: loginStoryIdentifier) as? LoginViewController {
-                                
-                                let navController = UINavigationController(rootViewController: loginVCDestination)
-                                self!.present(navController, animated: true, completion: nil)
-                            }
+                            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                            let controller = storyboard.instantiateViewController(withIdentifier: "loginVC")
+                            self!.present(controller, animated: true, completion: nil)
                         }
                     }
                 }
@@ -347,6 +344,9 @@ class ProfileSettingsViewController: UIViewController {
                             }
                             
                             let user = Auth.auth().currentUser
+
+                            try! Auth.auth().signOut()
+                            
                             user?.delete { error in
                                 if let error = error {
                                     // An error happened.
