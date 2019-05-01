@@ -225,13 +225,10 @@ class Cache {
     
     func addGroupUpdateListener(id:String, listener: @escaping (Group?) -> Void){
         DispatchQueue.main.async {
-            print("adding listener: "+id)
             if self.groupUpdateListeners[id] != nil {
-                print("exists")
                 self.groupUpdateListeners[id]?.append(listener)
             }
             else{
-                print("nope")
                 self.groupUpdateListeners[id] = [listener]
             }
         }
@@ -540,9 +537,7 @@ class Cache {
                     if let group = group, !group.active {
                         let lastUnreadMessage = group.lastUnreadMessage as Date
                         let currentUID = Auth.auth().currentUser!.uid
-                        print(lastUnreadMessage)
                         if lastUnreadMessage < sent.dateValue() && currentUID != uid {
-                            print(sent.dateValue())
                             let data:[String:Any] = [
                                 "name": group.name,
                                 "numMembers": group.numMembers,
@@ -609,8 +604,6 @@ class Cache {
                                 group.numMembers = numMembers
                                 group.unreadMessages = Int32(0)
                                 group.lastActive = lastActive as NSDate
-                                print("listen dude this is it:")
-                                print(group.lastActive)
                                 group.lastUnreadMessage = lastActive as NSDate
                                 self.groupData[id] = group
                                 self.updateCore()

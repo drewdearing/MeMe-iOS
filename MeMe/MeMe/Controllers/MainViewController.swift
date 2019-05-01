@@ -29,7 +29,6 @@ class MainViewController: UITabBarController, UITabBarControllerDelegate {
                         if self.unreadMessages[groupId] == nil {
                             cache.getGroup(id: groupId, complete: { (group) in
                                 if let group = group {
-                                    print("UNREAD: "+String(group.unreadMessages))
                                     self.unreadMessages[group.id] = group.unreadMessages
                                     self.updateMessageCounter()
                                 }
@@ -58,23 +57,16 @@ class MainViewController: UITabBarController, UITabBarControllerDelegate {
     
     func updateMessageCounter(){
         var count = 0 as Int32
-        print(unreadMessages)
         for numMessages in Array(unreadMessages.values) {
             count += numMessages
         }
-        print("SHOULD BE: "+String(count))
-        var found = false
-        while(!found){
-            print("help")
-            if let items = self.tabBar.items {
-                found = true
-                let item = items[2]
-                if count > 0 {
-                    item.badgeValue = "\(count)"
-                }
-                else{
-                    item.badgeValue = nil
-                }
+        if let items = self.tabBar.items {
+            let item = items[2]
+            if count > 0 {
+                item.badgeValue = "\(count)"
+            }
+            else{
+                item.badgeValue = nil
             }
         }
     }
