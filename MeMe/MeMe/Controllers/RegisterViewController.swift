@@ -14,7 +14,7 @@ struct RegisterFields {
     let name:String
     let password:String
     let email:String
-    let photoURL:String
+    let image:UIImage
 }
 
 class RegisterViewController: UIViewController, ImagePickerDelegate {
@@ -79,19 +79,8 @@ class RegisterViewController: UIViewController, ImagePickerDelegate {
                 if let password = getPassword() {
                     if let image = selectedImage {
                         SVProgressHUD.show(withStatus: "Loading...")
-                        uploadImage(image: image) { (url) in
-                            if let avatarURL = url {
-                                let requiredFields = RegisterFields(name: name, password: password, email: email, photoURL: avatarURL)
-                                complete(requiredFields)
-                                return
-                            }
-                            else{
-                                SVProgressHUD.dismiss()
-                                self.unlockUI()
-                                self.statusLabel.text = "Could not upload image!"
-                                complete(nil)
-                            }
-                        }
+                        let requiredFields = RegisterFields(name: name, password: password, email: email, image: image)
+                        complete(requiredFields)
                     }
                     else{
                         statusLabel.text = "Please select an avatar!"
@@ -155,34 +144,43 @@ class RegisterViewController: UIViewController, ImagePickerDelegate {
                 Auth.auth().createUser(withEmail: fields.email, password: fields.password) { authResult, error in
                     if let user = authResult {
                         print(user.user.uid)
-                        Firestore.firestore().collection("users").document(user.user.uid).setData([
-                            "username": fields.name,
-                            "email": fields.email,
-                            "followers": [String](),
-                            "following": [String](),
-                            "numFollowing": 0,
-                            "numFollowers": 0,
-                            "posts": [String](),
-                            "profilePicURL": fields.photoURL
-                        ]) { err in
-                            if let err = err {
-                                SVProgressHUD.dismiss()
-                                user.user.delete { error in
-                                    if let error = error {
-                                        print("data corrupted!")
+                        self.uploadImage(image: fields.image) { (url) in
+                            if let avatarURL = url {
+                                Firestore.firestore().collection("users").document(user.user.uid).setData([
+                                    "username": fields.name,
+                                    "email": fields.email,
+                                    "followers": [String](),
+                                    "following": [String](),
+                                    "numFollowing": 0,
+                                    "numFollowers": 0,
+                                    "posts": [String](),
+                                    "profilePicURL": avatarURL
+                                ]) { err in
+                                    if let err = err {
+                                        SVProgressHUD.dismiss()
+                                        user.user.delete { error in
+                                            if let error = error {
+                                                print("data corrupted!")
+                                            } else {
+                                                self.statusLabel.text = "Could not create user!"
+                                            }
+                                        }
                                     } else {
-                                        self.statusLabel.text = "Could not create user!"
+                                        SVProgressHUD.dismiss()
+                                        self.statusLabel.text = "User created!"
+                                        let newUser = CurrentProfile(username: fields.name, email: fields.email, numFollowing: 0, numFollowers: 0, profilePicURL: avatarURL)
+                                        UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
+                                        //go to home
+                                        self.performSegue(withIdentifier: "RegisterSegue", sender: self)
                                     }
+                                    self.unlockUI()
                                 }
-                            } else {
-                                SVProgressHUD.dismiss()
-                                self.statusLabel.text = "User created!"
-                                let newUser = CurrentProfile(username: fields.name, email: fields.email, numFollowing: 0, numFollowers: 0, profilePicURL: fields.photoURL)
-                                UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
-                                //go to home
-                                self.performSegue(withIdentifier: "RegisterSegue", sender: self)
                             }
-                            self.unlockUI()
+                            else{
+                                SVProgressHUD.dismiss()
+                                self.unlockUI()
+                                self.statusLabel.text = "Could not upload image!"
+                            }
                         }
                     }
                     else{

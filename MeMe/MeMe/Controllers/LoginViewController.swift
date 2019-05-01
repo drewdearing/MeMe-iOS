@@ -89,9 +89,19 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        try! Auth.auth().signOut()
+        
+        Auth.auth().addStateDidChangeListener { auth, user in
+            if let user = user {
+                print("username", user.uid)
+                // user is signed in so don't do anything
+            } else {
+
+                Auth.auth().removeStateDidChangeListener(auth)
+            }
+        }
+        
         statusLabel.text = ""
     }
-
-
 }
 
