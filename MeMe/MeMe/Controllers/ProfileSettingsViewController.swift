@@ -196,50 +196,64 @@ class ProfileSettingsViewController: UIViewController {
                         following.append(document.documentID)
                     }
                     
-                    for id in following {
-                        usersRef.document(id).collection("followers").document(currentUserID).delete() { deleteError in
-                            if let deleteError = deleteError {
-                                print("Error removing document: \(deleteError)")
-                            } else {
-                                print("Deleting User Document successfully removed from follower!")
-                            }
-                        }
-                    }
-                    
-                    // delete following documents and set numbers correctly
-                    for id in following {
-                        currentUserDocRef.collection("following").document(id).delete() { deleteError in
-                            if let deleteError = deleteError {
-                                print("Error removing document: \(deleteError)")
-                            } else {
-                                print("Deleting User Document successfully removed from follower!")
-                            }
-                        }
-                    }
-                    
-                    currentUserDocRef.updateData(["numFollowing" : 0])
-                    
-                    // Setting Following's new Num
-                    var numFollowers = 0
-                    
-                    for id in following {
-                        usersRef.document(id).collection("followers").getDocuments(completion: { (userDocumentSnapshot, error) in
-                            if let error = error {
-                                print("Error getting following documents: \(error)")
-                            } else {
-                                numFollowers = (userDocumentSnapshot?.count)!
-                                
-                                usersRef.document(id).updateData(["numFollowers" : numFollowers]) { err in
-                                    if let err = err {
-                                        print("Error updating followers \(err)")
+                    DispatchQueue.main.async {
+                        DispatchQueue.global(qos: .userInteractive).async {
+                            for id in following {
+                                usersRef.document(id).collection("followers").document(currentUserID).delete() { deleteError in
+                                    if let deleteError = deleteError {
+                                        print("Error removing document: \(deleteError)")
                                     } else {
-                                        print("Document successfully updated for new followers num")
+                                        print("Deleting User Document successfully removed from follower!0")
                                     }
                                 }
-                                
-                                numFollowers = 0
                             }
-                        })
+                            
+                            DispatchQueue.main.async {
+                                DispatchQueue.global(qos: .userInteractive).async {
+                                    // delete following documents and set numbers correctly
+                                    for id in following {
+                                        currentUserDocRef.collection("following").document(id).delete() { deleteError in
+                                            if let deleteError = deleteError {
+                                                print("Error removing document: \(deleteError)")
+                                            } else {
+                                                print("Deleting User Document successfully removed from follower!1")
+                                            }
+                                        }
+                                    }
+                                    currentUserDocRef.updateData(["numFollowing" : 0])
+                                    
+                                    DispatchQueue.main.async {
+                                        DispatchQueue.global(qos: .userInteractive).async {
+                                            
+                                            // Setting Following's new Num
+                                            var numFollowers = 0
+                                            
+                                            for id in following {
+                                                usersRef.document(id).getDocument(completion: { (userDocumentSnapshot, error) in
+                                                    if let error = error {
+                                                        print("Error getting following documents: \(error)")
+                                                    } else {
+                                                        if (userDocumentSnapshot?.exists)!,
+                                                            let userData = userDocumentSnapshot?.data() {
+                                                            
+                                                            numFollowers = userData["numFollowers"] as! Int
+                                                            numFollowers = numFollowers - 1
+                                                            usersRef.document(id).updateData(["numFollowers" : numFollowers]) { err in
+                                                                if let err = err {
+                                                                    print("Error updating followers \(err)")
+                                                                } else {
+                                                                    print("Document successfully updated for new followers num")
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             })
@@ -262,49 +276,64 @@ class ProfileSettingsViewController: UIViewController {
                         followers.append(document.documentID)
                     }
                     
-                    for id in followers {
-                        usersRef.document(id).collection("following").document(currentUserID).delete() { deleteError in
-                            if let deleteError = deleteError {
-                                print("Error removing document: \(deleteError)")
-                            } else {
-                                print("Deleting User Document successfully removed from follower!")
-                            }
-                        }
-                    }
-                    
-                    // delete following documents and set numbers correctly
-                    for id in followers {
-                        currentUserDocRef.collection("followers").document(id).delete() { deleteError in
-                            if let deleteError = deleteError {
-                                print("Error removing document: \(deleteError)")
-                            } else {
-                                print("Deleting User Document successfully removed from follower!")
-                            }
-                        }
-                    }
-                    currentUserDocRef.updateData(["numFollowers" : 0])
-
-                    // Setting Following's new Num
-                    var numFollowing = 0
-                    
-                    for id in followers {
-                        usersRef.document(id).collection("following").getDocuments(completion: { (userDocumentSnapshot, error) in
-                            if let error = error {
-                                print("Error getting following documents: \(error)")
-                            } else {
-                                numFollowing = (userDocumentSnapshot?.count)!
-                                
-                                usersRef.document(id).updateData(["numFollowing" : numFollowing]) { err in
-                                    if let err = err {
-                                        print("Error updating followers \(err)")
+                    DispatchQueue.main.async {
+                        DispatchQueue.global(qos: .userInteractive).async {
+                            for id in followers {
+                                usersRef.document(id).collection("following").document(currentUserID).delete() { deleteError in
+                                    if let deleteError = deleteError {
+                                        print("Error removing document: \(deleteError)")
                                     } else {
-                                        print("Document successfully updated for new followers num")
+                                        print("Deleting User Document successfully removed from follower!")
                                     }
                                 }
-                            
-                                numFollowing = 0
                             }
-                        })
+                            
+                            DispatchQueue.main.async {
+                                DispatchQueue.global(qos: .userInteractive).async {
+                                    // delete following documents and set numbers correctly
+                                    for id in followers {
+                                        currentUserDocRef.collection("followers").document(id).delete() { deleteError in
+                                            if let deleteError = deleteError {
+                                                print("Error removing document: \(deleteError)")
+                                            } else {
+                                                print("Deleting User Document successfully removed from follower!0")
+                                            }
+                                        }
+                                    }
+                                    currentUserDocRef.updateData(["numFollowers" : 0])
+                                    
+                                    DispatchQueue.main.async {
+                                        DispatchQueue.global(qos: .userInteractive).async {
+                                            // Setting Following's new Num
+                                            var numFollowing = 0
+                                            
+                                            for id in followers {
+                                                
+                                                usersRef.document(id).getDocument(completion: { (userDocumentSnapshot, error) in
+                                                    if let error = error {
+                                                        print("Error getting following documents: \(error)")
+                                                    } else {
+                                                        if (userDocumentSnapshot?.exists)!,
+                                                            let userData = userDocumentSnapshot?.data() {
+                                                            
+                                                            numFollowing = userData["numFollowing"] as! Int
+                                                            numFollowing = numFollowing - 1
+                                                            usersRef.document(id).updateData(["numFollowing" : numFollowing]) { err in
+                                                                if let err = err {
+                                                                    print("Error updating followers \(err)")
+                                                                } else {
+                                                                    print("Document successfully updated for new followers num")
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             })
