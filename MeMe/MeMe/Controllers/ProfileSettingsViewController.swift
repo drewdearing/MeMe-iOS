@@ -58,6 +58,7 @@ class ProfileSettingsViewController: UIViewController {
                 print("username", user.uid)
                 // user is signed in so don't do anything
             } else {
+                cache.clearCache()
                 let storyboard = UIStoryboard(name: "Main", bundle: nil)
                 let controller = storyboard.instantiateViewController(withIdentifier: "loginVC")
                 self.present(controller, animated: true, completion: nil)
@@ -124,6 +125,7 @@ class ProfileSettingsViewController: UIViewController {
                     DispatchQueue.global(qos: .userInteractive).async {
                         self!.deleteUser(currentUserID: currentUserID)
                         DispatchQueue.main.async {
+                            cache.clearCache()
                             let storyboard = UIStoryboard(name: "Main", bundle: nil)
                             let controller = storyboard.instantiateViewController(withIdentifier: "loginVC")
                             self!.present(controller, animated: true, completion: nil)
@@ -344,8 +346,6 @@ class ProfileSettingsViewController: UIViewController {
                             }
                             
                             let user = Auth.auth().currentUser
-
-                            try! Auth.auth().signOut()
                             
                             user?.delete { error in
                                 if let error = error {
