@@ -540,13 +540,15 @@ class Cache {
                     if let group = group, !group.active {
                         let lastUnreadMessage = group.lastUnreadMessage as Date
                         let currentUID = Auth.auth().currentUser!.uid
+                        print(lastUnreadMessage)
                         if lastUnreadMessage < sent.dateValue() && currentUID != uid {
+                            print(sent.dateValue())
                             let data:[String:Any] = [
                                 "name": group.name,
                                 "numMembers": group.numMembers,
                                 "lastActive": group.lastActive,
                                 "unreadMessages": group.unreadMessages + 1,
-                                "lastUnreadMessage": group.lastUnreadMessage,
+                                "lastUnreadMessage": sent.dateValue(),
                                 "active": group.active
                             ]
                             self.updateGroup(id: groupID, data: data, complete: {_ in })
@@ -607,6 +609,8 @@ class Cache {
                                 group.numMembers = numMembers
                                 group.unreadMessages = Int32(0)
                                 group.lastActive = lastActive as NSDate
+                                print("listen dude this is it:")
+                                print(group.lastActive)
                                 group.lastUnreadMessage = lastActive as NSDate
                                 self.groupData[id] = group
                                 self.updateCore()
@@ -617,7 +621,12 @@ class Cache {
                                 if self.chatListeners[group.id] == nil {
                                     self.chatListeners[group.id] = messageRef.addSnapshotListener { (query, error) in
                                         if let query = query {
-                                            query.documentChanges.forEach { change in
+                                            let messages = query.documentChanges.sorted(by: { (a, b) -> Bool in
+                                                let Asent = a.document.data()["sent"] as! Firebase.Timestamp
+                                                let Bsent = b.document.data()["sent"] as! Firebase.Timestamp
+                                                return Asent.dateValue() < Bsent.dateValue()
+                                            })
+                                            messages.forEach { change in
                                                 if change.type == .added {
                                                     self.handleMessageDoc(messageDoc: change.document)
                                                 }

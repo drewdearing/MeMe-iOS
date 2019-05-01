@@ -64,6 +64,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                     "name": self.groupChat.name,
                     "numMembers": self.groupChat.numMembers,
                     "lastActive": lastActive.dateValue() as NSDate,
+                    "lastUnreadMessage": lastActive.dateValue() as NSDate,
                     "unreadMessages": 0 as Int32,
                     "active": false
                 ]
