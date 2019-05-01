@@ -12,6 +12,7 @@
         <attribute name="active" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="id" attributeType="String" syncable="YES"/>
         <attribute name="lastActive" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="lastUnreadMessage" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="numMembers" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="unreadMessages" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -38,9 +39,9 @@
         <attribute name="username" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Group" positionX="-63" positionY="72" width="128" height="135"/>
+        <element name="ChatMessage" positionX="-63" positionY="72" width="128" height="135"/>
+        <element name="Group" positionX="-63" positionY="72" width="128" height="150"/>
         <element name="Post" positionX="-63" positionY="-18" width="128" height="210"/>
         <element name="Profile" positionX="-63" positionY="63" width="128" height="135"/>
-        <element name="ChatMessage" positionX="-63" positionY="72" width="128" height="135"/>
     </elements>
 </model>

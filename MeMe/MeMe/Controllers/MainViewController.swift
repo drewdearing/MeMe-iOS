@@ -58,16 +58,23 @@ class MainViewController: UITabBarController, UITabBarControllerDelegate {
     
     func updateMessageCounter(){
         var count = 0 as Int32
+        print(unreadMessages)
         for numMessages in Array(unreadMessages.values) {
             count += numMessages
         }
-        if let items = tabBar.items {
-            let item = items[2]
-            if count > 0 {
-                item.badgeValue = "\(count)"
-            }
-            else{
-                item.badgeValue = nil
+        print("SHOULD BE: "+String(count))
+        var found = false
+        while(!found){
+            print("help")
+            if let items = self.tabBar.items {
+                found = true
+                let item = items[2]
+                if count > 0 {
+                    item.badgeValue = "\(count)"
+                }
+                else{
+                    item.badgeValue = nil
+                }
             }
         }
     }

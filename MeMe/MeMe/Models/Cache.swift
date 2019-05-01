@@ -260,8 +260,12 @@ class Cache {
         var numMembers = data["numMembers"] as? Int32
         var lastActive = data["lastActive"] as? NSDate
         var active = data["active"] as? Bool
+        var lastUnreadMessage = data["lastUnreadMessage"] as? NSDate
         var unreadMessages = data["unreadMessages"] as? Int32
         if let group = groupData[id] {
+            if lastUnreadMessage == nil {
+                lastUnreadMessage = group.lastUnreadMessage
+            }
             if name == nil {
                 name = group.name
             }
@@ -277,6 +281,7 @@ class Cache {
             if unreadMessages == nil {
                 unreadMessages = group.unreadMessages
             }
+            group.lastUnreadMessage = lastUnreadMessage!
             group.name = name!
             group.numMembers = numMembers!
             group.lastActive = lastActive!
@@ -289,6 +294,62 @@ class Cache {
         else {
             getGroup(id: id, complete: complete)
         }
+    }
+    
+    func clearCache(){
+        postData = [:]
+        profileData = [:]
+        imageData = [:]
+        groupData = [:]
+        groupUpdateListeners = [:]
+        
+        for imageTask in imageTasks {
+            imageTasks[imageTask.key] = nil
+            imageTask.value?.leave()
+        }
+        imageTasks = [:]
+        
+        for profileTask in profileTasks {
+            imageTasks[profileTask.key] = nil
+            profileTask.value?.leave()
+        }
+        profileTasks = [:]
+        
+        for postTask in postTasks {
+            postTasks[postTask.key] = nil
+            postTask.value?.leave()
+        }
+        postTasks = [:]
+        
+        for groupTask in groupTasks {
+            groupTasks[groupTask.key] = nil
+            groupTask.value?.leave()
+        }
+        groupTasks = [:]
+        
+        for postListener in postListeners {
+            postListeners[postListener.key] = nil
+            postListener.value?.remove()
+        }
+        postListeners = [:]
+        
+        for profileListener in profileListeners {
+            profileListeners[profileListener.key] = nil
+            profileListener.value?.remove()
+        }
+        profileListeners = [:]
+        
+        for groupListener in groupListeners {
+            groupListeners[groupListener.key] = nil
+            groupListener.value?.remove()
+        }
+        groupListeners = [:]
+        
+        for chatListener in chatListeners {
+            chatListeners[chatListener.key] = nil
+            chatListener.value?.remove()
+        }
+        chatListeners = [:]
     }
     
     func updateProfile(uid: String, data:[String:Any], complete: @escaping (Profile?) -> Void){
@@ -477,14 +538,15 @@ class Cache {
                 let uid = data["uid"] as! String
                 getGroup(id: groupID) { (group) in
                     if let group = group, !group.active {
-                        let lastActive = group.lastActive as Date
+                        let lastUnreadMessage = group.lastUnreadMessage as Date
                         let currentUID = Auth.auth().currentUser!.uid
-                        if lastActive < sent.dateValue() && currentUID != uid {
+                        if lastUnreadMessage < sent.dateValue() && currentUID != uid {
                             let data:[String:Any] = [
                                 "name": group.name,
                                 "numMembers": group.numMembers,
                                 "lastActive": group.lastActive,
                                 "unreadMessages": group.unreadMessages + 1,
+                                "lastUnreadMessage": group.lastUnreadMessage,
                                 "active": group.active
                             ]
                             self.updateGroup(id: groupID, data: data, complete: {_ in })
@@ -545,6 +607,7 @@ class Cache {
                                 group.numMembers = numMembers
                                 group.unreadMessages = Int32(0)
                                 group.lastActive = lastActive as NSDate
+                                group.lastUnreadMessage = lastActive as NSDate
                                 self.groupData[id] = group
                                 self.updateCore()
                                 if let dispatchGroup = self.groupTasks[id], let g = dispatchGroup {
