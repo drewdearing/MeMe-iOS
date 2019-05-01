@@ -55,6 +55,10 @@ class MainViewController: UITabBarController, UITabBarControllerDelegate {
         }
     }
     
+    override func viewDidLayoutSubviews() {
+        updateMessageCounter()
+    }
+    
     func updateMessageCounter(){
         var count = 0 as Int32
         for numMessages in Array(unreadMessages.values) {

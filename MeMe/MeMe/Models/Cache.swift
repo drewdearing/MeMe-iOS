@@ -176,15 +176,19 @@ class Cache {
                         self.imageData[imageURL] = image
                         DispatchQueue.main.async {
                             complete(image)
-                            self.imageTasks[imageURL] = nil
-                            group.leave()
+                            if let dispatchGroup = self.imageTasks[imageURL], let group = dispatchGroup {
+                                self.imageTasks[imageURL] = nil
+                                group.leave()
+                            }
                         }
                     }
                     else{
                         DispatchQueue.main.async {
                             complete(nil)
-                            self.imageTasks[imageURL] = nil
-                            group.leave()
+                            if let dispatchGroup = self.imageTasks[imageURL], let group = dispatchGroup {
+                                self.imageTasks[imageURL] = nil
+                                group.leave()
+                            }
                         }
                     }
                 }
@@ -294,6 +298,18 @@ class Cache {
     }
     
     func clearCache(){
+        if let context = getContext() {
+            for post in postData {
+                context.delete(post.value)
+            }
+            for profile in profileData {
+                context.delete(profile.value)
+            }
+            for group in groupData {
+                context.delete(group.value)
+            }
+            updateCore()
+        }
         postData = [:]
         profileData = [:]
         imageData = [:]
@@ -308,19 +324,16 @@ class Cache {
         
         for profileTask in profileTasks {
             imageTasks[profileTask.key] = nil
-            profileTask.value?.leave()
         }
         profileTasks = [:]
         
         for postTask in postTasks {
             postTasks[postTask.key] = nil
-            postTask.value?.leave()
         }
         postTasks = [:]
         
         for groupTask in groupTasks {
             groupTasks[groupTask.key] = nil
-            groupTask.value?.leave()
         }
         groupTasks = [:]
         
