@@ -7,6 +7,7 @@
 //
 import UIKit
 import Firebase
+import FirebaseFirestore
 
 protocol IndividualPostDelegate {
     func refreshCell(index:IndexPath)
@@ -26,6 +27,9 @@ class PostViewController: UIViewController {
     @IBOutlet weak var navItem: UINavigationItem!
     @IBOutlet weak var userButton: UIButton!
     
+    var database: Firestore!
+    var authentication: Auth!
+
     var post: String?
     var index: IndexPath!
     var memeURL:String = ""
@@ -54,6 +58,60 @@ class PostViewController: UIViewController {
         userProfileImageView.addGestureRecognizer(tapGesture)
         userProfileImageView.isUserInteractionEnabled = true
         navItem.title = "Meme"
+        
+        database = Firestore.firestore()
+        authentication = Auth.auth()
+
+        // Needs to be tested...
+//        NotificationCenter.default.addObserver(self, selector: #selector(screenshotTaken), name: UIApplication.userDidTakeScreenshotNotification, object: nil)
+    }
+    
+    @objc func screenshotTaken() {
+        // check to see if a scheenshot has been taken
+        if let id = Auth.auth().currentUser?.uid {
+            DispatchQueue.global(qos: .userInteractive).async {
+
+                self.database.collection("users").document(id).collection("screenshot").getDocuments { (screenshotQuerySnapshot, screenshotError) in
+                    
+                    if let screenshotError = screenshotError {
+                        print("error:", screenshotError)
+                        // none, so make one
+                        // if the screenshot has been taken for the first time, set a warning
+                        DispatchQueue.main.async {
+                            DispatchQueue.global(qos: .userInteractive).async {
+                                self.database.collection("users").document(id).collection("screenshot").addDocument(data: ["Strike" : true])
+                            }
+                            
+                            let alert = UIAlertController(title: "WARNING!!!", message: "Do not screenshot! Next screenshot will result in an account termination.", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "I Understand", style: .cancel, handler: nil))
+                            self.present(alert, animated: true)
+                        }
+                    } else {
+                        // else terminate the login and log them out...
+                        DispatchQueue.main.async {
+                            DispatchQueue.global(qos: .userInteractive).async {
+                                let user = Auth.auth().currentUser
+                                
+                                user?.delete { error in
+                                    if let error = error {
+                                        // An error happened.
+                                        print("Error deleting user: \(error)")
+                                    } else {
+                                        // Account deleted.
+                                        print("deleted User successfully!")
+                                    }
+                                }
+                            }
+                            
+                            cache.clearCache()
+                            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                            let controller = storyboard.instantiateViewController(withIdentifier: "loginVC")
+                            self.present(controller, animated: true, completion: nil)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     func fill(post:Post){
