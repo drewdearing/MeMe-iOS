@@ -66,6 +66,8 @@
 		3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */; };
 		3BD6291E225DA3AB007BECBB /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD6291D225DA3AB007BECBB /* UIImage.swift */; };
 		3BDA3462225DBCE1009EA280 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BDA3461225DBCE1009EA280 /* ShareViewController.swift */; };
+		3BE247922280B78D00024B37 /* BrushSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE247912280B78D00024B37 /* BrushSettingsViewController.swift */; };
+		3BE247942280CFE900024B37 /* TextSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE247932280CFE900024B37 /* TextSettingsViewController.swift */; };
 		3BE25156225527B600B8FCAC /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE25155225527B600B8FCAC /* Cache.swift */; };
 		3BEC94202254745E003AE517 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC941F2254745E003AE517 /* Home.storyboard */; };
 		3BEC942222547470003AE517 /* Discover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BEC942122547470003AE517 /* Discover.storyboard */; };
@@ -148,6 +150,8 @@
 		3BC7D0DF22397D3800CA98C4 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		3BD6291D225DA3AB007BECBB /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		3BDA3461225DBCE1009EA280 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		3BE247912280B78D00024B37 /* BrushSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushSettingsViewController.swift; sourceTree = "<group>"; };
+		3BE247932280CFE900024B37 /* TextSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSettingsViewController.swift; sourceTree = "<group>"; };
 		3BE25155225527B600B8FCAC /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		3BEC941F2254745E003AE517 /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
 		3BEC942122547470003AE517 /* Discover.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Discover.storyboard; sourceTree = "<group>"; };
@@ -224,6 +228,8 @@
 				609987A52255E15D002EFA2F /* ProfileViewController.swift */,
 				3B143718225572D100331A5B /* TabViewController.swift */,
 				177FB7A722598576002B7588 /* ChatViewController.swift */,
+				3BE247912280B78D00024B37 /* BrushSettingsViewController.swift */,
+				3BE247932280CFE900024B37 /* TextSettingsViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -521,6 +527,7 @@
 				17C6E8502239B2E9004665F0 /* ProfileView.swift in Sources */,
 				3BD6291E225DA3AB007BECBB /* UIImage.swift in Sources */,
 				3B1B71BC225E6CCE003B80E6 /* ImagePicker.swift in Sources */,
+				3BE247942280CFE900024B37 /* TextSettingsViewController.swift in Sources */,
 				3BBC46FF226EC7C700C261B1 /* UIColor.swift in Sources */,
 				17A35F92225403B300C2362D /* GroupChatViewController.swift in Sources */,
 				17A35F9B2254192200C2362D /* GroupChat.swift in Sources */,
@@ -532,6 +539,7 @@
 				17428C552273B4C400A983E4 /* Group+CoreDataClass.swift in Sources */,
 				3BEC942A22547F90003AE517 /* HomeViewController.swift in Sources */,
 				3BC7D0E022397D3800CA98C4 /* RegisterViewController.swift in Sources */,
+				3BE247922280B78D00024B37 /* BrushSettingsViewController.swift in Sources */,
 				17A35FA322541A9F00C2362D /* CurrentUserTableViewCell.swift in Sources */,
 				3BA760C1226FB7F500FBB835 /* Timestamp.swift in Sources */,
 				60430CCE2231CC630033C92F /* LoginViewController.swift in Sources */,

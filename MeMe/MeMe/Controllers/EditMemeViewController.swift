@@ -15,10 +15,14 @@ protocol NewMemeDelegate {
     func addMeme(post: PostData)
 }
 
-class EditMemeViewController: UIViewController, EditToolsDelegate {
+class EditMemeViewController: UIViewController, EditToolsDelegate, BrushSettingsDelegate, TextSettingsDelegate, UIPopoverPresentationControllerDelegate {
     
     @IBOutlet weak var memeImageView: UIImageView!
     @IBOutlet weak var doneButton: UIBarButtonItem!
+    @IBOutlet var textColorView: UIView!
+    @IBOutlet var brushColorView: UIView!
+    @IBOutlet var brushButton: UIButton!
+    @IBOutlet var textButton: UIButton!
     var desc: String = ""
     var lastPoint = CGPoint.zero
     var hue: CGFloat = 0
@@ -165,17 +169,24 @@ class EditMemeViewController: UIViewController, EditToolsDelegate {
         }
     }
     
-    func updateTools(size: Float, hue: Float, red: CGFloat, green: CGFloat, blue: CGFloat, desc: String, text: String, textSize: Float, textHue: Float, draw: Bool) {
+    func updateText(text: String, textSize: Float, textHue: Float) {
+        self.textHue = CGFloat(textHue)
+        self.textSize = CGFloat(textSize)
+        self.text = text
+        textColorView.backgroundColor = UIColor(hue: CGFloat(textHue), saturation: 1, brightness: 1, alpha: 1)
+    }
+    
+    func updateDesc(desc: String) {
+        self.desc = desc
+    }
+    
+    func updateBrush(size: Float, hue: Float, red: CGFloat, green: CGFloat, blue: CGFloat) {
         self.brushWidth = CGFloat(size)
         self.hue = CGFloat(hue)
         self.red = red
         self.green = green
         self.blue = blue
-        self.desc = desc
-        self.textHue = CGFloat(textHue)
-        self.textSize = CGFloat(textSize)
-        self.text = text
-        self.draw = draw
+        brushColorView.backgroundColor = UIColor(red: red, green: green, blue: blue, alpha: 1)
     }
     
     func addMeme(post: PostData) {
@@ -186,18 +197,67 @@ class EditMemeViewController: UIViewController, EditToolsDelegate {
         if segue.identifier == "EditToolsSegue" {
             let dest = segue.destination as! EditToolsViewController
             dest.delegate = self
+            dest.desc = desc
+            dest.selectedImage = memeImageView.image
+            dest.originalSize = originalSize
+        }
+        if segue.identifier == "BrushSettingsSegue" {
+            let dest = segue.destination as! BrushSettingsViewController
+            dest.delegate = self
             dest.blue = Float(blue)
             dest.red = Float(red)
             dest.green = Float(green)
             dest.brush = Float(brushWidth)
-            dest.desc = desc
             dest.hue = Float(hue)
-            dest.selectedImage = memeImageView.image
+            dest.modalPresentationStyle = .popover
+            let width = view.frame.width - (36+16+16)
+            dest.preferredContentSize = CGSize(width: width, height: 100)
+            let presentationController = dest.presentationController as! UIPopoverPresentationController
+            presentationController.delegate = self
+            presentationController.sourceView = brushButton
+            presentationController.sourceRect = brushButton.bounds
+            presentationController.permittedArrowDirections = [.up, .right]
+        }
+        if segue.identifier == "TextSettingsSegue" {
+            let dest = segue.destination as! TextSettingsViewController
+            dest.delegate = self
             dest.text = text
             dest.textHue = Float(textHue)
             dest.textSize = Float(textSize)
-            dest.draw = draw
-            dest.originalSize = originalSize
+            dest.modalPresentationStyle = .popover
+            let width = view.frame.width - (36+16+16)
+            dest.preferredContentSize = CGSize(width: width, height: 201)
+            let presentationController = dest.presentationController as! UIPopoverPresentationController
+            presentationController.delegate = self
+            presentationController.sourceView = textButton
+            presentationController.sourceRect = textButton.bounds
+            presentationController.permittedArrowDirections = [.up, .right]
+        }
+    }
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.none
+    }
+    
+    @IBAction func brushTool(_ sender: Any) {
+        if draw {
+            performSegue(withIdentifier: "BrushSettingsSegue", sender: self)
+        }
+        else{
+            draw = true
+            textButton.backgroundColor = .lightGray
+            brushButton.backgroundColor = nil
+        }
+    }
+    
+    @IBAction func textTool(_ sender: Any) {
+        if !draw {
+            performSegue(withIdentifier: "TextSettingsSegue", sender: self)
+        }
+        else{
+            draw = false
+            brushButton.backgroundColor = .lightGray
+            textButton.backgroundColor = nil
         }
     }
     
