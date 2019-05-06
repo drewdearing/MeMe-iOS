@@ -24,24 +24,46 @@ class FollowersViewController: UIViewController, UITableViewDelegate, UITableVie
         tableView.dataSource = self
         // Do any additional setup after loading the view.
         
-        let q = DispatchQueue(label:"followers")
-        q.sync {
-            let db = Firestore.firestore().collection("users").document(uid).collection("followers")
-            db.getDocuments() { (querySnapshot, err) in
-                if let err = err {
-                    print("Error getting documents: \(err)")
-                    return
-                } else {
-                    for document in querySnapshot!.documents {
-                        let userID = document.documentID
-                        cache.getProfile(uid: userID) { (profile) in
-                            if let profile = profile {
-                                self.members.append(profile.id)
+        if vcTitle == "Followers" {
+            let q = DispatchQueue(label:"followers")
+            q.sync {
+                let db = Firestore.firestore().collection("users").document(uid).collection("followers")
+                db.getDocuments() { (querySnapshot, err) in
+                    if let err = err {
+                        print("Error getting documents: \(err)")
+                        return
+                    } else {
+                        for document in querySnapshot!.documents {
+                            let userID = document.documentID
+                            cache.getProfile(uid: userID) { (profile) in
+                                if let profile = profile {
+                                    self.members.append(profile.id)
+                                }
                             }
                         }
+                        self.tableView.reloadData()
                     }
-                    print(self.members)
-                    self.tableView.reloadData()
+                }
+            }
+        } else if vcTitle == "Following" {
+            let q = DispatchQueue(label:"following")
+            q.sync {
+                let db = Firestore.firestore().collection("users").document(uid).collection("following")
+                db.getDocuments() { (querySnapshot, err) in
+                    if let err = err {
+                        print("Error getting documents: \(err)")
+                        return
+                    } else {
+                        for document in querySnapshot!.documents {
+                            let userID = document.documentID
+                            cache.getProfile(uid: userID) { (profile) in
+                                if let profile = profile {
+                                    self.members.append(profile.id)
+                                }
+                            }
+                        }
+                        self.tableView.reloadData()
+                    }
                 }
             }
         }

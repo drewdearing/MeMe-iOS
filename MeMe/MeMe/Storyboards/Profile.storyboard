@@ -198,6 +198,7 @@
                         <outlet property="settingsButton" destination="UMu-r9-az6" id="fOj-Og-5mR"/>
                         <outlet property="usernameLabel" destination="Xad-Cg-u1n" id="dxf-gQ-ePl"/>
                         <segue destination="zft-fP-Aab" kind="show" identifier="followersSegue" id="FZP-rR-pVB"/>
+                        <segue destination="zft-fP-Aab" kind="show" identifier="followingSegue" id="avk-i3-0ov"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yQQ-0c-h3z" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -210,7 +211,7 @@
                 <viewControllerPlaceholder storyboardName="Followers" id="zft-fP-Aab" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T2K-dK-Ta3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1029" y="580"/>
+            <point key="canvasLocation" x="1280" y="578"/>
         </scene>
         <!--Profile Settings View Controller-->
         <scene sceneID="wdj-UA-Ucr">
@@ -329,4 +330,7 @@
         <image name="settings" width="30" height="30"/>
         <image name="user_male" width="30" height="30"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="avk-i3-0ov"/>
+    </inferredMetricsTieBreakers>
 </document>

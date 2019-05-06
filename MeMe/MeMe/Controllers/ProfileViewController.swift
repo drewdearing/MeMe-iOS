@@ -62,13 +62,21 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
     }
     
     func setUpGestures() {
-        let tapFollowers = UITapGestureRecognizer(target: self, action: #selector(tappedAction(recognizer:)))
+        let tapFollowers = UITapGestureRecognizer(target: self, action: #selector(tappedFollowers(recognizer:)))
         followersLabel.addGestureRecognizer(tapFollowers)
         followersLabel.isUserInteractionEnabled = true
+        
+        let tapFollowing = UITapGestureRecognizer(target: self, action: #selector(tappedFollowing(recognizer:)))
+        followingLabel.addGestureRecognizer(tapFollowing)
+        followingLabel.isUserInteractionEnabled = true
     }
     
-    @IBAction func tappedAction(recognizer: AnyObject) {
+    @IBAction func tappedFollowers(recognizer: AnyObject) {
         performSegue(withIdentifier: "followersSegue", sender: self)
+    }
+    
+    @IBAction func tappedFollowing(recognizer: AnyObject) {
+        performSegue(withIdentifier: "followingSegue", sender: self)
     }
     
     func setProfile(){
@@ -334,6 +342,10 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
             let destination = segue.destination as! FollowersViewController
             destination.uid = uid
             destination.vcTitle = "Followers"
+        } else if segue.identifier == "followingSegue" {
+            let destination = segue.destination as! FollowersViewController
+            destination.uid = uid
+            destination.vcTitle = "Following"
         }
     }
     
