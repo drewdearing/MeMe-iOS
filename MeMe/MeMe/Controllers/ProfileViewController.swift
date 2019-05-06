@@ -333,6 +333,7 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
         } else if segue.identifier == "followersSegue" {
             let destination = segue.destination as! FollowersViewController
             destination.uid = uid
+            destination.vcTitle = "Followers"
         }
     }
     
