@@ -57,7 +57,26 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
         profileImageView.layer.borderColor = UIColor.white.cgColor
         profileImageView.clipsToBounds = true
         setProfile()
+        setUpGestures()
         reloadPosts(showProgress: false)
+    }
+    
+    func setUpGestures() {
+        let tapFollowers = UITapGestureRecognizer(target: self, action: #selector(tappedFollowers(recognizer:)))
+        followersLabel.addGestureRecognizer(tapFollowers)
+        followersLabel.isUserInteractionEnabled = true
+        
+        let tapFollowing = UITapGestureRecognizer(target: self, action: #selector(tappedFollowing(recognizer:)))
+        followingLabel.addGestureRecognizer(tapFollowing)
+        followingLabel.isUserInteractionEnabled = true
+    }
+    
+    @IBAction func tappedFollowers(recognizer: AnyObject) {
+        performSegue(withIdentifier: "followersSegue", sender: self)
+    }
+    
+    @IBAction func tappedFollowing(recognizer: AnyObject) {
+        performSegue(withIdentifier: "followingSegue", sender: self)
     }
     
     func setProfile(){
@@ -319,6 +338,14 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
         if segue.identifier == ProfileSettingsSegueID {
             let destination = segue.destination
             (destination as? ProfileSettingsViewController)?.delegate = self
+        } else if segue.identifier == "followersSegue" {
+            let destination = segue.destination as! FollowersViewController
+            destination.uid = uid
+            destination.vcTitle = "Followers"
+        } else if segue.identifier == "followingSegue" {
+            let destination = segue.destination as! FollowersViewController
+            destination.uid = uid
+            destination.vcTitle = "Following"
         }
     }
     

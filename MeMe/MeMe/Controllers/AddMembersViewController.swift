@@ -61,11 +61,15 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
         super.viewDidLoad()
         searchBar.autocapitalizationType = .none
         setUpSearchBar()
-        setUpUsers()
+        //setUpUsers()
         
         // Do any additional setup after loading the view.
         potentialMembersTableView.delegate = self
         potentialMembersTableView.dataSource = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        setUpUsers()
     }
     
     private func setUpUsers(){
@@ -107,7 +111,6 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     
     private func setUpSearchBar(){
         searchBar.delegate = self
-        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -137,11 +140,6 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
             potentialMembersTableView.reloadData()
             return
         }
-//        currentPotentialMembers = potentialMembers.filter({names -> Bool in
-//            guard let text = searchBar.text else { return false}
-//            //for user in potentialMembers {
-//            return names.contains(text)
-//        })
         currentPotentialMembers.removeAll()
         if let text = searchBar.text {
             for member in potentialMembers {

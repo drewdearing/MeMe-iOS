@@ -197,11 +197,21 @@
                         <outlet property="scrollView" destination="yei-tU-TQc" id="q7a-ph-3ZY"/>
                         <outlet property="settingsButton" destination="UMu-r9-az6" id="fOj-Og-5mR"/>
                         <outlet property="usernameLabel" destination="Xad-Cg-u1n" id="dxf-gQ-ePl"/>
+                        <segue destination="zft-fP-Aab" kind="show" identifier="followersSegue" id="FZP-rR-pVB"/>
+                        <segue destination="zft-fP-Aab" kind="show" identifier="followingSegue" id="avk-i3-0ov"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yQQ-0c-h3z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1030" y="122"/>
+        </scene>
+        <!--Followers-->
+        <scene sceneID="Csv-VB-cUB">
+            <objects>
+                <viewControllerPlaceholder storyboardName="Followers" id="zft-fP-Aab" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="T2K-dK-Ta3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1280" y="578"/>
         </scene>
         <!--Profile Settings View Controller-->
         <scene sceneID="wdj-UA-Ucr">
@@ -315,9 +325,12 @@
         </scene>
     </scenes>
     <resources>
-        <image name="globe" width="75" height="75"/>
-        <image name="heart" width="75" height="75"/>
-        <image name="settings" width="45" height="45"/>
+        <image name="globe" width="100" height="100"/>
+        <image name="heart" width="100" height="100"/>
+        <image name="settings" width="30" height="30"/>
         <image name="user_male" width="30" height="30"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="avk-i3-0ov"/>
+    </inferredMetricsTieBreakers>
 </document>
