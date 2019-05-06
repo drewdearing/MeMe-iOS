@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		172585AE2280B37000B18178 /* Followers.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 172585AD2280B37000B18178 /* Followers.storyboard */; };
+		172585B02280B39D00B18178 /* FollowersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172585AF2280B39D00B18178 /* FollowersViewController.swift */; };
 		17428C552273B4C400A983E4 /* Group+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17428C532273B4C400A983E4 /* Group+CoreDataClass.swift */; };
 		17428C562273B4C400A983E4 /* Group+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17428C542273B4C400A983E4 /* Group+CoreDataProperties.swift */; };
 		1745B70222557E6800DDFB34 /* AddMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1745B70122557E6800DDFB34 /* AddMembersViewController.swift */; };
@@ -89,6 +91,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		172585AD2280B37000B18178 /* Followers.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Followers.storyboard; sourceTree = "<group>"; };
+		172585AF2280B39D00B18178 /* FollowersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersViewController.swift; sourceTree = "<group>"; };
 		17428C532273B4C400A983E4 /* Group+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Group+CoreDataClass.swift"; sourceTree = "<group>"; };
 		17428C542273B4C400A983E4 /* Group+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Group+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		1745B70122557E6800DDFB34 /* AddMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMembersViewController.swift; sourceTree = "<group>"; };
@@ -205,6 +209,7 @@
 		17C6E8452239A9B7004665F0 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				172585AF2280B39D00B18178 /* FollowersViewController.swift */,
 				3BDA3461225DBCE1009EA280 /* ShareViewController.swift */,
 				3BEC942922547F90003AE517 /* HomeViewController.swift */,
 				3BEC942B22548302003AE517 /* DiscoverViewController.swift */,
@@ -291,6 +296,7 @@
 				3BEC942122547470003AE517 /* Discover.storyboard */,
 				3BEC942322547489003AE517 /* Messages.storyboard */,
 				3BEC942522547492003AE517 /* Profile.storyboard */,
+				172585AD2280B37000B18178 /* Followers.storyboard */,
 				3BEC942722547B85003AE517 /* NewMeme.storyboard */,
 				177FB7A522598529002B7588 /* Chat.storyboard */,
 			);
@@ -436,6 +442,7 @@
 				3BEC94202254745E003AE517 /* Home.storyboard in Resources */,
 				17C6E8542239B31F004665F0 /* ProfileView.xib in Resources */,
 				60430CD32231CC650033C92F /* Assets.xcassets in Resources */,
+				172585AE2280B37000B18178 /* Followers.storyboard in Resources */,
 				60430CD12231CC630033C92F /* Main.storyboard in Resources */,
 				17A35FA222541A9F00C2362D /* CurrentUserTableViewCell.xib in Resources */,
 				17A35FB32254251E00C2362D /* ProfileSettings.storyboard in Resources */,
@@ -518,6 +525,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				172585B02280B39D00B18178 /* FollowersViewController.swift in Sources */,
 				17C6E8502239B2E9004665F0 /* ProfileView.swift in Sources */,
 				3BD6291E225DA3AB007BECBB /* UIImage.swift in Sources */,
 				3B1B71BC225E6CCE003B80E6 /* ImagePicker.swift in Sources */,

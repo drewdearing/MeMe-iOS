@@ -57,7 +57,18 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
         profileImageView.layer.borderColor = UIColor.white.cgColor
         profileImageView.clipsToBounds = true
         setProfile()
+        setUpGestures()
         reloadPosts(showProgress: false)
+    }
+    
+    func setUpGestures() {
+        let tapFollowers = UITapGestureRecognizer(target: self, action: #selector(tappedAction(recognizer:)))
+        followersLabel.addGestureRecognizer(tapFollowers)
+        followersLabel.isUserInteractionEnabled = true
+    }
+    
+    @IBAction func tappedAction(recognizer: AnyObject) {
+        performSegue(withIdentifier: "followersSegue", sender: self)
     }
     
     func setProfile(){
@@ -319,6 +330,9 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
         if segue.identifier == ProfileSettingsSegueID {
             let destination = segue.destination
             (destination as? ProfileSettingsViewController)?.delegate = self
+        } else if segue.identifier == "followersSegue" {
+            let destination = segue.destination as! FollowersViewController
+            destination.uid = uid
         }
     }
     
