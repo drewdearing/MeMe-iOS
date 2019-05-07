@@ -6,6 +6,7 @@
 //  Copyright © 2019 meme. All rights reserved.
 //
 
+//populates each cell on the feed with relevant info such as # of upvotes/downvotes, the actual image, etc. Cache is used if available to speed up loading time.
 import UIKit
 import Firebase
 
@@ -30,7 +31,6 @@ class FeedTableViewCell: UITableViewCell {
     
     var memeURL:String = ""
     var profileURL:String = ""
-    
     var uid:String = ""
     var postID:String = ""
     var color:String = ""

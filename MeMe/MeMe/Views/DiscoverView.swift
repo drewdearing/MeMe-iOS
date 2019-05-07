@@ -58,7 +58,6 @@ class DiscoverView: FeedView {
             let post = data[data.count-1]
             let score = post.upvotes - post.downvotes
             urlPathBase = urlPathBase.appending("?maxScore="+String(score))
-            print(urlPathBase)
         }
         let request = NSMutableURLRequest()
         request.url = URL(string: urlPathBase)
@@ -90,5 +89,4 @@ class DiscoverView: FeedView {
     override func sortData() -> [PostData] {
         return Array(self.postData.values).sorted(by: {($0.upvotes - $0.downvotes) > ($1.upvotes - $1.downvotes)})
     }
-    
 }

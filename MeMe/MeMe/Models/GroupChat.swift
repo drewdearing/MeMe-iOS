@@ -6,6 +6,7 @@
 //  Copyright © 2019 meme. All rights reserved.
 //
 
+//a struct which stores GroupChat info for future use, such as a chat's name, id, etc.
 import Foundation
 
 class GroupChat {

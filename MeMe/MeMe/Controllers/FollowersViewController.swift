@@ -74,7 +74,6 @@ class FollowersViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("HERE")
         let cell = tableView.dequeueReusableCell(withIdentifier: "followersCell", for: indexPath as IndexPath) as? CurrentUserTableViewCell
         let currentUser = members[indexPath.row]
         

@@ -27,15 +27,11 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource,
         galleryCollectionView.delegate = self
         galleryCollectionView.dataSource = self
         
-        print("Register")
-        
         // Do any additional setup after loading the view.
         fetchGalleryImages()
-        print("Fetched :", self.images.count, "images")
     }
     
     private func fetchGalleryImages() {
-        
         let imageManager = PHImageManager.default()
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = true
@@ -45,11 +41,9 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource,
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false, selector: nil)]
         
         if let fetchResult: PHFetchResult = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: fetchOptions) {
-            
             if fetchResult.count > 0 {
                 for index in 0 ..< fetchResult.count {
                     imageManager.requestImage(for: fetchResult.object(at: index), targetSize: CGSize(width: 200, height: 200), contentMode: PHImageContentMode.aspectFill, options: requestOptions) { (image, [AnyHashable : Any]?) in
-                        
                         self.images.append(image!)
                     }
                 }
@@ -60,15 +54,12 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource,
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
         return images.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-        
         // Configure the cell
-        
         if let imageView = cell.viewWithTag(25) as? UIImageView {
             imageView.image = images[indexPath.row]
         }
@@ -93,14 +84,12 @@ class GalleryViewController: UIViewController, UICollectionViewDataSource,
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         let mainStoryBoard: UIStoryboard = UIStoryboard(name: "NewMeme", bundle: nil)
         if let editMemeVCDestination = mainStoryBoard.instantiateViewController(withIdentifier: editMemeStoryIdentifier) as? EditMemeViewController {
             editMemeVCDestination.selectedImage = images[indexPath.row]
             editMemeVCDestination.delegate = delegate
             self.navigationController?.pushViewController(editMemeVCDestination, animated: true)
         }
-
     }
     
     @IBAction func cancelButton(_ sender: Any) {

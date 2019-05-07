@@ -15,6 +15,6 @@ class NavigationView: UIView {
     var rightNavButtonIcon:UIImage?
     
     func pressRightNavButton(){
-        print("sup")
+        print("Pressed right nav button")
     }
 }

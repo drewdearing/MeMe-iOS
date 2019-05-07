@@ -157,7 +157,6 @@ class FeedView: UIView, UITableViewDelegate, UIScrollViewDelegate, UITableViewDa
     func reloadPosts(showProgress:Bool = true){
         loading = true
         postData = [:]
-        //data = []
         if showProgress {
             SVProgressHUD.show(withStatus: "loading...")
         }

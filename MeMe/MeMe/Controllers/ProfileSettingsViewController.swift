@@ -52,7 +52,6 @@ class ProfileSettingsViewController: UIViewController {
     
     @IBAction func onClickLogout(_ sender: Any) {
         try! Auth.auth().signOut()
-        
         Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
                 print("username", user.uid)
@@ -68,15 +67,12 @@ class ProfileSettingsViewController: UIViewController {
 
     }
     
-    
     @objc func saveProfileEdits() {
-        
         Auth.auth().signIn(withEmail: email.text!, password: password.text!) { [weak self] user, error in
             guard let strongSelf = self else { return }
             
             if let user = user {
                 if let currentUserID = self!.authentication.currentUser?.uid {
-                    print("About to delete", currentUserID)
                     self!.statusLabel.text = "Updating Username"
                     self?.username.isUserInteractionEnabled = false
                     self?.password.isUserInteractionEnabled = false
@@ -109,15 +105,12 @@ class ProfileSettingsViewController: UIViewController {
         }
     }
     
-    
     @IBAction func deleteAccount(_ sender: Any) {
-        
         Auth.auth().signIn(withEmail: email.text!, password: password.text!) { [weak self] user, error in
             guard let strongSelf = self else { return }
             
             if let user = user {
                 if let currentUserID = self!.authentication.currentUser?.uid {
-                    print("About to delete", currentUserID)
                     self!.statusLabel.text = "Deleting Acount..."
                     self?.username.isUserInteractionEnabled = false
                     self?.password.isUserInteractionEnabled = false
@@ -140,7 +133,6 @@ class ProfileSettingsViewController: UIViewController {
     
     private func updateUsername(newUsername: String, currentUserID: String) {
         let userDocumentReference = database.collection("users").document(currentUserID)
-        
         userDocumentReference.updateData(["username" : newUsername]) { err in
             if let err = err {
                 print("Error updating username to user document: \(err)")
@@ -166,9 +158,7 @@ class ProfileSettingsViewController: UIViewController {
         let defaultProfilePicURL = "https://cnam.ca/wp-content/uploads/2018/06/default-profile.gif"
         
         DispatchQueue.global(qos: .background).async {
-
             let userDocumentReference = self.database.collection("users").document(currentUserID)
-            
             userDocumentReference.updateData(["username" : defaultUsername,
                                               "profilePicURL" : defaultProfilePicURL]) { err in
                 if let err = err {
@@ -188,14 +178,12 @@ class ProfileSettingsViewController: UIViewController {
         // Unfollow by deleting the to be deleted user
         DispatchQueue.global(qos: .userInteractive).async {
             currentUserDocRef.collection("following").getDocuments(completion: { (userDocumentSnapshot, error0) in
-                
                 if let error0 = error0 {
                     print("Error getting following documents: \(error0)")
                 } else {
                     for document in userDocumentSnapshot!.documents {
                         following.append(document.documentID)
                     }
-                    
                     DispatchQueue.main.async {
                         DispatchQueue.global(qos: .userInteractive).async {
                             for id in following {
@@ -207,7 +195,6 @@ class ProfileSettingsViewController: UIViewController {
                                     }
                                 }
                             }
-                            
                             DispatchQueue.main.async {
                                 DispatchQueue.global(qos: .userInteractive).async {
                                     // delete following documents and set numbers correctly
@@ -221,13 +208,10 @@ class ProfileSettingsViewController: UIViewController {
                                         }
                                     }
                                     currentUserDocRef.updateData(["numFollowing" : 0])
-                                    
                                     DispatchQueue.main.async {
                                         DispatchQueue.global(qos: .userInteractive).async {
-                                            
                                             // Setting Following's new Num
                                             var numFollowers = 0
-                                            
                                             for id in following {
                                                 usersRef.document(id).getDocument(completion: { (userDocumentSnapshot, error) in
                                                     if let error = error {
@@ -264,11 +248,9 @@ class ProfileSettingsViewController: UIViewController {
         let usersRef = database.collection("users")
         let currentUserDocRef = usersRef.document(currentUserID)
         var followers: [String] = []
-        
         // Unfollow by deleting the to be deleted user
         DispatchQueue.global(qos: .userInteractive).async {
             currentUserDocRef.collection("followers").getDocuments(completion: { (userDocumentSnapshot, error0) in
-                
                 if let error0 = error0 {
                     print("Error getting following documents: \(error0)")
                 } else {
@@ -287,7 +269,6 @@ class ProfileSettingsViewController: UIViewController {
                                     }
                                 }
                             }
-                            
                             DispatchQueue.main.async {
                                 DispatchQueue.global(qos: .userInteractive).async {
                                     // delete following documents and set numbers correctly
@@ -308,7 +289,6 @@ class ProfileSettingsViewController: UIViewController {
                                             var numFollowing = 0
                                             
                                             for id in followers {
-                                                
                                                 usersRef.document(id).getDocument(completion: { (userDocumentSnapshot, error) in
                                                     if let error = error {
                                                         print("Error getting following documents: \(error)")

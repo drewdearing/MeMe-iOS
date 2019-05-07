@@ -206,7 +206,6 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
     func reloadPosts(showProgress:Bool = true){
         loading = true
         postData = [:]
-        //data = []
         if showProgress {
             SVProgressHUD.show(withStatus: "loading...")
         }
@@ -275,7 +274,6 @@ UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, ProfileSettingsDel
             timestamp += Double(post.timestamp._nanoseconds) * 0.000000001
             urlPathBase = urlPathBase.appending("&timestamp="+String(timestamp))
         }
-        print(urlPathBase)
         let request = NSMutableURLRequest()
         request.url = URL(string: urlPathBase)
         request.httpMethod = "GET"

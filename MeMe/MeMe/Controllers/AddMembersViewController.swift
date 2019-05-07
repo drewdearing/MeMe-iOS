@@ -51,7 +51,6 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     private var potentialMembers: [String] = []
     private var currentPotentialMembers: [String] = []
     
-    
     var loaded = false
     var groupname = String ()
     var groupddocid = String ()
@@ -61,7 +60,6 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
         super.viewDidLoad()
         searchBar.autocapitalizationType = .none
         setUpSearchBar()
-        //setUpUsers()
         
         // Do any additional setup after loading the view.
         potentialMembersTableView.delegate = self
@@ -77,7 +75,6 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
             let useHUD = self.potentialMembers.count <= 0
             if useHUD {
                 DispatchQueue.main.async {
-                    print("start")
                     SVProgressHUD.show(withStatus: "loading...")
                 }
             }
@@ -158,7 +155,7 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let currentID = currentPotentialMembers[indexPath.row]
-        let currentCell = potentialMembersTableView.cellForRow(at: indexPath) as! PotentialUserTableViewCell
+        _ = potentialMembersTableView.cellForRow(at: indexPath) as! PotentialUserTableViewCell
         
         if (delegate != nil) {
             //group name you want to add user in
@@ -173,8 +170,7 @@ class AddMembersViewController: UIViewController, UITableViewDelegate, UITableVi
                 }
             }
             
-            
-            let ref_setuser = Firestore.firestore().collection("users").document(currentID).collection("groups").document(groupddocid).setData([
+            _ = Firestore.firestore().collection("users").document(currentID).collection("groups").document(groupddocid).setData([
                 "name": groupname
             ]) { err in
                 if let err = err {

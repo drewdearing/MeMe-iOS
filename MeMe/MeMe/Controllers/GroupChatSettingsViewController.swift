@@ -38,7 +38,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     @IBOutlet weak var saveLabel: UIBarButtonItem!
     @IBOutlet weak var vcTitle: UINavigationItem!
     
-    
     @IBOutlet weak var seguebutton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,8 +64,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: currentMemebersCellIdentifier, for: indexPath as IndexPath) as? CurrentUserTableViewCell
-        
-        let row = indexPath.row
         let currentUser = currentMembers[indexPath.row]
         
         cache.getProfile(uid: currentUser) { (profile) in
@@ -78,7 +75,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                 })
             }
         }
-        
         return cell!
     }
     
@@ -86,7 +82,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
         let user_id = currentMembers[indexPath.row]
         
         if (user_id != Auth.auth().currentUser?.uid) {
-            let ref = Firestore.firestore().collection("users").document(user_id).collection("groups").document(groupID).delete() { err in
+            let ref_delete = Firestore.firestore().collection("users").document(user_id).collection("groups").document(groupID).delete() { err in
                 if let err = err {
                     print("Error removing document: \(err)")
                 } else {
@@ -94,7 +90,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                 }
             }
             
-            let ref_user = Firestore.firestore().collection("groups").document(groupID).collection("usersInGroup").document(user_id).delete() { err in
+            let ref_user_delete = Firestore.firestore().collection("groups").document(groupID).collection("usersInGroup").document(user_id).delete() { err in
                 if let err = err {
                     print("Error removing document: \(err)")
                 } else {
@@ -102,7 +98,7 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                 }
             }
             currentMembers.remove(at: indexPath.row)
-            let ref_num = Firestore.firestore().collection("groups").document(groupID).setData(["numMembers" : currentMembers.count], merge: true)
+            let ref_num_delete = Firestore.firestore().collection("groups").document(groupID).setData(["numMembers" : currentMembers.count], merge: true)
             
         }
         currentMemebersTableView.reloadData()
@@ -114,7 +110,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             let vc: AddMembersViewController = segue.destination as! AddMembersViewController
             vc.delegate = self
             vc.currentMembers = self.currentMembers
-            
             if (identity == "settingsIdentifier") {
                 vc.groupname = self.groupName
                 vc.groupddocid = self.groupID
@@ -187,7 +182,6 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
     }
 
     private func getMembers() {
-            print("get members")
             let q = DispatchQueue(label:"GroupSettings")
             q.sync {
                 let db = Firestore.firestore().collection("groups")
@@ -207,14 +201,12 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
             }
     }
     
-    
     @IBAction func saveButton(_ sender: Any) {
         if (groupChatNameTextField.text != "") {
             let refid = createGroup()
             groupID = refid
             let ref_user = Firestore.firestore().collection("users")
             let currentUser = Auth.auth().currentUser
-            
             ref_user.document((currentUser?.uid)!).getDocument { (document, error) in
                 if let username = document?.get("username") {
                     self.currentMembers.append((currentUser?.uid)!)
@@ -223,23 +215,19 @@ class GroupChatSettingsViewController: UIViewController, UITableViewDelegate, UI
                     print("Error")
                 }
             }
-            
             seguebutton.isHidden = false
             saveLabel.isEnabled = false
             saveLabel.tintColor = UIColor.clear
             editButton.isHidden = false
             vcTitle.title = groupChatNameTextField.text
-            
             if(delegate != nil) {
                 delegate?.addGroup(name: groupChatNameTextField.text!, id: refid)
-            }else{
             }
         }
     }
     
     func addMember(id: String) {
         if groupID != "" {
-            print(groupID)
             if !currentMembers.contains(id) {
                 currentMembers.append(id)
                 currentMemebersTableView.reloadData()

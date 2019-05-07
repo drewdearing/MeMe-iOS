@@ -24,7 +24,6 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         messageInputBar.delegate = self
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
@@ -78,18 +77,15 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     private func checkListener() {
         ref = db.collection("groups").document(chatID).collection("messages")
         listener = ref?.addSnapshotListener { query,error in
-            print("LISTENER WILL CALLED")
             guard let snapshot = query else {
                 print("ERROR")
                 return
             }
-            
             snapshot.documentChanges.forEach{ change in
                 self.handleDocumentChange(change)
             }
         }
     }
-    
     
     @IBAction func settingsAction(_ sender: Any) {
         performSegue(withIdentifier: "settingsIdentifier", sender: self)
@@ -174,19 +170,14 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
                         let name = profile.username
                         let sender = Sender(id: uid, displayName: name)
                         if isImage {
-                            print("we know theres an image")
                             cache.getPost(id: content) { (post) in
-                                print("post retrieved: "+(post?.id)!)
                                 Timestamp.getServerTime { (serverTime) in
                                     if let serverTime = serverTime {
-                                        print("serverTime got")
                                         let expireTime = Timestamp(s:serverTime.dateValue().timeIntervalSince1970 - 86400)
                                         if let post = post, Timestamp(s: post.seconds, n: post.nanoseconds) > expireTime {
-                                            print("in here")
                                             let postImageURL = post.photoURL
                                             cache.getImage(imageURL: postImageURL, complete: { (cachedImage) in
                                                 if let cachedImage = cachedImage {
-                                                    print("in here 2")
                                                     let image = MessageImage(image: cachedImage, post: content)
                                                     let message = Message(id: id, content: content, image: image, sender: sender, date: date.dateValue())
                                                     self.insertMessage(message)
@@ -280,7 +271,7 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
     }
     
     func refreshCell(index: IndexPath) {
-        //dont need
+        //dont need, its part of delegate so we keep in here
     }
     
     func messageTopLabelAttributedText(
@@ -301,7 +292,6 @@ class ChatViewController: MessagesViewController, MessageInputBarDelegate, Messa
         for message: MessageType,
         at indexPath: IndexPath,
         in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        
         return 12
     }
     

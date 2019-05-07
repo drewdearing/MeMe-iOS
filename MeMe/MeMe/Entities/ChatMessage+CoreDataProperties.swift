@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 
-
 extension ChatMessage {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<ChatMessage> {
@@ -23,5 +22,4 @@ extension ChatMessage {
     @NSManaged public var content: String
     @NSManaged public var uid: String
     @NSManaged public var sent: NSDate
-
 }

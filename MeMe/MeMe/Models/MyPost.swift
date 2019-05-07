@@ -11,6 +11,7 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 
+//a struct which stores Post info for future use, such as a post's id, # of upvotes/downvotes, etc.
 struct MyPost {
     var userID: String
     var photoURL: String
@@ -78,7 +79,6 @@ extension PostImage : DocumentSerializable {
             else {
                 return nil
         }
-        
         self.init(post: post, image: image)
     }
 }
@@ -91,13 +91,10 @@ extension PostImage: Equatable {
 
 extension PostImage: Comparable {
     static func < (lhs: PostImage, rhs: PostImage) -> Bool {
-        
         if lhs.post.timeStamp.seconds != rhs.post.timeStamp.seconds {
             return lhs.post.timeStamp.seconds > rhs.post.timeStamp.seconds
         }
-        
         return true
-        
     }
 }
 

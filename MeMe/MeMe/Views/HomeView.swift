@@ -68,7 +68,6 @@ class HomeView: FeedView {
                 timestamp += Double(post.timestamp._nanoseconds) * 0.000000001
                 urlPathBase = urlPathBase.appending("&timestamp="+String(timestamp))
             }
-            print(urlPathBase)
             let request = NSMutableURLRequest()
             request.url = URL(string: urlPathBase)
             request.httpMethod = "GET"
@@ -98,5 +97,4 @@ class HomeView: FeedView {
     override func sortData() -> [PostData] {
         return Array(self.postData.values).sorted(by: {$0.timestamp > $1.timestamp})
     }
-    
 }

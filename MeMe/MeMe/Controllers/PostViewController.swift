@@ -70,9 +70,7 @@ class PostViewController: UIViewController {
         // check to see if a scheenshot has been taken
         if let id = Auth.auth().currentUser?.uid {
             DispatchQueue.global(qos: .userInteractive).async {
-
                 self.database.collection("users").document(id).collection("screenshot").getDocuments { (screenshotQuerySnapshot, screenshotError) in
-                    
                     if let screenshotError = screenshotError {
                         print("error:", screenshotError)
                         // none, so make one
@@ -91,7 +89,6 @@ class PostViewController: UIViewController {
                         DispatchQueue.main.async {
                             DispatchQueue.global(qos: .userInteractive).async {
                                 let user = Auth.auth().currentUser
-                                
                                 user?.delete { error in
                                     if let error = error {
                                         // An error happened.
@@ -102,7 +99,6 @@ class PostViewController: UIViewController {
                                     }
                                 }
                             }
-                            
                             cache.clearCache()
                             let storyboard = UIStoryboard(name: "Main", bundle: nil)
                             let controller = storyboard.instantiateViewController(withIdentifier: "loginVC")
@@ -150,7 +146,6 @@ class PostViewController: UIViewController {
                 })
             }
         }
-        
         cache.getImage(imageURL: memeURL) { (postImage) in
             self.postImageView.image = postImage
         }

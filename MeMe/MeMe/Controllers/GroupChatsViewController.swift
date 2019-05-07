@@ -24,7 +24,6 @@ class GroupChatsViewController: TabViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
         groupChatsTableView.delegate = self
         groupChatsTableView.dataSource = self
-        
         setUpGroups()
     }
     
@@ -33,7 +32,6 @@ class GroupChatsViewController: TabViewController, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let groupChatCell = groupChatsTableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath as IndexPath) as! GroupChatTableViewCell
         
         cache.getGroup(id: groupChats[indexPath.row]) { (group) in
@@ -42,7 +40,6 @@ class GroupChatsViewController: TabViewController, UITableViewDelegate, UITableV
                 groupChatCell.unreadMessagesLabel.text = String(group.unreadMessages)
             }
         }
-        
         return groupChatCell
     }
     
@@ -105,8 +102,7 @@ class GroupChatsViewController: TabViewController, UITableViewDelegate, UITableV
     }
     
     func addGroup(name:String, id: String) {
-        //cache.getGroup(id:  , complete: <#T##(Group?) -> Void#>)
-        //groupChatsTableView.reloadData()
+        //this is just for the addgroup delegate
     }
     
     override func update() {

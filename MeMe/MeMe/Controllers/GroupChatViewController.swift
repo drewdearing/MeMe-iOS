@@ -22,7 +22,6 @@ class GroupChatViewController: UIViewController,
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         // Do any additional setup after loading the view.
     }
     
@@ -32,12 +31,8 @@ class GroupChatViewController: UIViewController,
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let messageCell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier, for: indexPath as IndexPath) as! MessageTableViewCell
-        
-        let row = indexPath.row
-        
+
         messageCell.disableReceiver()
-//        messageCell.senderMessageLabel.text = message.message
-//        messageCell.senderMemeImageView.isHidden = true
         
         return messageCell
         

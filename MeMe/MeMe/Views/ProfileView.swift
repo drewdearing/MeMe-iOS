@@ -57,8 +57,6 @@ class ProfileView: TabView, UICollectionViewDataSource, UICollectionViewDelegate
         
         // Configure the cell
         let row = indexPath.row
-        //        postCollectionViewCell?.postImageView.image = posts[row].image
-        
         return postCollectionViewCell!
     }
     

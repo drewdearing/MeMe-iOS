@@ -1,5 +1,6 @@
 import UIKit
 
+//used for editing tools, can choose an image from gallery to make a meme.
 public protocol ImagePickerDelegate: class {
     func didSelect(image: UIImage?)
 }

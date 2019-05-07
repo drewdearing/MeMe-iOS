@@ -8,8 +8,7 @@
 
 import UIKit
 
-
-
+//used for potential members a user might want to add to a group.
 class PotentialUserTableViewCell: UITableViewCell {
     
     @IBOutlet weak var userProfileImageView: UIImageView!

@@ -81,7 +81,6 @@ class EditToolsViewController: UIViewController {
         let color = image.averageColor!.toHexString()
         let ref = Firestore.firestore().collection("post").document()
         let imageName = ref.documentID
-        print(imageName)
         let imageRef = storageRef.child("\(imageName).png")
         
         let metadata = StorageMetadata()

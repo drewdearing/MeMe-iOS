@@ -9,6 +9,7 @@
 import Foundation
 import MessageKit
 
+//a struct which stores MessageImage info for future use, such as a message's size, url, etc.
 class MessageImage: MediaItem {
     var url: URL?
     var image: UIImage?

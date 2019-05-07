@@ -73,7 +73,6 @@ class RegisterViewController: UIViewController, ImagePickerDelegate {
     }
     
     func getRequiredFields(complete: @escaping (RegisterFields?) -> Void){
-        print("enter")
         if let email = getEmail(){
             if let name = getName() {
                 if let password = getPassword() {

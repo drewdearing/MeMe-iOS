@@ -67,10 +67,8 @@ class EditMemeViewController: UIViewController, EditToolsDelegate, BrushSettings
         tempImage = memeImageView.image!
         var width = memeImageView.frame.width
         var height = memeImageView.frame.height
-        
         let mW = width / memeImageView.image!.size.width
         let mH = height / memeImageView.image!.size.height
-        
         if( mH < mW ) {
             width = height / memeImageView.image!.size.height * memeImageView.image!.size.width
         }
@@ -126,7 +124,6 @@ class EditMemeViewController: UIViewController, EditToolsDelegate, BrushSettings
             NSAttributedString.Key.font: textFont,
             NSAttributedString.Key.foregroundColor: textColor,
             ] as [NSAttributedString.Key : Any]
-        
         
         let rect = CGRect(origin: point, size: memeImageView.image!.size)
         text.draw(in: rect, withAttributes: textFontAttributes)
@@ -260,5 +257,4 @@ class EditMemeViewController: UIViewController, EditToolsDelegate, BrushSettings
             textButton.backgroundColor = nil
         }
     }
-    
 }

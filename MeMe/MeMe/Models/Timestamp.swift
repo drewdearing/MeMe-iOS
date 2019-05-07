@@ -6,6 +6,7 @@
 //  Copyright © 2019 meme. All rights reserved.
 //
 
+//timestamp class used for things such as ordering the placement of memes on home feed, making sure memes go away after a day
 import Foundation
 import Firebase
 

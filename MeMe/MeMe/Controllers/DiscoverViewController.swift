@@ -19,7 +19,6 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
     var imagePicker:ImagePicker!
     var selectedImage:UIImage?
     
-    //
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var searchUserTableView: UITableView!
     
@@ -34,7 +33,6 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
     var users: [User] = []
     
     private var isFetching: Bool = false
-    //
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,7 +108,6 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
         allUsersID.removeAll()
         
         DispatchQueue.global(qos: .userInteractive).async {
-            
             _ = self.database.collection("users").getDocuments() { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
@@ -155,7 +152,6 @@ class DiscoverViewController: TabViewController, NewMemeDelegate, FeedViewDelega
 extension DiscoverViewController : UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         var usernames: [String] = []
-        
         if searchText.isEmpty {
             searchUserTableView.isHidden = true
             return

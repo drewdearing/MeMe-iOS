@@ -11,6 +11,7 @@ import UIKit
 import CoreData
 import Firebase
 
+//Cache object so that there is no need to constantly access the database for the info we need
 class Cache {
     private var postData:[String:Post] = [:]
     private var profileData:[String:Profile] = [:]
@@ -32,7 +33,6 @@ class Cache {
     private static var cache:Cache? = nil
     
     private init(){
-        print("starting cache")
         if let context = getContext() {
             let postRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
             let profileRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Profile")
@@ -75,7 +75,6 @@ class Cache {
                 print("cant fetch")
             }
         }
-        print("cache loaded")
     }
     
     static func get() -> Cache {

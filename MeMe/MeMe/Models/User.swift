@@ -5,6 +5,9 @@
 //  Created by Yair Sanchez Nieto on 3/28/19.
 //  Copyright © 2019 meme. All rights reserved.
 //
+
+
+//a struct which stores User info for future use, such as a user's email, username, etc.
 import Foundation
 import FirebaseFirestore
 

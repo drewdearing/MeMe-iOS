@@ -55,17 +55,14 @@ class LoginViewController: UIViewController {
                         Firestore.firestore().collection("users").document(user.user.uid).getDocument(completion: { (doc, err) in
                             if let doc = doc {
                                 if(doc.exists){
-                                    print(doc.data())
                                     let data = doc.data()
                                     let username = data!["username"] as! String
                                     let email = data!["email"] as! String
                                     let profilePicURL = data!["profilePicURL"] as! String
                                     let numFollowing = Int(data!["numFollowing"] as! NSNumber)
                                     let numFollowers = Int(data!["numFollowers"] as! NSNumber)
-                                    
                                     let newUser = CurrentProfile(username: username, email: email, numFollowing: numFollowing, numFollowers: numFollowers, profilePicURL: profilePicURL)
                                     UserDefaults.standard.set(try? PropertyListEncoder().encode(newUser), forKey: "currentProfile")
-                                    print("LOGIN SEGUE")
                                     self?.performSegue(withIdentifier: "LoginSegue", sender: self)
                                 }
                             }
