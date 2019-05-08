@@ -194,8 +194,10 @@ extension DiscoverViewController : UISearchBarDelegate {
         let storyboard = UIStoryboard(name: "Profile", bundle: nil)
         if let controller = storyboard.instantiateViewController(withIdentifier: "profileView") as? ProfileViewController {
             // set data to controller
-            controller.uid = allUsersID[current]!
-            self.navigationController?.pushViewController(controller, animated: true)
+            if let uid = allUsersID[current] {
+                controller.uid = uid
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
         }
     }
 }
