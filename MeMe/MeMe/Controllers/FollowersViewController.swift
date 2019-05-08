@@ -74,19 +74,15 @@ class FollowersViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "followersCell", for: indexPath as IndexPath) as? CurrentUserTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "followersCell", for: indexPath as IndexPath)
         let currentUser = members[indexPath.row]
         
         cache.getProfile(uid: currentUser) { (profile) in
             if let profile = profile {
-                cell?.usernameLabel.text = profile.username
-                let profilePicURL = profile.profilePicURL
-                cache.getImage(imageURL: profilePicURL, complete: { (profilePic) in
-                    cell?.userProfileImageView.image = profilePic
-                })
+                cell.textLabel?.text = profile.username
             }
         }
-        return cell!
+        return cell
     }
 
 }

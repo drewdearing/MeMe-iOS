@@ -56,6 +56,7 @@
 		3B3F47C42249ACBA00B2C5A0 /* FeedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */; };
 		3B76C13D22398191005CA53E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B76C13C22398191005CA53E /* GoogleService-Info.plist */; };
 		3B860CD52252C3E800831C41 /* MeMe.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3B860CD32252C3E800831C41 /* MeMe.xcdatamodeld */; };
+		3B8F8229228357EE0088909B /* FollowersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8F8228228357EE0088909B /* FollowersTableViewCell.swift */; };
 		3B9B6F43225455FD005A52B4 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9B6F42225455FD005A52B4 /* TabView.swift */; };
 		3BA760C1226FB7F500FBB835 /* Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA760C0226FB7F500FBB835 /* Timestamp.swift */; };
 		3BA760C3226FBEE300FBB835 /* MyPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA760C2226FBEE300FBB835 /* MyPost.swift */; };
@@ -142,6 +143,7 @@
 		3B3F47C22249ACBA00B2C5A0 /* FeedTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FeedTableViewCell.xib; path = MeMe/Cells/FeedTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 		3B76C13C22398191005CA53E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B860CD42252C3E800831C41 /* MeMe.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MeMe.xcdatamodel; sourceTree = "<group>"; };
+		3B8F8228228357EE0088909B /* FollowersTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowersTableViewCell.swift; path = MeMe/Controllers/FollowersTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		3B9B6F42225455FD005A52B4 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		3BA760C0226FB7F500FBB835 /* Timestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timestamp.swift; sourceTree = "<group>"; };
 		3BA760C2226FBEE300FBB835 /* MyPost.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyPost.swift; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 				17A35FA922541BD000C2362D /* ProfilePostCollectionViewCell.swift */,
 				609987AB2255EC10002EFA2F /* MessageTableViewCell.swift */,
 				6048638D22750A9C0017C5E6 /* SearchUserTableViewCell.swift */,
+				3B8F8228228357EE0088909B /* FollowersTableViewCell.swift */,
 			);
 			name = Cells;
 			path = "New Group1";
@@ -533,6 +536,7 @@
 			files = (
 				172585B02280B39D00B18178 /* FollowersViewController.swift in Sources */,
 				17C6E8502239B2E9004665F0 /* ProfileView.swift in Sources */,
+				3B8F8229228357EE0088909B /* FollowersTableViewCell.swift in Sources */,
 				3BD6291E225DA3AB007BECBB /* UIImage.swift in Sources */,
 				3B1B71BC225E6CCE003B80E6 /* ImagePicker.swift in Sources */,
 				3BE247942280CFE900024B37 /* TextSettingsViewController.swift in Sources */,
